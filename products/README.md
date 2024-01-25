@@ -1,4 +1,4 @@
-The folders inside this folder should contain all the products of your project.
+The folders inside this folder contain all the products for Taylor Glass and Aryln Santiago's final project for MADA 2024.
 
 For a classical academic project, this will be a peer-reviewed manuscript. 
 The `manuscript` folder contains a template. This template is structured as a report for a class, but you can easily adjust it.
