@@ -19,6 +19,7 @@ This uses MS Word as output format. [See here](https://quarto.org/docs/output-fo
 
 
 ```{r, echo=FALSE, message=FALSE}
+xcode-select --install
 # load a few R packages
 library(here)
 library(knitr)
