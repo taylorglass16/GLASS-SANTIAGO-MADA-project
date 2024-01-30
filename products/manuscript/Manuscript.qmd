@@ -26,7 +26,6 @@ library(knitr)
 ```
 
 
-
 # Summary/Abstract
 _Write a summary of your project._
 
