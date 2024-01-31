@@ -1,5 +1,5 @@
 ---
-title: "Example Manuscript Template for a Data Analysis Project"
+title: "Global Distribution of Unintended Pregnancies and Contraceptive Usage"
 subtitle: ""
 author: Taylor Glass and Aryln Santiago
 date: "`r Sys.Date()`"
@@ -24,7 +24,38 @@ xcode-select --install
 library(here)
 library(knitr)
 ```
+## Project Part 1  
+# Data Source 
+The data source for this project is the Guttmacher Institute, which is a well-known research organization focusing on improving sexual and reproductive health around the world. The data used here is from their Adding It Up project. The goals of this project include estimating the need for, impact of, and costs associated with providing sexual and reproductive health services. Low and middle income countries are the target audience for this research, specifically women of reproductive age (15-49). Some of the variables included in this dataset are modern contraceptive use, unintended pregnancies, unplanned births, and abortions averted. 
 
+# Load and describe the data 
+```{r}
+library(here)
+AIUdata <- read_csv(here("data", "raw-data", "AIU All Women Dataset.csv"))
+dim(AIUdata)
+colnames(AIUdata)
+```
+There are 132 observations, one row for each low- to middle- income country, of the 399 variable included in the Adding It Up All Women Dataset. Some examples of measurements included are percentages of pregnancy outcomes, rates of safe and unsafe abortions, percentage of various contraceptive usages, percentages of care received for various pregnancy complications, and costs for many variables including abortions and STIs. 
+
+# Potential Research Questions
+1) What is the relationship between rates of unintended pregnancies and usage of contraceptive methods?
+  -outcome variables: 
+  unintended pregnancies, total number (pct_upreg) 
+  unintended pregnancies, total number [subregional]      (upreg_subreg)
+  
+  -predictor variables:
+  number of women 25-34 using modern methods (modmmethods_2534)
+  number of women 25-34 using sterilization (ster_2534)
+  number of women using long-acting reversible methods (larc_2534)
+  number of women 25-34 using short-acting methods (sarc_2534)
+  number of women 25-34 using traditional methods (tradmethods_2534)
+  number of women 25-34 using no method (nomethod_2534)
+  *These variables exist for two other age ranges (20-24 and 35-49), so we could analyze contraceptive usage across age categories too  
+  
+2) How do the rates of safe abortions fluctuate with available methods for safe abortions?
+
+# How to analyze 
+All of the variables used in this analysis are numeric, so we can build linear regression models to analyze how each method of contraception affects the percentage of unintended pregnancies. We can group countries together based on the subregion variable to compare how these relationships vary across the world. There are other interesting variables that can be used for grouping for analysis such as wealth, urban/rural location, and marriage status. 
 
 # Summary/Abstract
 _Write a summary of your project._
@@ -40,6 +71,7 @@ _Provide enough background on your topic that others can understand the why and 
 
 ## Description of data and data source
 _Describe what the data is, what it contains, where it is from, etc. Eventually this might be part of a methods section._
+
 
 ## Questions/Hypotheses to be addressed
 _State the research questions you plan to answer with this analysis._
