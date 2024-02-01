@@ -12,30 +12,45 @@ bibliography: ../assets/dataanalysis-references.bib
 csl: ../assets/apa.csl
 ---
 
-The structure below is one possible setup for a data analysis project (including the course project). For a manuscript, adjust as needed. 
-You don't need to have exactly these sections, but the content covering those sections should be addressed.
-
 This uses MS Word as output format. [See here](https://quarto.org/docs/output-formats/ms-word.html) for more information. You can switch to other formats, like html or pdf. See [the Quarto documentation](https://quarto.org/) for other formats.
-
 
 ```{r, echo=FALSE, message=FALSE}
 xcode-select --install
 # load a few R packages
+install.packages("dplyr")
+install.packages("naniar")
 library(here)
+library(readr)
 library(knitr)
+library(dplyr)
+library(naniar)
+library(ggplot2)
 ```
 ## Project Part 1  
 # Data Source 
-The data source for this project is the Guttmacher Institute, which is a well-known research organization focusing on improving sexual and reproductive health around the world. The data used here is from their Adding It Up project. The goals of this project include estimating the need for, impact of, and costs associated with providing sexual and reproductive health services. Low and middle income countries are the target audience for this research, specifically women of reproductive age (15-49). Some of the variables included in this dataset are modern contraceptive use, unintended pregnancies, unplanned births, and abortions averted. 
+The data source for this project is the Guttmacher Institute, which is a well-known research organization focusing on improving sexual and reproductive health around the world. The data used here is from their Adding It Up project. The goals of this project include estimating the need for, impact of, and costs associated with providing sexual and reproductive health services. Low and middle income countries are the target audience for this research, specifically women of reproductive age (15-49). Some of the variables included in this dataset are modern contraceptive use, unintended pregnancies, unplanned births, and abortions averted. Observations are drawn from nationally representative surveys, including Demographic and Health Surveys, UNICCEF Multiple Indicator Cluster Surveys, US Centers for Disease Control Reproductive Health Surveys, Performance Monitoring for Action Surveys, and others. The UN Population Division is the source of population projections for women in this age group, and estimates of unintended pregnancies are from the Guttmacher Institute, WHO, and other authors, which have been adjusted to 2019. 
 
 # Load and describe the data 
 ```{r}
 library(here)
 AIUdata <- read_csv(here("data", "raw-data", "AIU All Women Dataset.csv"))
 dim(AIUdata)
-colnames(AIUdata)
+str(AIUdata)
 ```
-There are 132 observations, one row for each low- to middle- income country, of the 399 variable included in the Adding It Up All Women Dataset. Some examples of measurements included are percentages of pregnancy outcomes, rates of safe and unsafe abortions, percentage of various contraceptive usages, percentages of care received for various pregnancy complications, and costs for many variables including abortions and STIs. 
+There are 132 observations, one row for each low- to middle- income country, of the 399 variable included in the Adding It Up All Women Dataset. Some examples of numeric variables included are percentages of pregnancy outcomes, rates of safe and unsafe abortions, percentage of various contraceptive usages, percentages of care received for various pregnancy complications, and costs for many variables including abortions and STIs. There are three important character variables that can be used to group the numeric variables: country name, region, and sub region. 
+
+# Summarize the data 
+```{r}
+table(AIUdata$region)
+table(AIUdata$subregion)
+summary(AIUdata$pct_upreg)
+ggplot(AIUdata, aes(x = country, y = pct_upreg, fill = region)) +
+  geom_col(position = "dodge") +
+  labs(title = "Percentage Unintended Pregnancies by Country",
+       x = "Country",
+       y = "Percentage")
+```
+The dataset includes 53 African countries, 36 Asian countries, 11 European Countries, 24 Latin American/Caribbean countries, and 8 Oceanic countries.There are 16 subregions that provide better detail about each country's location. The average percentage of unintended pregnancies at the country level is 46.79%. with a maximum of 75.65%. This variable has 24 missing values, which will need to be cleaned.  A simple visualization shows that African and Latin American/Carribean countries have the highest percentages of unintended pregnancies. 
 
 # Potential Research Questions
 1) What is the relationship between rates of unintended pregnancies and usage of contraceptive methods?
@@ -44,18 +59,19 @@ There are 132 observations, one row for each low- to middle- income country, of 
   unintended pregnancies, total number [subregional]      (upreg_subreg)
   
   -predictor variables:
-  number of women 25-34 using modern methods (modmmethods_2534)
-  number of women 25-34 using sterilization (ster_2534)
-  number of women using long-acting reversible methods (larc_2534)
-  number of women 25-34 using short-acting methods (sarc_2534)
-  number of women 25-34 using traditional methods (tradmethods_2534)
-  number of women 25-34 using no method (nomethod_2534)
-  *These variables exist for two other age ranges (20-24 and 35-49), so we could analyze contraceptive usage across age categories too  
+  number of women 35-49 using modern methods (modmmethods_3549)
+  number of women 35-49 using sterilization (ster_3549)
+  number of women 35-49 using long-acting reversible methods (larc_3549)
+  number of women 35-49 using short-acting methods (sarc_3549)
+  number of women 35-49 using traditional methods (tradmethods_3549)
+  number of women 35-49 using no method (nomethod_3549)
+
+We will be looking for patterns in contraceptive methods and higher unintended pregnancies to investigate the effectiveness of each method. We hope to find relationships between subregions, rates of unintended pregnancies, and contraceptive methods to determine possible interventions that will increase the effectiveness of contraceptive methods in each subregion. Each of the predictor variables exist for two other age ranges (20-24 and 25-34), so we could analyze contraceptive usage across age categories within each subregion as well.
   
-2) How do the rates of safe abortions fluctuate with available methods for safe abortions?
+Backup question: How do the rates of safe abortions fluctuate with available methods for safe abortions?
 
 # How to analyze 
-All of the variables used in this analysis are numeric, so we can build linear regression models to analyze how each method of contraception affects the percentage of unintended pregnancies. We can group countries together based on the subregion variable to compare how these relationships vary across the world. There are other interesting variables that can be used for grouping for analysis such as wealth, urban/rural location, and marriage status. 
+All of the variables used in this analysis are numeric, so we can build linear regression models to analyze how each method of contraception affects the percentage of unintended pregnancies. We can group countries together based on the subregion variable to compare how these relationships vary across the world as shown in the crude visualization above. There are other interesting variables that can be used for grouping for analysis such as wealth, urban/rural location, and marriage status. 
 
 # Summary/Abstract
 _Write a summary of your project._
