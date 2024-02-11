@@ -1,0 +1,145 @@
+---
+title: "Processing Script"
+author: "Taylor Glass and Arlyn Santiago"
+date: "2024-02-09"
+output: html_document
+---
+
+
+# Processing script
+
+# Setup
+
+Load the necessary packages for data loading and processing. 
+
+```{r}
+library(readr) # for loading csv files
+library(readxl) # for loading excel files (codebook)
+library(dplyr) #for data processing/cleaning
+library(tidyr) #for data processing/cleaning
+library(naniar) #to explore data missingness
+library(skimr) #for nice visualization of data 
+library(here) #to set paths
+```
+
+
+# Data loading
+
+```{r}
+# path to data using here() function
+data_location <- here("data","raw-data","AIU All Women Dataset.csv")
+rawdata <- read_csv(data_location)
+```
+
+# Check data
+
+We will load and examine the codebook first. 
+
+```{r}
+# write file path to the codebook
+codebook_location <- here("data", "AIU All Women Dataset Codebook.xlsx")
+  
+# specify the 3 sheets of the codebook we need 
+sheets <- c("Demographics", "Contraceptive need & use", "Pregnancy-related & newborn")
+
+# load codebook
+codebook <- lapply(sheets, function(sheet) {
+  readxl::read_excel(codebook_location, sheet = sheet)
+})
+print(codebook)
+```
+
+# Glimpse at the data
+
+We will take a glimpse at our data to better understand the variables we are working with. There are four character variables: `country`, `data_source_year`, `region`, and `subregion`. The remainder of the variables are numeric and describe percentage of birth outcomes, maternal deaths due to birth outcomes, contraceptive methods divided by age groups, wealth levels in relation to contraceptive methods, various abortion procedure rates, current cost of pregnancy outcomes and STI treatment.
+
+```{r}
+dplyr::glimpse(rawdata)
+summary(rawdata)
+head(rawdata)
+skimr::skim(rawdata)
+```
+# Identifying variables to be cleaned 
+
+```{r}
+rawdata2 <- rawdata %>% 
+                select(country, region, subregion, pct_upreg, upreg_subreg, modmethods_3549, ster_3549, larc_3549, sarc_3549, tradmethods_3549, nomethod_3549)
+
+skimr::skim(rawdata2)
+```
+
+# Cleaning
+
+By inspecting the data as done above, we find some problems that need addressing:
+
+First, the `region` variable is a character variable, but it will be more useful later as a factor. We can easily mutate it from a character variable to factor variable.  
+```{r}
+# convert character variable to factor variable
+rawdata2 <- rawdata2 %>% 
+              mutate(region = as.factor(region))
+
+# check that the conversion worked 
+class(rawdata2$region)
+```
+
+Second, there are 24 entries missing for the percentage of all unintended pregnancies by country, which is only 18.18% of the observations. After isolating the observations with this missing variable, we see that the majority of countries in this category are located in Asia. This does not make sense because the majority of countries in the raw dataset are located in Africa, which suggests that the data are not missing at random. 
+```{r}
+# find missing percentage for each variable
+miss_var_summary(rawdata2)
+
+# isolate the percentage of all unintended pregnancies by country to discover trends in missingness 
+variable_with_missing <- "pct_upreg"
+missing_obs <- rawdata2[is.na(rawdata2[[variable_with_missing]]), ]
+other_variables <- colnames(rawdata2)[!colnames(rawdata2) == variable_with_missing]
+pct_upregmissing <- missing_obs[, other_variables]
+print(pct_upregmissing)
+
+# compare dataset with the missing variable to the full dataset
+table(pct_upregmissing$region)
+table(rawdata2$region)
+```
+
+We can impute the missing data here because only 18.18% of the data is missing, so the mean value of the variable is fairly reliable (find a source for this?) After finding the summary statistics of this variable, the median is 0.4701 and the mean is 0.4679, which suggests that there are minimal outliers in the data.  
+```{r}
+summary(rawdata2$pct_upreg)
+```
+
+
+Third, we need to evaluate the 108 missing entries of the percentage of unintended pregnancies subregion. Since 81.81% of this variable is missing, it does not make sense to include it in the analyis because we do not have enough information to impute the missing data. 
+```{r}
+# isolate the percentage of all unintended pregnancies by subregion to discover trends in missingness
+variable_with_missing <- "upreg_subreg"
+missing_obs2 <- rawdata2[is.na(rawdata2[[variable_with_missing]]), ]
+other_variables2 <- colnames(rawdata2)[!colnames(rawdata2) == variable_with_missing]
+pct_subregmissing <- missing_obs2[, other_variables2]
+print(pct_subregmissing)
+```
+
+
+Lastly, we will assign the clean data to a final variable, which makes it easier to add further cleaning steps above if necessary.
+
+```{r}
+processeddata <- d4
+```
+
+
+# Save data 
+
+Finally, we save the clean data as RDS file. I suggest you save your processed and cleaned data as RDS or RDA/Rdata files. 
+This preserves coding like factors, characters, numeric, etc.  If you save as CSV, that information would get lost.
+However, CSV is better for sharing with others since it's plain text. If you do CSV, you might want to write down somewhere what each variable is.
+
+See here for some suggestions on how to store your processed data:
+http://www.sthda.com/english/wiki/saving-data-into-r-data-format-rds-and-rdata
+
+```{r}
+save_data_location <- here::here("data","processed_data","processeddata.rds")
+saveRDS(processeddata, file = save_data_location)
+```
+
+
+
+# Notes
+
+Removing anyone who had "faulty" or missing data is one approach. It's often not the best. based on your question and your analysis approach, you might want to do cleaning differently (e.g. keep individuals with some missing information).
+

@@ -1,10 +1,5 @@
-This folder contains a simple made-up data-set in an Excel file.
+This folder contains the raw data for the AIU All Women Dataset. It contains 132 observations of 399 variables. 
 
-It contains the variables `Height`, `Weight` and `Gender` of a few imaginary individuals.
+Some of the numeric variables included are percentages of pregnancy outcomes, rates of safe and unsafe abortions, percentage of various contraceptive usages, percentages of care received for various pregnancy complications, and costs for many variables including abortions and STIs. There are three important character variables that can be used to group the numeric variables: country name, region, and sub region. 
 
-The dataset purposefully contains some faulty entries that need to be cleaned.
-
-Generally, any dataset should contain some meta-data explaining what each variable in the dataset is. (This is often called a **Codebook**.) For this simple example, the codebook is given as a second sheet in the Excel file.
-
-This raw data-set should generally not be edited by hand. It should instead be loaded and processed/cleaned using code.
-
+This raw data-set should generally not be edited by hand. It should instead be loaded and processed/cleaned using code found in the processingfile-v1.qmd file.  
