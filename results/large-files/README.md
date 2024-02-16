@@ -1,4 +1,4 @@
-This is where you should store the results of computations that produce
+This is where we stored the results of computations that produce
 large files, such as posterior samples from Bayesian models.
 
 Everything in this folder except for the README is ignored by Git, so it will

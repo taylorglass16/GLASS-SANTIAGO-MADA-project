@@ -1,3 +1,1 @@
-Folder for all figures.
-
-You can create further sub-folders if that makes sense.
+This folder contains all of the figures displayed in the final manuscript. 

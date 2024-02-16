@@ -68,6 +68,26 @@ The dataset includes 53 African countries, 36 Asian countries, 11 European Count
 
 We will be looking for patterns in contraceptive methods and higher unintended pregnancies to investigate the effectiveness of each method. We hope to find relationships between subregions, rates of unintended pregnancies, and contraceptive methods to determine possible interventions that will increase the effectiveness of contraceptive methods in each subregion. Each of the predictor variables exist for two other age ranges (20-24 and 25-34), so we could analyze contraceptive usage across age categories within each subregion as well.
 
+2) How does marriage status affect percentage of unintended pregnancies across different types of birth control?
+  -outcome variables:
+      unintended pregnancies, total number (pct_upreg)
+      unintended pregnancies, using larc and sterilization (pct_upreg_larcster)
+      unintended pregnancies, using short term reversible (pct_upreg_sarc)
+  -predictor variables:
+      Number wanting to avoid pregnancy, all married women (inneed_married)
+      Number using sterilization, all married women	(ster_married) **combine these two in processing
+      Number using long-acting reversible methods, all married women	(larc_married)
+      Number using short-acting methods, all married women	(sarc_married)
+      Number wanting to avoid pregnancy, formerly married women 	(inneed_formerlymar)
+      Number using sterilization, formerly married women	(ster_formerlymar)
+      Number using long-acting reversible methods, formerly married women	(larc_formerlymar)
+      Number using short-acting methods, formerly married women	(sarc_formerlymar)
+      Number wanting to avoid pregnancy, never married women 	(inneed_nevermar)
+      Number using all modern methods, never married women	(modmethods_nevermar)
+      Number using sterilization, never married women	(ster_nevermar)
+      Number using long-acting reversible methods, never married women	(larc_nevermar)
+      Number using short-acting methods, never married women	(sarc_nevermar)
+
 # How to analyze 
 All of the variables used in this analysis are numeric, so we can build linear regression models to analyze how each method of contraception affects the percentage of unintended pregnancies. We can group countries together based on the subregion variable to compare how these relationships vary across the world as shown in the crude visualization above. There are other interesting variables that can be used for grouping for analysis such as wealth, urban/rural location, and marriage status. 
 

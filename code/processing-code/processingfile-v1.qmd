@@ -1,7 +1,7 @@
 ---
 title: "Processing Script"
 author: "Taylor Glass and Arlyn Santiago"
-date: "2024-02-09"
+date: "2024-02-16"
 output: html_document
 ---
 
@@ -20,6 +20,8 @@ library(tidyr) #for data processing/cleaning
 library(naniar) #to explore data missingness
 library(skimr) #for nice visualization of data 
 library(here) #to set paths
+library(tidymodels) #to impute missing data
+library(recipes) #to impute missing data
 ```
 
 
@@ -48,6 +50,7 @@ codebook <- lapply(sheets, function(sheet) {
 })
 print(codebook)
 ```
+Note: should we include other covariates like marriage percentages, number of live births, number of induced abortions
 
 # Glimpse at the data
 
@@ -72,7 +75,7 @@ skimr::skim(rawdata2)
 
 By inspecting the data as done above, we find some problems that need addressing:
 
-First, the `region` variable is a character variable, but it will be more useful later as a factor. We can easily mutate it from a character variable to factor variable.  
+First, the `region` variable is a character variable, but it will be more useful later as a factor. We can easily mutate it from a character variable to factor variable. All the remaining variables are numeric as they should be. 
 ```{r}
 # convert character variable to factor variable
 rawdata2 <- rawdata2 %>% 
@@ -82,7 +85,7 @@ rawdata2 <- rawdata2 %>%
 class(rawdata2$region)
 ```
 
-Second, there are 24 entries missing for the percentage of all unintended pregnancies by country, which is only 18.18% of the observations. After isolating the observations with this missing variable, we see that the majority of countries in this category are located in Asia. This does not make sense because the majority of countries in the raw dataset are located in Africa, which suggests that the data are not missing at random. 
+Second, there are 24 entries missing for the percentage of all unintended pregnancies by country `pct_upreg`, which accounts for 18.18% of the observations. After isolating the observations with this missing variable, we see that the majority of countries in this category are located in Asia. This does not make sense because the majority of countries in the raw dataset are located in Africa, which suggests that the data are not missing at random. 
 ```{r}
 # find missing percentage for each variable
 miss_var_summary(rawdata2)
@@ -99,13 +102,36 @@ table(pct_upregmissing$region)
 table(rawdata2$region)
 ```
 
-We can impute the missing data here because only 18.18% of the data is missing, so the mean value of the variable is fairly reliable (find a source for this?) After finding the summary statistics of this variable, the median is 0.4701 and the mean is 0.4679, which suggests that there are minimal outliers in the data.  
+We should impute the missing data here to avoid introducing bias because 18.18% of the data is missing, and this variable is the best outcome variable to answer the research question. After finding the summary statistics of this variable, the median is 0.4701 and the mean is 0.4679, which suggests that there are minimal outliers in the data.  
 ```{r}
+# find mean to use for imputed data
 summary(rawdata2$pct_upreg)
+
+# create a recipe to impute data 
+rec <- recipe(pct_upreg ~ ., data = rawdata2) %>%
+  step_naomit(all_predictors(), -all_outcomes(), skip = TRUE) %>%
+  step_impute_mean(all_predictors()) #which predictors would I use?
+
+# prepare the raw data using the recipe
+data_prep <- prep(rec, training = rawdata2)
+
+# impute the data 
+data_imputed <- bake(data_prep, new_data = NULL) #all pct_upreg are NaN values 
+
+# identify rows with missing values in the original dataset
+missing_rows <- which(is.na(rawdata2$pct_upreg))
+
+# replace missing values in the original dataset with imputed values
+rawdata2$pct_upreg[missing_rows] <- data_imputed$pct_upreg[missing_rows]
+
+```
+Once the missing values have been imputed, we should further clean the `pct_upreg` variable to have a typical percentage format. 
+```{r}
+rawdata2 <- rawdata2 %>% 
+              mutate(pct_upreg = pct_upreg * 100)
 ```
 
-
-Third, we need to evaluate the 108 missing entries of the percentage of unintended pregnancies subregion. Since 81.81% of this variable is missing, it does not make sense to include it in the analyis because we do not have enough information to impute the missing data. 
+We also need to evaluate the 108 missing entries of the percentage of unintended pregnancies by subregion `upreg_subreg`. Since 81.81% of this variable is missing, it does not make sense to include it in the analysis because we do not have enough information to impute the missing data. We will remove this variable for the sake of this analysis.
 ```{r}
 # isolate the percentage of all unintended pregnancies by subregion to discover trends in missingness
 variable_with_missing <- "upreg_subreg"
@@ -113,33 +139,49 @@ missing_obs2 <- rawdata2[is.na(rawdata2[[variable_with_missing]]), ]
 other_variables2 <- colnames(rawdata2)[!colnames(rawdata2) == variable_with_missing]
 pct_subregmissing <- missing_obs2[, other_variables2]
 print(pct_subregmissing)
+
+# remove unintended pregnancies by subregion variable due to missingness
+rawdata2 <- rawdata2 %>% 
+              select(-upreg_subreg)
 ```
 
+Each of the variables about birth control methods, `mod_methods3549`, `ster_3549`, `larc_3549`, `sarc_3549`, `tradmethods_3549`, `nomethod_3549`, are not very intuitive, so they should be renamed. Since we are only studying one age group, 35 to 49 years, it is unnecessary for those numbers to be included in each variable name. It also makes sense to rename `pct_upreg` to be more descriptive since we already know it is percentage format. 
+```{r}
+# rename predictor variables
+rawdata2 <- rawdata2 %>% rename(modern = modmethods_3549,
+                                sterile = ster_3549, 
+                                longactrev = larc_3549,
+                                shortact = sarc_3549,
+                                tradition = tradmethods_3549,
+                                nomethod = nomethod_3549,
+                                unint_preg = pct_upreg)
+# check if renaming worked
+head(rawdata2)
+```
+To answer our research question about how unintended pregnancies are related to birth control methods, it makes sense to have a variable with the total number of women using birth control in each country. This will service as the main predictor variable, and each type of birth control can serve as a covariate. 
+```{r}
+# create new variable with total number on birth control of any form
+rawdata2 <- rawdata2 %>% 
+              mutate(totalbc = modern + sterile + longactrev + shortact + tradition + nomethod)
+
+# check new variable is created 
+head(rawdata2)
+```
 
 Lastly, we will assign the clean data to a final variable, which makes it easier to add further cleaning steps above if necessary.
 
 ```{r}
-processeddata <- d4
+processeddata <- rawdata2
 ```
 
 
 # Save data 
 
-Finally, we save the clean data as RDS file. I suggest you save your processed and cleaned data as RDS or RDA/Rdata files. 
-This preserves coding like factors, characters, numeric, etc.  If you save as CSV, that information would get lost.
-However, CSV is better for sharing with others since it's plain text. If you do CSV, you might want to write down somewhere what each variable is.
-
-See here for some suggestions on how to store your processed data:
-http://www.sthda.com/english/wiki/saving-data-into-r-data-format-rds-and-rdata
+Finally, we will save the clean data as RDS file to preserve coding like factors, characters, numeric, etc. 
 
 ```{r}
-save_data_location <- here::here("data","processed_data","processeddata.rds")
+save_data_location <- here("data","processed-data","processeddata.rds")
 saveRDS(processeddata, file = save_data_location)
 ```
 
-
-
-# Notes
-
-Removing anyone who had "faulty" or missing data is one approach. It's often not the best. based on your question and your analysis approach, you might want to do cleaning differently (e.g. keep individuals with some missing information).
 

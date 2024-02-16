@@ -58,4 +58,6 @@ packages and versions that the package uses. When you open the R project on a
 new computer, you can run `renv::restore()` to reinstall all the packages that
 you recorded in the `renv.lock` file.
 
+# How to reproduce the project
+Begin with the `processing-filev1.qmd` file located in the `processing-code` folder inside the `code` folder to process the raw data that is stored in the `raw-data` folder located inside the `data` folder. This document will clean all the variables for analysis and save them in the `processeddata.rds` file located inside the `processed-data` folder found inside the `data`folder. Use this data file for reproducing the exploratory data analysis process that models the outcome, predictor variable, and covariates. 
 
