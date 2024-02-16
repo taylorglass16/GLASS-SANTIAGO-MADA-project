@@ -67,9 +67,7 @@ The dataset includes 53 African countries, 36 Asian countries, 11 European Count
   number of women 35-49 using no method (nomethod_3549)
 
 We will be looking for patterns in contraceptive methods and higher unintended pregnancies to investigate the effectiveness of each method. We hope to find relationships between subregions, rates of unintended pregnancies, and contraceptive methods to determine possible interventions that will increase the effectiveness of contraceptive methods in each subregion. Each of the predictor variables exist for two other age ranges (20-24 and 25-34), so we could analyze contraceptive usage across age categories within each subregion as well.
-  
-Backup question: How do the rates of safe abortions fluctuate with available methods for safe abortions?
-Backup question: Are formerly married women more likely to use contraceptives?
+
 # How to analyze 
 All of the variables used in this analysis are numeric, so we can build linear regression models to analyze how each method of contraception affects the percentage of unintended pregnancies. We can group countries together based on the subregion variable to compare how these relationships vary across the world as shown in the crude visualization above. There are other interesting variables that can be used for grouping for analysis such as wealth, urban/rural location, and marriage status. 
 
@@ -214,5 +212,7 @@ Note that this cited reference will show up at the end of the document, the refe
 
 # References
 
-
+https://pubmed.ncbi.nlm.nih.gov/32981858/
+https://pubmed.ncbi.nlm.nih.gov/30687521/ #This study is set in Senegal 
+https://www.sciencedirect.com/science/article/pii/S001078241730478X 
 
