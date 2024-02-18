@@ -13,6 +13,7 @@ output: html_document
 Load the necessary packages for data loading and processing. 
 
 ```{r}
+#| message: false
 library(readr) # for loading csv files
 library(readxl) # for loading excel files (codebook)
 library(dplyr) #for data processing/cleaning
@@ -28,6 +29,7 @@ library(recipes) #to impute missing data
 # Data loading
 
 ```{r}
+#| message: false
 # path to data using here() function
 data_location <- here("data","raw-data","AIU All Women Dataset.csv")
 rawdata <- read_csv(data_location)
@@ -38,6 +40,7 @@ rawdata <- read_csv(data_location)
 We will load and examine the codebook first. 
 
 ```{r}
+#| message: false
 # write file path to the codebook
 codebook_location <- here("data", "AIU All Women Dataset Codebook.xlsx")
   
@@ -57,26 +60,51 @@ Note: should we include other covariates like marriage percentages, number of li
 We will take a glimpse at our data to better understand the variables we are working with. There are four character variables: `country`, `data_source_year`, `region`, and `subregion`. The remainder of the variables are numeric and describe percentage of birth outcomes, maternal deaths due to birth outcomes, contraceptive methods divided by age groups, wealth levels in relation to contraceptive methods, various abortion procedure rates, current cost of pregnancy outcomes and STI treatment.
 
 ```{r}
+#| message: false
 dplyr::glimpse(rawdata)
 summary(rawdata)
 head(rawdata)
 skimr::skim(rawdata)
 ```
 # Identifying variables to be cleaned 
+We want to explore the relationship between unintended pregnancies and birth control methods across different age groups. We will use three demographic variable: `country`, `region`, and `subregion`. The variable for the total percentage of unintended pregnancies, `pct_upreg` will be the main outcome variable. We could also use `upreg_subreg` to explore unintended pregnancies by subregion. The predictor variables will include percentage of unintended pregnancies across three types of birth control: long acting reversible methods (`pct_upreg_larcster`), short term reversible methods (`pct_upreg_sarc`), traditional methods (`pct_upreg_trad`), and no method (`pct_upreg_nouse`). No method variables can serve as control groups for statistical tests. Covariates will include the number of women using each of these methods across four different age groups: 15-19, 20-24, 25-34, and 35-49. 
+-Number of women 15-19 using long-acting reversible methods `larc_1519`
+-Number of women 15-19 using short-acting methods `sarc_1519`
+-Number of women 15-19 using traditional methods `tradmethods_1519`
+-Number of women 15-19 using no method `nomethod_1519`
+-Number of women 20-24 using long-acting reversible methods `larc_2024`
+-Number of women 20-24 using short-acting methods	`sarc_2024`
+-Number of women 20-24 using traditional methods	`tradmethods_2024`
+-Number of women 20-24 using no method	`nomethod_2024`
+-Number of women 25-34 using long-acting reversible methods	`larc_2534`
+-Number of women 25-34 using short-acting methods	`sarc_2534`
+-Number of women 25-34 using traditional methods	`tradmethods_2534`
+-Number of women 25-34 using no method	`nomethod_2534`
+-Number of women 35-49 using long-acting reversible method	`larc_3549`
+-Number of women 35-49 using short-acting method	`sarc_3549`
+-Number of women 35-49 using all traditional methods	`tradmethods_3549`
+-Number of women 35-49 using no method	`nomethod_3549`
+
+code for low, medium, and high use per country using case_when()
 
 ```{r}
+#| message: false
+# select the outcome variable, predictor variables, and covariates  
 rawdata2 <- rawdata %>% 
-                select(country, region, subregion, pct_upreg, upreg_subreg, modmethods_3549, ster_3549, larc_3549, sarc_3549, tradmethods_3549, nomethod_3549)
+                select(country, region, subregion, pct_upreg, upreg_subreg, pct_upreg_larcster, pct_upreg_sarc, pct_upreg_trad, pct_upreg_nouse, larc_1519, sarc_1519, tradmethods_1519, nomethod_1519, larc_2024, sarc_2024, tradmethods_2024, nomethod_2024, larc_2534,  sarc_2534, tradmethods_2534,  nomethod_2534, larc_3549, sarc_3549, tradmethods_3549, nomethod_3549)
 
-skimr::skim(rawdata2)
+# take a glimpse at the selected variables 
+skim(rawdata2)
+head(rawdata2)
 ```
 
 # Cleaning
 
 By inspecting the data as done above, we find some problems that need addressing:
 
-First, the `region` variable is a character variable, but it will be more useful later as a factor. We can easily mutate it from a character variable to factor variable. All the remaining variables are numeric as they should be. 
+First, the `region` variable is a character variable, but it will be more useful later as a factor. We can easily mutate it from a character variable to factor variable. All the remaining predictor and covariate variables are numeric as they should be. 
 ```{r}
+#| message: false
 # convert character variable to factor variable
 rawdata2 <- rawdata2 %>% 
               mutate(region = as.factor(region))
@@ -87,6 +115,7 @@ class(rawdata2$region)
 
 Second, there are 24 entries missing for the percentage of all unintended pregnancies by country `pct_upreg`, which accounts for 18.18% of the observations. After isolating the observations with this missing variable, we see that the majority of countries in this category are located in Asia. This does not make sense because the majority of countries in the raw dataset are located in Africa, which suggests that the data are not missing at random. 
 ```{r}
+#| message: false
 # find missing percentage for each variable
 miss_var_summary(rawdata2)
 
@@ -102,8 +131,9 @@ table(pct_upregmissing$region)
 table(rawdata2$region)
 ```
 
-We should impute the missing data here to avoid introducing bias because 18.18% of the data is missing, and this variable is the best outcome variable to answer the research question. After finding the summary statistics of this variable, the median is 0.4701 and the mean is 0.4679, which suggests that there are minimal outliers in the data.  
+We should impute the missing data here to avoid introducing bias because 18.18% of the data is missing, and this variable is essential for answering the research question. After finding the summary statistics of this variable, the median is 0.4701 and the mean is 0.4679, which suggests that there are minimal outliers in the data.  
 ```{r}
+#| message: false
 # find mean to use for imputed data
 summary(rawdata2$pct_upreg)
 
@@ -127,12 +157,18 @@ rawdata2$pct_upreg[missing_rows] <- data_imputed$pct_upreg[missing_rows]
 ```
 Once the missing values have been imputed, we should further clean the `pct_upreg` variable to have a typical percentage format. 
 ```{r}
+#| message: false
+# convert percentage variable to typical percentage format
 rawdata2 <- rawdata2 %>% 
               mutate(pct_upreg = pct_upreg * 100)
+
+# ensure mutation worked correctly
+summary(rawdata2$pct_upreg)
 ```
 
 We also need to evaluate the 108 missing entries of the percentage of unintended pregnancies by subregion `upreg_subreg`. Since 81.81% of this variable is missing, it does not make sense to include it in the analysis because we do not have enough information to impute the missing data. We will remove this variable for the sake of this analysis.
 ```{r}
+#| message: false
 # isolate the percentage of all unintended pregnancies by subregion to discover trends in missingness
 variable_with_missing <- "upreg_subreg"
 missing_obs2 <- rawdata2[is.na(rawdata2[[variable_with_missing]]), ]
@@ -145,32 +181,84 @@ rawdata2 <- rawdata2 %>%
               select(-upreg_subreg)
 ```
 
-Each of the variables about birth control methods, `mod_methods3549`, `ster_3549`, `larc_3549`, `sarc_3549`, `tradmethods_3549`, `nomethod_3549`, are not very intuitive, so they should be renamed. Since we are only studying one age group, 35 to 49 years, it is unnecessary for those numbers to be included in each variable name. It also makes sense to rename `pct_upreg` to be more descriptive since we already know it is percentage format. 
+Fortunately, the rest of the variables required for this analysis are complete. Each of the four variables describing the percentage of unintended pregnancies based on birth control type also need to be converted to traditional percentage format. 
 ```{r}
-# rename predictor variables
-rawdata2 <- rawdata2 %>% rename(modern = modmethods_3549,
-                                sterile = ster_3549, 
-                                longactrev = larc_3549,
-                                shortact = sarc_3549,
-                                tradition = tradmethods_3549,
-                                nomethod = nomethod_3549,
-                                unint_preg = pct_upreg)
-# check if renaming worked
-head(rawdata2)
-```
-To answer our research question about how unintended pregnancies are related to birth control methods, it makes sense to have a variable with the total number of women using birth control in each country. This will service as the main predictor variable, and each type of birth control can serve as a covariate. 
-```{r}
-# create new variable with total number on birth control of any form
+#| message: false
+# convert percentage variable to typical percentage format
 rawdata2 <- rawdata2 %>% 
-              mutate(totalbc = modern + sterile + longactrev + shortact + tradition + nomethod)
+              mutate(pct_upreg_larcster = pct_upreg_larcster * 100, 
+                     pct_upreg_sarc = pct_upreg_sarc * 100, 
+                     pct_upreg_trad = pct_upreg_trad * 100, 
+                     pct_upreg_nouse = pct_upreg_nouse * 100)
 
-# check new variable is created 
-head(rawdata2)
+# ensure mutations worked correctly
+summary(rawdata2$pct_upreg_larcster)
+summary(rawdata2$pct_upreg_sarc)
+summary(rawdata2$pct_upreg_trad)
+summary(rawdata2$pct_upreg_nouse)
+```
+
+To make the covariate variables more useful, it makes sense to create a new factor variable denoting low, medium, and high usage of each birth control method by country. First, we need to determine the boundaries for each level of usage by exploring how many women use each method across age groups. We need to create a variable showing the total usage of each birth control method to remove the effect of age.  
+```{r}
+#| message: false
+# create new variables showing total usage of each method including all age groups
+rawdata2 <- rawdata2 %>% 
+              mutate(total_larc = larc_1519 + larc_2024 + larc_2534 + larc_3549,
+                     total_sarc = sarc_1519 + sarc_2024 + sarc_2534 + sarc_3549,
+                     total_trad = tradmethods_1519 + tradmethods_2024 + tradmethods_2534 + tradmethods_3549,
+                     total_none = nomethod_1519 + nomethod_2024 + nomethod_2534 + nomethod_3549)
+
+# explore summary of each total to set boundaries for each level of usage
+rawdata2 %>% skim(total_larc, total_sarc, total_trad, total_none)
+```
+After finding the distribution of number of women using each type of birth control, we can use that information to create a new factor variable denoting low, medium, and high usage for each method. The "low" category will include observations below the 25th percentile. The "medium" category will include observations between the 25th and 75th percentiles. The "high" category will include observations above the 75th percentile. 
+```{r}
+#| message: false
+# create usage variable for long acting reversible methods 
+rawdata2 <- rawdata2 %>% 
+              mutate(larc_usage = as.factor(case_when(
+                                  total_larc < 11.5 ~ "Low",
+                                  total_larc >= 11.5 & total_larc < 407.4633 ~ "Medium",
+                                  total_larc >= 407.4633 ~ "High")))
+
+# check if new variable was created correctly 
+class(rawdata2$larc_usage)
+
+# create usage variable for short acting reversible methods 
+rawdata2 <- rawdata2 %>% 
+              mutate(sarc_usage = as.factor(case_when(
+                                  total_sarc < 114.33113 ~ "Low",
+                                  total_sarc >= 114.33113 & total_larc < 1554.7609 ~ "Medium",
+                                  total_sarc >= 1554.7609	 ~ "High")))
+
+# check if new variable was created correctly 
+class(rawdata2$sarc_usage)
+
+# create usage variable for traditional methods 
+rawdata2 <- rawdata2 %>% 
+              mutate(trad_usage = as.factor(case_when(
+                                  total_trad < 15.05000	 ~ "Low",
+                                  total_trad >= 15.05000 & total_larc < 332.4750 ~ "Medium",
+                                  total_trad >= 332.4750	 ~ "High")))
+
+# check if new variable was created correctly 
+class(rawdata2$trad_usage)
+
+# create usage variable for no methods
+rawdata2 <- rawdata2 %>% 
+              mutate(none_usage = as.factor(case_when(
+                                  total_none < 80.07500	 ~ "Low",
+                                  total_none >= 80.07500 & total_larc < 875.2750 ~ "Medium",
+                                  total_none >= 875.2750	 ~ "High")))
+
+# check if new variable was created correctly 
+class(rawdata2$none_usage)
 ```
 
 Lastly, we will assign the clean data to a final variable, which makes it easier to add further cleaning steps above if necessary.
 
 ```{r}
+#| message: false
 processeddata <- rawdata2
 ```
 
@@ -180,6 +268,7 @@ processeddata <- rawdata2
 Finally, we will save the clean data as RDS file to preserve coding like factors, characters, numeric, etc. 
 
 ```{r}
+#| message: false
 save_data_location <- here("data","processed-data","processeddata.rds")
 saveRDS(processeddata, file = save_data_location)
 ```

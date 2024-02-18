@@ -46,7 +46,9 @@ mydata <- readRDS(data_location)
 ```
 
 
-
+explore how many people use each method
+explore how many countries are in each category for each method using new factor variable
+explore percentage of unintended pregnancies across methods
 
 
 # Data exploration through tables

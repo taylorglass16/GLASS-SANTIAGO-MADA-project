@@ -52,21 +52,29 @@ ggplot(AIUdata, aes(x = country, y = pct_upreg, fill = region)) +
 ```
 The dataset includes 53 African countries, 36 Asian countries, 11 European Countries, 24 Latin American/Caribbean countries, and 8 Oceanic countries.There are 16 subregions that provide better detail about each country's location. The average percentage of unintended pregnancies at the country level is 46.79%. with a maximum of 75.65%. This variable has 24 missing values, which will need to be cleaned.  A simple visualization shows that African and Latin American/Carribean countries have the highest percentages of unintended pregnancies. 
 
-# Potential Research Questions
-1) What is the relationship between rates of unintended pregnancies and usage of contraceptive methods?
-  -outcome variables: 
-  unintended pregnancies, total number (pct_upreg) 
-  unintended pregnancies, total number [subregional]      (upreg_subreg)
-  
-  -predictor variables:
-  number of women 35-49 using modern methods (modmmethods_3549)
-  number of women 35-49 using sterilization (ster_3549)
-  number of women 35-49 using long-acting reversible methods (larc_3549)
-  number of women 35-49 using short-acting methods (sarc_3549)
-  number of women 35-49 using traditional methods (tradmethods_3549)
-  number of women 35-49 using no method (nomethod_3549)
+# Research Questions
+1) What is the relationship between rates of unintended pregnancies and usage of contraceptive methods across various age groups?
+The main outcome variables will be total percentage of unintended pregnancies (`pct_upreg`). 
+The predictor variables will include percentage of unintended pregnancies across three types of birth control: long acting reversible methods (`pct_upreg_larcster`), short term reversible methods (`pct_upreg_sarc`), traditional methods (`pct_upreg_trad`), and no method (`pct_upreg_nouse`). No method variables can serve as control groups for statistical tests.
+Covariates will include the number of women using each of these methods across four different age groups: 15-19, 20-24, 25-34, and 35-49. 
+-Number of women 15-19 using long-acting reversible methods `larc_1519`
+-Number of women 15-19 using short-acting methods `sarc_1519`
+-Number of women 15-19 using traditional methods `tradmethods_1519`
+-Number of women 15-19 using no method `nomethod_1519`
+-Number of women 20-24 using long-acting reversible methods `larc_2024`
+-Number of women 20-24 using short-acting methods	`sarc_2024`
+-Number of women 20-24 using traditional methods	`tradmethods_2024`
+-Number of women 20-24 using no method	`nomethod_2024`
+-Number of women 25-34 using long-acting reversible methods	`larc_2534`
+-Number of women 25-34 using short-acting methods	`sarc_2534`
+-Number of women 25-34 using traditional methods	`tradmethods_2534`
+-Number of women 25-34 using no method	`nomethod_2534`
+-Number of women 35-49 using long-acting reversible method	`larc_3549`
+-Number of women 35-49 using short-acting method	`sarc_3549`
+-Number of women 35-49 using all traditional methods	`tradmethods_3549`
+-Number of women 35-49 using no method	`nomethod_3549`  
 
-We will be looking for patterns in contraceptive methods and higher unintended pregnancies to investigate the effectiveness of each method. We hope to find relationships between subregions, rates of unintended pregnancies, and contraceptive methods to determine possible interventions that will increase the effectiveness of contraceptive methods in each subregion. Each of the predictor variables exist for two other age ranges (20-24 and 25-34), so we could analyze contraceptive usage across age categories within each subregion as well.
+We will be looking for patterns in contraceptive methods and higher unintended pregnancies across age groups to investigate the effectiveness of each method. We hope to find relationships between subregions, rates of unintended pregnancies, and contraceptive methods to determine possible interventions that will increase the effectiveness of contraceptive methods.
 
 2) How does marriage status affect percentage of unintended pregnancies across different types of birth control?
   -outcome variables:
