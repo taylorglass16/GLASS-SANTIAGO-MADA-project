@@ -39,8 +39,8 @@ library(ggplot2)
 Load the data.
 
 ```{r}
-#Path to data. Note the use of the here() package and not absolute paths
-data_location <- here::here("data","processed_data","processeddata.rds")
+#Path to data
+data_location <- here("data","processed-data","processeddata.rds")
 #load data
 mydata <- readRDS(data_location)
 ```
@@ -52,48 +52,62 @@ explore percentage of unintended pregnancies across methods
 
 
 # Data exploration through tables
-
-Showing a bit of code to produce and save a summary table.
-
+We will begin with creating a summary table of our cleaned variables using the skim()function. This provides information 
 
 ```{r}
-summary_df = skimr::skim(mydata)
+summary_df = skim(mydata)
 print(summary_df)
 # save to file
-summarytable_file = here("results", "summarytable.rds")
+summarytable_file = here("results", "tables", "summarytable.rds")
 saveRDS(summary_df, file = summarytable_file)
 ```
 
-We are saving the results to the `results` folder. Depending on how many tables/figures you have, it might make sense to have separate folders for each. And/or you could have separate folders for exploratory tables/figures and for final tables/figures. Just choose a setup that makes sense for your project and works for you, and provide enough documentation that someone can understand what you are doing.
-
-
 # Data exploration through figures
 
-Histogram plots for the continuous outcomes. 
+We will make histogram plots for the continuous outcomes in our dataset.
 
-Height first.
+Percent of unintended pregnancies is the main outcome of interest, so we will explore this variable first. 
 
 ```{r}
-p1 <- mydata %>% ggplot(aes(x=Height)) + geom_histogram() 
+p1 <- mydata %>% ggplot(aes(x=pct_upreg)) + geom_histogram() 
 plot(p1)
-figure_file = here("results","height_distribution.png")
+figure_file = here("results", "figures", "exploratory-figures", "pctupreg_distribution.png")
 ggsave(filename = figure_file, plot=p1) 
 ```
 
-Now weights.
+It is important to consider the type of birth control methods associated with percent of unintended pregnancies as well. We will create a histogram for the `pct_upreg_larcster`, `pct_upreg_sarc`, `pct_upreg_trad`, and `pct_upreg_nouse`.  
 
 ```{r}
-p2 <- mydata %>% ggplot(aes(x=Weight)) + geom_histogram() 
+p2 <- mydata %>% ggplot(aes(x=pct_upreg_larcster)) + geom_histogram() 
 plot(p2)
-figure_file = here("results","weight_distribution.png")
+figure_file = here("results", "figures", "exploratory-figures", "pctupreg_larcster_distribution.png")
 ggsave(filename = figure_file, plot=p2) 
+
+p3 <- mydata %>% ggplot(aes(x=pct_upreg_sarc)) + geom_histogram() 
+plot(p3)
+figure_file = here("results", "figures", "exploratory-figures", "pctupreg_sarc_distribution.png")
+ggsave(filename = figure_file, plot=p3) 
+
+p4 <- mydata %>% ggplot(aes(x=pct_upreg_trad)) + geom_histogram() 
+plot(p4)
+figure_file = here("results", "figures", "exploratory-figures", "pctupreg_trad_distribution.png")
+ggsave(filename = figure_file, plot=p4) 
+
+p5 <- mydata %>% ggplot(aes(x=pct_upreg_nouse)) + geom_histogram() 
+plot(p5)
+figure_file = here("results", "figures", "exploratory-figures", "pctupreg_nouse_distribution.png")
+ggsave(filename = figure_file, plot=p5) 
 ```
 
-Now height as function of weight.
+We will now explore the new 
+plots 6-10
+
+
+We will start exploring how many women use each type of birth control compared to the percent of unintended pregnancies related to that birth control. Plot 11 shows `pct_upreg_larcster` vs `total_larcster` to analyze women using long acting reversible methods and sterilization versus the percentage of unintended pregnancies using those methods. 
 
 ```{r}
-p3 <- mydata %>% ggplot(aes(x=Height, y=Weight)) + geom_point() + geom_smooth(method='lm')
-plot(p3)
+p11 <- mydata %>% ggplot(aes(x=pct_upreg_larcster, y=total_larcster)) + geom_point() + geom_smooth(method='lm')
+plot(p11)
 figure_file = here("results","height_weight.png")
 ggsave(filename = figure_file, plot=p3) 
 ```
@@ -107,7 +121,16 @@ figure_file = here("results","height_weight_stratified.png")
 ggsave(filename = figure_file, plot=p4) 
 ```
 
+Our next group of plots will be violin plots to explore the usage level of birth associated with percentage of unintended pregnancies use for each birth control method. 
+```{r}
+p16 <- mydata %>% ggplot(aes(x=larcster_usage, y=pct_upreg_larcster))
+```
 
+Our last plots will be mosaic plots to compare two categorical variables: region and usage for each type of birth control. 
+```{r}
+library(ggmosaic)
+p17 <- mydata %>% ggplot(aes(x=region, y=larcster_usage, fill = freq)) + geom_mosaic(aes(x=region, fill = larcster_usage))
+```
 
 # Notes
 

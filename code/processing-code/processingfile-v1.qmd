@@ -91,7 +91,7 @@ code for low, medium, and high use per country using case_when()
 #| message: false
 # select the outcome variable, predictor variables, and covariates  
 rawdata2 <- rawdata %>% 
-                select(country, region, subregion, pct_upreg, upreg_subreg, pct_upreg_larcster, pct_upreg_sarc, pct_upreg_trad, pct_upreg_nouse, larc_1519, sarc_1519, tradmethods_1519, nomethod_1519, larc_2024, sarc_2024, tradmethods_2024, nomethod_2024, larc_2534,  sarc_2534, tradmethods_2534,  nomethod_2534, larc_3549, sarc_3549, tradmethods_3549, nomethod_3549)
+                select(country, region, subregion, pct_upreg, upreg_subreg, pct_upreg_larcster, pct_upreg_sarc, pct_upreg_trad, pct_upreg_nouse, larc_1519, ster_1519, sarc_1519, tradmethods_1519, nomethod_1519, larc_2024, ster_2024, sarc_2024, tradmethods_2024, nomethod_2024, larc_2534, ster_2534, sarc_2534, tradmethods_2534,  nomethod_2534, larc_3549, ster_3549, sarc_3549, tradmethods_3549, nomethod_3549)
 
 # take a glimpse at the selected variables 
 skim(rawdata2)
@@ -198,37 +198,37 @@ summary(rawdata2$pct_upreg_trad)
 summary(rawdata2$pct_upreg_nouse)
 ```
 
-To make the covariate variables more useful, it makes sense to create a new factor variable denoting low, medium, and high usage of each birth control method by country. First, we need to determine the boundaries for each level of usage by exploring how many women use each method across age groups. We need to create a variable showing the total usage of each birth control method to remove the effect of age.  
+To make the covariate variables more useful, it makes sense to create a new factor variable denoting low, medium, and high usage of each birth control method by country. First, we need to determine the boundaries for each level of usage by exploring how many women use each method across age groups. We need to create a variable showing the total usage of each birth control method to remove the effect of age. It is worth noting here that the long acting reversible and sterilzation methods are combined in the`pct_upreg_larcster` variable, so we need to consider all the women using both of these methods in the total. 
 ```{r}
 #| message: false
 # create new variables showing total usage of each method including all age groups
 rawdata2 <- rawdata2 %>% 
-              mutate(total_larc = larc_1519 + larc_2024 + larc_2534 + larc_3549,
+              mutate(total_larcster = larc_1519 + larc_2024 + larc_2534 + larc_3549 + ster_1519 + ster_2024 + ster_2534 +                          ster_3549,
                      total_sarc = sarc_1519 + sarc_2024 + sarc_2534 + sarc_3549,
                      total_trad = tradmethods_1519 + tradmethods_2024 + tradmethods_2534 + tradmethods_3549,
                      total_none = nomethod_1519 + nomethod_2024 + nomethod_2534 + nomethod_3549)
 
 # explore summary of each total to set boundaries for each level of usage
-rawdata2 %>% skim(total_larc, total_sarc, total_trad, total_none)
+rawdata2 %>% skim(total_larcster, total_sarc, total_trad, total_none)
 ```
 After finding the distribution of number of women using each type of birth control, we can use that information to create a new factor variable denoting low, medium, and high usage for each method. The "low" category will include observations below the 25th percentile. The "medium" category will include observations between the 25th and 75th percentiles. The "high" category will include observations above the 75th percentile. 
 ```{r}
 #| message: false
 # create usage variable for long acting reversible methods 
 rawdata2 <- rawdata2 %>% 
-              mutate(larc_usage = as.factor(case_when(
-                                  total_larc < 11.5 ~ "Low",
-                                  total_larc >= 11.5 & total_larc < 407.4633 ~ "Medium",
-                                  total_larc >= 407.4633 ~ "High")))
+              mutate(larcster_usage = as.factor(case_when(
+                                  total_larcster < 23.94865 ~ "Low",
+                                  total_larcster >= 23.94865 & total_larcster < 1554.7609 ~ "Medium",
+                                  total_larcster >= 1554.7609 ~ "High")))
 
 # check if new variable was created correctly 
-class(rawdata2$larc_usage)
+class(rawdata2$larcster_usage)
 
 # create usage variable for short acting reversible methods 
 rawdata2 <- rawdata2 %>% 
               mutate(sarc_usage = as.factor(case_when(
                                   total_sarc < 114.33113 ~ "Low",
-                                  total_sarc >= 114.33113 & total_larc < 1554.7609 ~ "Medium",
+                                  total_sarc >= 114.33113 & total_sarc < 1554.7609 ~ "Medium",
                                   total_sarc >= 1554.7609	 ~ "High")))
 
 # check if new variable was created correctly 
@@ -238,7 +238,7 @@ class(rawdata2$sarc_usage)
 rawdata2 <- rawdata2 %>% 
               mutate(trad_usage = as.factor(case_when(
                                   total_trad < 15.05000	 ~ "Low",
-                                  total_trad >= 15.05000 & total_larc < 332.4750 ~ "Medium",
+                                  total_trad >= 15.05000 & total_trad < 332.4750 ~ "Medium",
                                   total_trad >= 332.4750	 ~ "High")))
 
 # check if new variable was created correctly 
@@ -248,7 +248,7 @@ class(rawdata2$trad_usage)
 rawdata2 <- rawdata2 %>% 
               mutate(none_usage = as.factor(case_when(
                                   total_none < 80.07500	 ~ "Low",
-                                  total_none >= 80.07500 & total_larc < 875.2750 ~ "Medium",
+                                  total_none >= 80.07500 & total_none < 875.2750 ~ "Medium",
                                   total_none >= 875.2750	 ~ "High")))
 
 # check if new variable was created correctly 
