@@ -111,12 +111,23 @@ _Write a summary of your project._
 ## General Background Information
 _Provide enough background on your topic that others can understand the why and how of your analysis_ 
 
+We will be looking for patterns in contraceptive methods and higher unintended pregnancies across age groups (20-24) and (35-49) to investigate the effectiveness of each contraceptive method.Financial, social, religious, and cultural factors are current challenges against efforts towards reducing unintended pregnancies. According to a cross-sectional survey done in 2017, contraceptive use was prevalent among women who had attained higher education, were in stable partnerships, and identified with the dominant ethnic group. Additionally, factors like previous pregnancies and immigration status did not appear to influence contraceptive use in this study. The table provided above under `Summarize the data` shows that African and Latin American/Caribbean countries have the highest percentages of unintended pregnancies. This could be due to the current legal status of contraception within Latin American countries. Free emergency contraception access exists, but regulations differ. Chile, Colombia, and Ecuador legally recognize access, while Nicaragua and Bolivia rely on Ministerial protocols. Argentina and Brazil lack legal recognition, but offer protocols and guides. Mexico requires provision to victims of sexual and domestic violence (Hevia, 2012).
+
+
+
 ## Description of data and data source
 _Describe what the data is, what it contains, where it is from, etc. Eventually this might be part of a methods section._
 
+This data originates from the Guttmacher Institute's Adding It Up project. The data contains numeric variables: percentages of pregnancy outcomes, rates of safe and unsafe abortions, percentage of various contraceptive usages, percentages of care received for various pregnancy complications, and costs for many variables including abortions and STIs. There are only three  character variables that can be used to group the numeric variables: country name, region, and sub region. So far we have dvided the observations into "low", "medium", and "high" category of birth control usage. 
 
 ## Questions/Hypotheses to be addressed
 _State the research questions you plan to answer with this analysis._
+
+1. How does marriage status affect percentage of unintended pregnancies across different types of birth control?
+
+2. Is there a significant difference in the percentage of unplanned pregnancies between reversible contraceptives (LARCs?) among the age groups (20-24) and (35-49)?
+
+
 
 To cite other work (important everywhere, but likely happens first in introduction), make sure your references are in the bibtex file specified in the YAML header above (here `dataanalysis_template_references.bib`) and have the right bibtex key. Then you can include like this:
 
@@ -243,4 +254,5 @@ Note that this cited reference will show up at the end of the document, the refe
 https://pubmed.ncbi.nlm.nih.gov/32981858/
 https://pubmed.ncbi.nlm.nih.gov/30687521/ #This study is set in Senegal 
 https://www.sciencedirect.com/science/article/pii/S001078241730478X 
+https://www.sciencedirect.com/science/article/abs/pii/S0020729211005406 #legal status article
 
