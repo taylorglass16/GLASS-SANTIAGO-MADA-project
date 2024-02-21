@@ -131,7 +131,9 @@ table(pct_upregmissing$region)
 table(rawdata2$region)
 ```
 
-We should impute the missing data here to avoid introducing bias because 18.18% of the data is missing, and this variable is essential for answering the research question. After finding the summary statistics of this variable, the median is 0.4701 and the mean is 0.4679, which suggests that there are minimal outliers in the data.  
+We should impute the missing data here to avoid introducing bias because 18.18% of the data is missing, and this variable is essential for answering the research question. After finding the summary statistics of this variable, the median is 0.4701 and the mean is 0.4679, which suggests that there are minimal outliers in the data. `mice` package or `tidymodels`
+or remove because it is main outcome
+or make our own pct_upreg_updated and compare to what they have
 ```{r}
 #| message: false
 # find mean to use for imputed data
