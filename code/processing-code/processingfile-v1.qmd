@@ -21,8 +21,6 @@ library(tidyr) #for data processing/cleaning
 library(naniar) #to explore data missingness
 library(skimr) #for nice visualization of data 
 library(here) #to set paths
-library(tidymodels) #to impute missing data
-library(recipes) #to impute missing data
 ```
 
 
@@ -131,43 +129,6 @@ table(pct_upregmissing$region)
 table(rawdata2$region)
 ```
 
-We should impute the missing data here to avoid introducing bias because 18.18% of the data is missing, and this variable is essential for answering the research question. After finding the summary statistics of this variable, the median is 0.4701 and the mean is 0.4679, which suggests that there are minimal outliers in the data. `mice` package or `tidymodels`
-or remove because it is main outcome
-or make our own pct_upreg_updated and compare to what they have
-```{r}
-#| message: false
-# find mean to use for imputed data
-summary(rawdata2$pct_upreg)
-
-# create a recipe to impute data 
-rec <- recipe(pct_upreg ~ ., data = rawdata2) %>%
-  step_naomit(all_predictors(), -all_outcomes(), skip = TRUE) %>%
-  step_impute_mean(all_predictors()) #which predictors would I use?
-
-# prepare the raw data using the recipe
-data_prep <- prep(rec, training = rawdata2)
-
-# impute the data 
-data_imputed <- bake(data_prep, new_data = NULL) #all pct_upreg are NaN values 
-
-# identify rows with missing values in the original dataset
-missing_rows <- which(is.na(rawdata2$pct_upreg))
-
-# replace missing values in the original dataset with imputed values
-rawdata2$pct_upreg[missing_rows] <- data_imputed$pct_upreg[missing_rows]
-
-```
-Once the missing values have been imputed, we should further clean the `pct_upreg` variable to have a typical percentage format. 
-```{r}
-#| message: false
-# convert percentage variable to typical percentage format
-rawdata2 <- rawdata2 %>% 
-              mutate(pct_upreg = pct_upreg * 100)
-
-# ensure mutation worked correctly
-summary(rawdata2$pct_upreg)
-```
-
 We also need to evaluate the 108 missing entries of the percentage of unintended pregnancies by subregion `upreg_subreg`. Since 81.81% of this variable is missing, it does not make sense to include it in the analysis because we do not have enough information to impute the missing data. We will remove this variable for the sake of this analysis.
 ```{r}
 #| message: false
@@ -200,7 +161,16 @@ summary(rawdata2$pct_upreg_trad)
 summary(rawdata2$pct_upreg_nouse)
 ```
 
-To make the covariate variables more useful, it makes sense to create a new factor variable denoting low, medium, and high usage of each birth control method by country. First, we need to determine the boundaries for each level of usage by exploring how many women use each method across age groups. We need to create a variable showing the total usage of each birth control method to remove the effect of age. It is worth noting here that the long acting reversible and sterilzation methods are combined in the`pct_upreg_larcster` variable, so we need to consider all the women using both of these methods in the total. 
+We should address the missing data in the general `pct_upreg` here to avoid introducing bias because 18.18% of this variable is missing, and it is essential for answering the research question. After reviewing the codebook, the researchers provided an external source for this variable, which we have included in the references. The numbers in this source do not match what is included in the data set. After exploring the methodology for the Adding It Up study, we found their original data that matches what is recorded in the dataset. When we tried to create our own percentage of unintended pregnancy variable, we found that each birth control method adds up to account for 100% of unintended pregnancies. Since there are 24 observations missing in what should be the total unintended pregnancy variable, it is likely that the variables with the percentages of unintended pregnancies by birth control method were imputed or estimated. Missingness in the collection of data could also explain why the long-acting reversible contraceptives and sterilization method were combined into one category. Based on this discovery, we modified the question that we want to answer with the data to use variables that are complete and reliable: `pct_upreg_larcster`, `pct_upreg_sarc`, `pct_upreg_trad`, and `pct_upreg_nouse`. These variables will allow us to answer the question of is there a significant difference in the percentage of unplanned pregnancies between three contraceptive methods among all countries compared to no usage?
+
+```{r}
+#| message: false
+rawdata2 <- rawdata2 %>% 
+            mutate(pct_preg = (pct_upreg_larcster + pct_upreg_sarc + pct_upreg_trad + pct_upreg_nouse))
+summary(rawdata2$pct_preg)
+```
+
+To make the covariate variables more useful for answering our research question, it makes sense to create a new factor variable denoting low, medium, and high usage of each birth control method by country. First, we need to determine the boundaries for each level of usage by exploring how many women use each method across age groups. We need to create a variable showing the total usage of each birth control method to remove the effect of age. It is worth noting again that the long acting reversible and sterilization methods are combined in the`pct_upreg_larcster` variable, so we need to consider all the women using both of these methods in the total. 
 ```{r}
 #| message: false
 # create new variables showing total usage of each method including all age groups
