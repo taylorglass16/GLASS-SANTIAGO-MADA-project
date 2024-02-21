@@ -66,17 +66,6 @@ We also created simple tables for the categorical variables: `region`, `larcster
 
 We will make histogram plots for the continuous outcomes in our dataset.
 
-Percent of unintended pregnancies is the main outcome of interest, so we will explore this variable first. 
-
-```{r}
-p1 <- mydata %>% ggplot(aes(x=pct_upreg)) + 
-  geom_histogram() + 
-  labs(x="Percent of Unintended Pregnancies", y="Frequency at Country Level")
-plot(p1)
-figure_file = here("results", "figures", "exploratory-figures", "pctupreg_distribution.png")
-ggsave(filename = figure_file, plot=p1) 
-```
-
 It is important to consider the type of birth control methods associated with percent of unintended pregnancies as well. We will create a histogram for the `pct_upreg_larcster`, `pct_upreg_sarc`, `pct_upreg_trad`, and `pct_upreg_nouse` variables.  
 
 ```{r}
@@ -105,7 +94,7 @@ We will now explore the new total usage variables that were created using the nu
 
 probably skewed by population size 
 ```{r}
-p6 <- mydata %>% ggplot(aes(x=total_larcster)) + geom_histogram(binwidth = 5000) 
+p6 <- mydata %>% ggplot(aes(x=total_larcster)) + geom_histogram() 
 plot(p6)
 figure_file = here("results", "figures", "exploratory-figures", "total_larcster_distribution.png")
 ggsave(filename = figure_file, plot=p6) 
@@ -124,6 +113,11 @@ p9 <- mydata %>% ggplot(aes(x=total_none)) + geom_histogram()
 plot(p9)
 figure_file = here("results", "figures", "exploratory-figures", "total_none_distribution.png")
 ggsave(filename = figure_file, plot=p9) 
+```
+
+We need to explore where the outliers in these variables are coming from. 
+```{r}
+outliers <- mydata %>% filter(total_larcster > 25000)
 ```
 
 We will start exploring how many women use each type of birth control compared to the percent of unintended pregnancies related to that birth control. Plot 10 shows `pct_upreg_larcster` vs `total_larcster` to analyze women using long acting reversible methods and sterilization versus the percentage of unintended pregnancies using those methods. Plot 11 uses `pct_upreg_sarc` and `total_sarc` to examine the same relationship as plot 10 but with short-acting reversible methods. 
