@@ -1,29 +1,9 @@
 ---
-title: "An example exploratory analysis script"
-author: "Andreas Handel"
-date: "10/28/2021"
+title: "Exploratory Analysis Script"
+author: "Taylor Glass and Arlyn Santiago"
+date: "02/21/24"
 output: html_document
 ---
-
-  
-  
-This Quarto file loads the cleaned data and does some exploring.
-
-I'm only showing it the way where the code is included in the file. 
-As described in the `processing_code` materials, I currently prefer the approach of having R code in a separate file and pulling it in.
-
-But I already had this written and haven't yet re-done it that way. Feel free to redo and send a pull request on GitHub :)
-
-Again, it is largely a matter of preference and what makes the most sense to decide if one wants to have code inside Quarto files, or as separate R files.
-And sometimes, an R script with enough comments is good enough and one doesn't need a Quarto file.
-
-Also note that while here I split cleaning and exploring, this is iterative. You saw that as part of the processing, we already had to explore the data somewhat to understand how to clean it. In general, as you explore, you'll find things that need cleaning. As you clean, you can explore more. Therefore, at times it might make more sense to combine the cleaning and exploring code parts into a single R or Quarto file. Or split things in any other logical way.
-
-As part of the exploratory analysis, you should produce plots or tables or other summary quantities for the most interesting/important quantities in your data. Depending on the total number of variables in your dataset, explore all or some of the others. Figures produced here might be histograms or density plots, correlation plots, etc. Tables might summarize your data.
-
-Start by exploring one variable at a time. Then continue by creating plots or tables of the outcome(s) of interest and the predictor/exposure/input variables you are most interested in. If your dataset is small, you can do that for all variables. 
-
-Plots produced here can be scatterplots, boxplots, violinplots, etc. Tables can be simple 2x2 tables or larger ones.
 
 # Setup
 
@@ -34,7 +14,6 @@ library(dplyr)
 library(skimr)
 library(ggplot2)
 ```
-
 
 Load the data.
 
@@ -50,6 +29,7 @@ mydata <- readRDS(data_location)
 We will begin with creating a summary table of our cleaned variables using the skim()function. This provides information about each of the numeric variables including the mean, standard deviation, quartiles, missing observations, and a histogram. 
 
 ```{r}
+# skim the data to create summary file
 summary_df = skim(mydata)
 print(summary_df)
 # save to file
@@ -69,76 +49,118 @@ We will make histogram plots for the continuous outcomes in our dataset.
 It is important to consider the type of birth control methods associated with percent of unintended pregnancies as well. We will create a histogram for the `pct_upreg_larcster`, `pct_upreg_sarc`, `pct_upreg_trad`, and `pct_upreg_nouse` variables.  
 
 ```{r}
+# explore the percentage of unintended pregnancies related to long acting reversible methods in each country
 p2 <- mydata %>% ggplot(aes(x=pct_upreg_larcster)) + geom_histogram() 
 plot(p2)
 figure_file = here("results", "figures", "exploratory-figures", "pctupreg_larcster_distribution.png")
 ggsave(filename = figure_file, plot=p2) 
 
+# explore the percentage of unintended pregnancies related to short acting reversible methods in each country
 p3 <- mydata %>% ggplot(aes(x=pct_upreg_sarc)) + geom_histogram() 
 plot(p3)
 figure_file = here("results", "figures", "exploratory-figures", "pctupreg_sarc_distribution.png")
 ggsave(filename = figure_file, plot=p3) 
 
+# explore the percentage of unintended pregnancies related to traditional methods in each country
 p4 <- mydata %>% ggplot(aes(x=pct_upreg_trad)) + geom_histogram() 
 plot(p4)
 figure_file = here("results", "figures", "exploratory-figures", "pctupreg_trad_distribution.png")
 ggsave(filename = figure_file, plot=p4) 
 
+# explore the percentage of unintended pregnancies related to no birth control usage in each country
 p5 <- mydata %>% ggplot(aes(x=pct_upreg_nouse)) + geom_histogram() 
 plot(p5)
 figure_file = here("results", "figures", "exploratory-figures", "pctupreg_nouse_distribution.png")
 ggsave(filename = figure_file, plot=p5) 
 ```
 
-We will now explore the new total usage variables that were created using the number of women using each method across the four age categories. This set of plots revealed large outliers in the 'total_larcster`, 'total_sarc', 'total_trad', and `total_none` variables, which prevented the graphs from being very useful. The histograms look like most observations for each of these four variables are 0, but that is not possible because the summary table showed that the minimum value for all four of these variables is greater than 0.   
+We will now explore the new total usage variables that were created using the number of women using each method across the four age categories. This set of plots revealed large outliers in the 'total_larcster`, 'total_sarc', 'total_trad', and `total_none` variables, which prevented the graphs from being very useful. The histograms look like most observations for each of these four variables are 0, but that is not possible because the summary table showed that the minimum value for all four of these variables is greater than 0. This distortion is caused by the two large outliers in the data set.    
 
-probably skewed by population size 
 ```{r}
+# explore the total number of people using long acting reversible methods in each country
 p6 <- mydata %>% ggplot(aes(x=total_larcster)) + geom_histogram() 
 plot(p6)
 figure_file = here("results", "figures", "exploratory-figures", "total_larcster_distribution.png")
 ggsave(filename = figure_file, plot=p6) 
 
+# explore the total number of people using short acting reversible methods in each country
 p7 <- mydata %>% ggplot(aes(x=total_sarc)) + geom_histogram() 
 plot(p7)
 figure_file = here("results", "figures", "exploratory-figures", "total_sarc_distribution.png")
 ggsave(filename = figure_file, plot=p7) 
 
+# explore the total number of people using traditional methods in each country
 p8 <- mydata %>% ggplot(aes(x=total_trad)) + geom_histogram() 
 plot(p8)
 figure_file = here("results", "figures", "exploratory-figures", "total_trad_distribution.png")
 ggsave(filename = figure_file, plot=p8) 
 
+# explore the total number of people not using birth control in each country
 p9 <- mydata %>% ggplot(aes(x=total_none)) + geom_histogram() 
 plot(p9)
 figure_file = here("results", "figures", "exploratory-figures", "total_none_distribution.png")
 ggsave(filename = figure_file, plot=p9) 
 ```
 
-We need to explore where the outliers in these variables are coming from. 
+We need to explore where the outliers in these variables are coming from. China and India are the two countries that account for the outliers in all 4 variables, which is likely being skewed by population size. The first method of standardizing we tried is creating proportions using the total count for each birth control method type. After creating these standardized variables, the same issue with outliers remained because China and India still account for the largest proportion of observations. Next, we considered using a scaling factor. We attempted this approach with the `total_larcster` variable and found the same issues as before. The third attempt at standarization utilized a min-max scaling with z-score normalization, but the outlier issue remained. 
 ```{r}
-outliers <- mydata %>% filter(total_larcster > 25000)
+# find the countries that represent the outliers
+outliers <- mydata %>% filter(total_larcster > 25000, 
+                              total_sarc > 25000,
+                              total_trad > 5000,
+                              total_none > 10000)
+
+# standardization attempt 1
+mydata <- mydata %>% mutate(larcster_st = total_larcster / sum(total_larcster),
+                            sarc_st = total_sarc / sum(total_sarc),
+                            trad_st = total_trad / sum(total_trad),
+                            none_st = total_none / sum(total_none))
+
+# standardization attempt 2
+scaling_factor_larcster <- max(mydata$total_larcster)
+mydata <- mydata %>% mutate(standardized_larcster = total_larcster / scaling_factor_larcster)
+
+# standardization attempt 3
+min_count <- min(mydata$total_larcster)
+max_count <- max(mydata$total_larcster)
+scaled_counts <- (mydata$total_larcster - min_count) / (max_count - min_count)
+print(scaled_counts)
+mean_count <- mean(mydata$total_larcster)
+sd_count <- sd(mydata$total_larcster)
+z_score_counts <- (mydata$total_larcster - mean_count) / sd_count
 ```
 
-We will start exploring how many women use each type of birth control compared to the percent of unintended pregnancies related to that birth control. Plot 10 shows `pct_upreg_larcster` vs `total_larcster` to analyze women using long acting reversible methods and sterilization versus the percentage of unintended pregnancies using those methods. Plot 11 uses `pct_upreg_sarc` and `total_sarc` to examine the same relationship as plot 10 but with short-acting reversible methods. 
-Plot 12 shows `pct_upreg_trad` versus `total_trad`, and plot 13 shows `pct_upreg_nouse` versus `total_none`. 
+After reviewing the raw data set again, we found the `wra` variable that accounts for the number of women of reproductive age (15-49) in each country. Once this variable was added to the original processed data set, we could use it to standardize the total counts for each birth control method by population size of women of reprodutive age. 
 ```{r}
-p10 <- mydata %>% ggplot(aes(x=pct_upreg_larcster, y=total_larcster)) + geom_point() + geom_smooth(method='lm')
+# population size standarization for total counts per birth control method
+mydata <- mydata %>% mutate(larcster_standard = total_larcster / wra,
+                            sarc_standard = total_sarc / wra,
+                            trad_standard = total_trad / wra, 
+                            none_standard = total_none / wra)
+```
+
+We will start exploring how many women use each type of birth control in each country compared to the percent of unintended pregnancies related to that birth control. Plot 10 shows `pct_upreg_larcster` vs `larcster_standard` to analyze women using long acting reversible methods and sterilization versus the percentage of unintended pregnancies using those methods. Plot 11 uses `pct_upreg_sarc` and `sarc_standard` to examine the same relationship as plot 10 but with short-acting reversible methods. Plot 12 shows `pct_upreg_trad` versus `trad_standard`, and plot 13 shows `pct_upreg_nouse` versus `none_standard`. 
+```{r}
+# explore percentage of unintended pregnancies compared to standardized count of women using long-acting reversible and sterilization methods
+p10 <- mydata %>% ggplot(aes(x=pct_upreg_larcster, y=larcster_standard)) + geom_point() + geom_smooth(method='lm')
 plot(p10)
 figure_file = here("results", "figures", "exploratory-figures", "pctuppreg_totallarcster.png")
 ggsave(filename = figure_file, plot=p10) 
 
-p11 <- mydata %>% ggplot(aes(x=pct_upreg_sarc, y=total_sarc)) + geom_point() + geom_smooth(method='lm')
+# explore percentage of unintended pregnancies compared to standardized count of women using short acting reversible methods
+p11 <- mydata %>% ggplot(aes(x=pct_upreg_sarc, y=sarc_standard)) + geom_point() + geom_smooth(method='lm')
 plot(p11)
 figure_file = here("results", "figures", "exploratory-figures", "pctupreg_totalsarc.png")
 ggsave(filename = figure_file, plot=p11) 
 
-p12 <- mydata %>% ggplot(aes(x=pct_upreg_trad, y=total_trad)) + geom_point() + geom_smooth(method='lm')
+# explore percentage of unintended pregnancies compared to standardized count of women using traditional methods
+p12 <- mydata %>% ggplot(aes(x=pct_upreg_trad, y=trad_standard)) + geom_point() + geom_smooth(method='lm')
 plot(p12)
 figure_file = here("results", "figures", "exploratory-figures", "pctupreg_totaltrad.png")
 ggsave(filename = figure_file, plot=p12) 
 
-p13 <- mydata %>% ggplot(aes(x=pct_upreg_nouse, y=total_none)) + geom_point() + geom_smooth(method='lm')
+# explore percentage of unintended pregnancies compared to standardized count of women not using no method
+p13 <- mydata %>% ggplot(aes(x=pct_upreg_nouse, y=none_standard)) + geom_point() + geom_smooth(method='lm')
 plot(p13)
 figure_file = here("results", "figures", "exploratory-figures", "pctupreg_totalnone.png")
 ggsave(filename = figure_file, plot=p13) 
@@ -147,29 +169,34 @@ ggsave(filename = figure_file, plot=p13)
 We are also interested in how these relationships between percent of unintended pregnancies using each birth control method and the number of people using each method varies across region. We adjusted the original scatter plots created above by coloring based on region. 
 
 ```{r}
-p14 <- mydata %>% ggplot(aes(x=pct_upreg_larcster, y=total_larcster, color = region)) + geom_point() + geom_smooth(method='lm')
+# explore percent unintended pregnancies using long acting reversible and sterilziation methods by region
+p14 <- mydata %>% ggplot(aes(x=pct_upreg_larcster, y=larcster_standard, color = region)) + geom_point() + geom_smooth(method='lm')
 plot(p14)
 figure_file = here("results", "figures", "exploratory-figures", "pctupreg_larcster_stratified.png")
 ggsave(filename = figure_file, plot=p14) 
 
-p15 <- mydata %>% ggplot(aes(x=pct_upreg_sarc, y=total_sarc, color = region)) + geom_point() + geom_smooth(method='lm')
+# explore percent unintended pregnancies using short acting reversible methods by region
+p15 <- mydata %>% ggplot(aes(x=pct_upreg_sarc, y=sarc_standard, color = region)) + geom_point() + geom_smooth(method='lm')
 plot(p15)
 figure_file = here("results", "figures", "exploratory-figures", "pctupreg_sarc_stratified.png")
 ggsave(filename = figure_file, plot=p15) 
 
-p16 <- mydata %>% ggplot(aes(x=pct_upreg_trad, y=total_trad, color = region)) + geom_point() + geom_smooth(method='lm')
+# explore percent unintended pregnancies using traditional methods by region
+p16 <- mydata %>% ggplot(aes(x=pct_upreg_trad, y=trad_standard, color = region)) + geom_point() + geom_smooth(method='lm')
 plot(p16)
 figure_file = here("results", "figures", "exploratory-figures", "pctupreg_trad_stratified.png")
 ggsave(filename = figure_file, plot=p16) 
 
-p17 <- mydata %>% ggplot(aes(x=pct_upreg_nouse, y=total_none, color = region)) + geom_point() + geom_smooth(method='lm')
+# explore percent unintended pregnancies using no method by region
+p17 <- mydata %>% ggplot(aes(x=pct_upreg_nouse, y=none_standard, color = region)) + geom_point() + geom_smooth(method='lm')
 plot(p17)
 figure_file = here("results", "figures", "exploratory-figures", "pctupreg_none_stratified.png")
 ggsave(filename = figure_file, plot=p17) 
 ```
 
-Our next group of plots will be violin plots to explore the usage level of each birth control message associated with percentage of unintended pregnancies use for each birth control method. 
+Our next group of plots will be violin plots to explore the usage level of each birth control method, a categorical variable, associated with percentage of unintended pregnancies use for each birth control method, a numerical variable.
 ```{r}
+# explore long acting reversible and sterilization method usage compared to percent of unintended pregnancies
 p18 <- mydata %>% ggplot(aes(x = larcster_usage, y = pct_upreg_larcster)) +
   geom_violin() +
   labs(x = "Long Acting Reversible and Sterilization Usage", y = "Percentage Unintended Pregnancies") 
@@ -177,6 +204,7 @@ plot(p18)
 figure_file = here("results", "figures", "exploratory-figures", "larcster_pctupreg_violin.png")
 ggsave(filename = figure_file, plot=p18) 
 
+# explore short acting reversible method usage compared to percent of unintended pregnancies
 p19 <- mydata %>% ggplot(aes(x = sarc_usage, y = pct_upreg_sarc)) +
   geom_violin() +
   labs(x = "Short Acting Reversible Usage", y = "Percentage Unintended Pregnancies") 
@@ -184,6 +212,7 @@ plot(p19)
 figure_file = here("results", "figures", "exploratory-figures", "sarc_pctupreg_violin.png")
 ggsave(filename = figure_file, plot=p19) 
 
+# explore traditional method usage compared to percent of unintended pregnancies
 p20 <- mydata %>% ggplot(aes(x = trad_usage, y = pct_upreg_trad)) +
   geom_violin() +
   labs(x = "Traditional Method Usage", y = "Percentage Unintended Pregnancies") 
@@ -191,6 +220,7 @@ plot(p20)
 figure_file = here("results", "figures", "exploratory-figures", "trad_pctupreg_violin.png")
 ggsave(filename = figure_file, plot=p20) 
 
+# explore no method usage compared to percent of unintended pregnancies
 p21 <- mydata %>% ggplot(aes(x = none_usage, y = pct_upreg_nouse)) +
   geom_violin() +
   labs(x = "No Birth Control Usage", y = "Percentage Unintended Pregnancies") 
@@ -198,10 +228,3 @@ plot(p21)
 figure_file = here("results", "figures", "exploratory-figures", "none_pctupreg_violin.png")
 ggsave(filename = figure_file, plot=p21) 
 ```
-
-
-# Notes
-
-For your own explorations, tables and figures can be "quick and dirty". As long as you can see what's going on, there is no need to polish them. That's in contrast to figures you'll produce for your final products (paper, report, presentation, website, etc.). Those should look as nice, polished and easy to understand as possible.
-
-

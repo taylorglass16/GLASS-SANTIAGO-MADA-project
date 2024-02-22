@@ -83,13 +83,12 @@ We want to explore the relationship between unintended pregnancies and birth con
 -Number of women 35-49 using all traditional methods	`tradmethods_3549`
 -Number of women 35-49 using no method	`nomethod_3549`
 
-code for low, medium, and high use per country using case_when()
 
 ```{r}
 #| message: false
 # select the outcome variable, predictor variables, and covariates  
 rawdata2 <- rawdata %>% 
-                select(country, region, subregion, pct_upreg, upreg_subreg, pct_upreg_larcster, pct_upreg_sarc, pct_upreg_trad, pct_upreg_nouse, larc_1519, ster_1519, sarc_1519, tradmethods_1519, nomethod_1519, larc_2024, ster_2024, sarc_2024, tradmethods_2024, nomethod_2024, larc_2534, ster_2534, sarc_2534, tradmethods_2534,  nomethod_2534, larc_3549, ster_3549, sarc_3549, tradmethods_3549, nomethod_3549)
+                select(country, wra, region, subregion, pct_upreg, upreg_subreg, pct_upreg_larcster, pct_upreg_sarc, pct_upreg_trad, pct_upreg_nouse, larc_1519, ster_1519, sarc_1519, tradmethods_1519, nomethod_1519, larc_2024, ster_2024, sarc_2024, tradmethods_2024, nomethod_2024, larc_2534, ster_2534, sarc_2534, tradmethods_2534,  nomethod_2534, larc_3549, ster_3549, sarc_3549, tradmethods_3549, nomethod_3549)
 
 # take a glimpse at the selected variables 
 skim(rawdata2)
@@ -144,7 +143,7 @@ rawdata2 <- rawdata2 %>%
               select(-upreg_subreg)
 ```
 
-Fortunately, the rest of the variables required for this analysis are complete. Each of the four variables describing the percentage of unintended pregnancies based on birth control type also need to be converted to traditional percentage format. 
+Fortunately, the rest of the variables required for this analysis are complete including the `wra` variable with population size that we will need to standardize population counts later in the exploratory data analysis process. Each of the four variables describing the percentage of unintended pregnancies based on birth control type also need to be converted to traditional percentage format. 
 ```{r}
 #| message: false
 # convert percentage variable to typical percentage format
@@ -161,7 +160,7 @@ summary(rawdata2$pct_upreg_trad)
 summary(rawdata2$pct_upreg_nouse)
 ```
 
-We should address the missing data in the general `pct_upreg` here to avoid introducing bias because 18.18% of this variable is missing, and it is essential for answering the research question. After reviewing the codebook, the researchers provided an external source for this variable, which we have included in the references. The numbers in this source do not match what is included in the data set. After exploring the methodology for the Adding It Up study, we found their original data that matches what is recorded in the dataset. When we tried to create our own percentage of unintended pregnancy variable, we found that each birth control method adds up to account for 100% of unintended pregnancies. Since there are 24 observations missing in what should be the total unintended pregnancy variable, it is likely that the variables with the percentages of unintended pregnancies by birth control method were imputed or estimated. Missingness in the collection of data could also explain why the long-acting reversible contraceptives and sterilization method were combined into one category. Based on this discovery, we modified the question that we want to answer with the data to use variables that are complete and reliable: `pct_upreg_larcster`, `pct_upreg_sarc`, `pct_upreg_trad`, and `pct_upreg_nouse`. These variables will allow us to answer the question of is there a significant difference in the percentage of unplanned pregnancies between three contraceptive methods among all countries compared to no usage?
+We should address the missing data in the general `pct_upreg` here to avoid introducing bias because 18.18% of this variable is missing, and it is essential for answering the research question. After reviewing the codebook, the researchers provided an external source for this variable, which we have included in the references. The numbers in this source do not match what is included in the data set. After exploring the methodology for the Adding It Up study, we found their original data that matches what is recorded in the dataset. When we tried to create our own percentage of unintended pregnancy variable, we found that each birth control method adds up to account for 100% of unintended pregnancies. Since there are 24 observations missing in what should be the total unintended pregnancy variable, it is likely that the variables with the percentages of unintended pregnancies by birth control method were imputed or estimated. Missingness in the collection of data could also explain why the long-acting reversible contraceptives and sterilization method were combined into one category. Based on this discovery, we modified the question that we want to answer with the data to use variables that are complete and reliable: `pct_upreg_larcster`, `pct_upreg_sarc`, `pct_upreg_trad`, and `pct_upreg_nouse`. These variables will allow us to answer the question of is there a significant difference in the percentage of unplanned pregnancies between three contraceptive methods among all countries compared to no usage. 
 
 ```{r}
 #| message: false
