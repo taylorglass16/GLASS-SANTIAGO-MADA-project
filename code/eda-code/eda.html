@@ -1,0 +1,1680 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.542">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Taylor Glass and Arlyn Santiago">
+<meta name="dcterms.date" content="2024-02-21">
+
+<title>Exploratory Analysis Script</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="eda_files/libs/clipboard/clipboard.min.js"></script>
+<script src="eda_files/libs/quarto-html/quarto.js"></script>
+<script src="eda_files/libs/quarto-html/popper.min.js"></script>
+<script src="eda_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="eda_files/libs/quarto-html/anchor.min.js"></script>
+<link href="eda_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="eda_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="eda_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="eda_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="eda_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Exploratory Analysis Script</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Taylor Glass and Arlyn Santiago </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">February 21, 2024</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="setup" class="level1">
+<h1>Setup</h1>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#load needed packages. make sure they are installed.</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here) <span class="co">#for data loading/saving</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>here() starts at /Users/valeriasantiago/Documents/GLASS-SANTIAGO-MADA-project</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr) <span class="co"># for basic piping functions</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+Attaching package: 'dplyr'</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:stats':
+
+    filter, lag</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>The following objects are masked from 'package:base':
+
+    intersect, setdiff, setequal, union</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(skimr) <span class="co"># for summarizing data</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2) <span class="co"># for visualizing data</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gtsummary) <span class="co"># for creating tables</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>#BlackLivesMatter</code></pre>
+</div>
+</div>
+<p>Load the data.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Path to data</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>data_location <span class="ot">&lt;-</span> <span class="fu">here</span>(<span class="st">"data"</span>,<span class="st">"processed-data"</span>,<span class="st">"processeddata.rds"</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#load data</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>mydata <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(data_location)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="data-exploration-through-tables" class="level1">
+<h1>Data exploration through tables</h1>
+<p>We will begin with creating a summary table of our cleaned variables using the skim()function. This provides information about each of the numeric variables including the mean, standard deviation, quartiles, missing observations, and a histogram.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># skim the data to create summary file</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>summary_df <span class="ot">&lt;-</span> <span class="fu">skim</span>(mydata)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(summary_df)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>── Data Summary ────────────────────────
+                           Values
+Name                       mydata
+Number of rows             132   
+Number of columns          38    
+_______________________          
+Column type frequency:           
+  character                2     
+  factor                   5     
+  numeric                  31    
+________________________         
+Group variables            None  
+
+── Variable type: character ────────────────────────────────────────────────────
+  skim_variable n_missing complete_rate min max empty n_unique whitespace
+1 country               0             1   4  32     0      132          0
+2 subregion             0             1   7  15     0       16          0
+
+── Variable type: factor ───────────────────────────────────────────────────────
+  skim_variable  n_missing complete_rate ordered n_unique
+1 region                 0             1 FALSE          5
+2 larcster_usage         0             1 FALSE          3
+3 sarc_usage             0             1 FALSE          3
+4 trad_usage             0             1 FALSE          3
+5 none_usage             0             1 FALSE          3
+  top_counts                        
+1 Afr: 53, Asi: 36, Lat: 24, Eur: 11
+2 Med: 79, Low: 33, Hig: 20         
+3 Med: 66, Hig: 33, Low: 33         
+4 Med: 66, Hig: 33, Low: 33         
+5 Med: 66, Hig: 33, Low: 33         
+
+── Variable type: numeric ──────────────────────────────────────────────────────
+   skim_variable      n_missing complete_rate      mean       sd        p0
+ 1 wra                        0         1     12427.    4.38e+ 4  25.5    
+ 2 pct_upreg                 24         0.818     0.468 1.43e- 1   0.163  
+ 3 pct_upreg_larcster         0         1         1.16  1.36e+ 0   0.0129 
+ 4 pct_upreg_sarc             0         1        15.8   1.08e+ 1   2.14   
+ 5 pct_upreg_trad             0         1        10.8   9.73e+ 0   0.552  
+ 6 pct_upreg_nouse            0         1        72.2   1.55e+ 1  34.6    
+ 7 larc_1519                  0         1        14.1   4.50e+ 1   0      
+ 8 ster_1519                  0         1         1.03  6.88e+ 0   0      
+ 9 sarc_1519                  0         1       123.    3.65e+ 2   0.0279 
+10 tradmethods_1519           0         1        15.8   5.11e+ 1   0      
+11 nomethod_1519              0         1        89.6   2.02e+ 2   0.130  
+12 larc_2024                  0         1        87.8   3.59e+ 2   0      
+13 ster_2024                  0         1        53.6   3.74e+ 2   0      
+14 sarc_2024                  0         1       420.    1.35e+ 3   0.190  
+15 tradmethods_2024           0         1        64.2   2.32e+ 2   0      
+16 nomethod_2024              0         1       227.    7.86e+ 2   0.430  
+17 larc_2534                  0         1       448.    2.85e+ 3   0      
+18 ster_2534                  0         1       511.    3.41e+ 3   0      
+19 sarc_2534                  0         1       994.    3.14e+ 3   0.862  
+20 tradmethods_2534           0         1       194.    6.63e+ 2   0.102  
+21 nomethod_2534              0         1       441.    1.44e+ 3   0.896  
+22 larc_3549                  0         1       649.    4.78e+ 3   0.0388 
+23 ster_3549                  0         1      1095.    6.49e+ 3   0.00640
+24 sarc_3549                  0         1       944.    3.93e+ 3   0.424  
+25 tradmethods_3549           0         1       257.    7.44e+ 2   0.256  
+26 nomethod_3549              0         1       363.    9.02e+ 2   0.872  
+27 pct_preg                   0         1       100     1.77e-14 100      
+28 total_larcster             0         1      2859.    1.59e+ 4   1.70   
+29 total_sarc                 0         1      2480.    8.49e+ 3   1.50   
+30 total_trad                 0         1       531.    1.67e+ 3   0.391  
+31 total_none                 0         1      1121.    3.23e+ 3   2.8    
+           p25        p50      p75       p100 hist 
+ 1 746.        2748.      8613.    353357.    ▇▁▁▁▁
+ 2   0.370        0.470      0.575      0.756 ▃▇▇▇▃
+ 3   0.236        0.711      1.46       7.62  ▇▁▁▁▁
+ 4   7.65        12.3       22.9       47.7   ▇▅▂▂▁
+ 5   3.41         6.96      14.8       41.2   ▇▃▂▁▁
+ 6  60.5         75.4       84.7       96.5   ▂▅▆▇▇
+ 7   0.111        1.47       8.40     378.    ▇▁▁▁▁
+ 8   0            0.00206    0.102     77.8   ▇▁▁▁▁
+ 9   2.97        29.0       89.6     3803.    ▇▁▁▁▁
+10   0.614        2.73      12.1      503.    ▇▁▁▁▁
+11   3.53        20.9       88.7     1901.    ▇▁▁▁▁
+12   1.42        12.4       41.0     3774.    ▇▁▁▁▁
+13   0.0000109    0.172      2.22    3456.    ▇▁▁▁▁
+14  16.2         90.0      317.     13449.    ▇▁▁▁▁
+15   2.03         9.65      37.2     2168.    ▇▁▁▁▁
+16  15.0         62.2      161.      8051.    ▇▁▁▁▁
+17   4.27        55.0      162.     32573.    ▇▁▁▁▁
+18   0.946        4.23      39.9    34202.    ▇▁▁▁▁
+19  54.6        191.       616.     30362.    ▇▁▁▁▁
+20   4.74        33.0      115.      6827.    ▇▁▁▁▁
+21  37.2        115.       339.     15078.    ▇▁▁▁▁
+22   5.35        47.4      177.     54783.    ▇▁▁▁▁
+23   4.24        22.2      205.     66036.    ▇▁▁▁▁
+24  35.3        146.       508.     42474.    ▇▁▁▁▁
+25   5.03        44.5      148.      7059.    ▇▁▁▁▁
+26  26.9        113.       279.      6986.    ▇▁▁▁▁
+27 100          100        100        100     ▁▇▂▁▁
+28  23.9        220.       860.    147382.    ▇▁▁▁▁
+29 114.         474.      1555.     86685.    ▇▁▁▁▁
+30  15.0         91.8      332.     16556.    ▇▁▁▁▁
+31  80.1        338.       875.     32016.    ▇▁▁▁▁</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># save to file</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>summarytable_file <span class="ot">&lt;-</span> <span class="fu">here</span>(<span class="st">"results"</span>, <span class="st">"tables"</span>, <span class="st">"summarytable.rds"</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(summary_df, <span class="at">file =</span> summarytable_file)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We also created a simple table with the categorical variables: <code>region</code>, <code>larcster_usage</code>, <code>sarc_usage</code>, and <code>none_usage</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># isolate categorical variables into their own data set</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>mydata_cat <span class="ot">&lt;-</span> mydata <span class="sc">%&gt;%</span> <span class="fu">select</span>(region, larcster_usage, sarc_usage, trad_usage, none_usage)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># create a summary table with counts of each level of each categorical variable</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>summary_table <span class="ot">&lt;-</span> <span class="fu">tbl_summary</span>(mydata_cat, <span class="at">statistic =</span> <span class="fu">all_categorical</span>() <span class="sc">~</span> <span class="st">"{n}"</span>)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(summary_table)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>&lt;div id="xlnlxaepwg" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;"&gt;
+  &lt;style&gt;#xlnlxaepwg table {
+  font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#xlnlxaepwg thead, #xlnlxaepwg tbody, #xlnlxaepwg tfoot, #xlnlxaepwg tr, #xlnlxaepwg td, #xlnlxaepwg th {
+  border-style: none;
+}
+
+#xlnlxaepwg p {
+  margin: 0;
+  padding: 0;
+}
+
+#xlnlxaepwg .gt_table {
+  display: table;
+  border-collapse: collapse;
+  line-height: normal;
+  margin-left: auto;
+  margin-right: auto;
+  color: #333333;
+  font-size: 16px;
+  font-weight: normal;
+  font-style: normal;
+  background-color: #FFFFFF;
+  width: auto;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #A8A8A8;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #A8A8A8;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+}
+
+#xlnlxaepwg .gt_caption {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+#xlnlxaepwg .gt_title {
+  color: #333333;
+  font-size: 125%;
+  font-weight: initial;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-color: #FFFFFF;
+  border-bottom-width: 0;
+}
+
+#xlnlxaepwg .gt_subtitle {
+  color: #333333;
+  font-size: 85%;
+  font-weight: initial;
+  padding-top: 3px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-color: #FFFFFF;
+  border-top-width: 0;
+}
+
+#xlnlxaepwg .gt_heading {
+  background-color: #FFFFFF;
+  text-align: center;
+  border-bottom-color: #FFFFFF;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#xlnlxaepwg .gt_bottom_border {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xlnlxaepwg .gt_col_headings {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+}
+
+#xlnlxaepwg .gt_col_heading {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 6px;
+  padding-left: 5px;
+  padding-right: 5px;
+  overflow-x: hidden;
+}
+
+#xlnlxaepwg .gt_column_spanner_outer {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: normal;
+  text-transform: inherit;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+
+#xlnlxaepwg .gt_column_spanner_outer:first-child {
+  padding-left: 0;
+}
+
+#xlnlxaepwg .gt_column_spanner_outer:last-child {
+  padding-right: 0;
+}
+
+#xlnlxaepwg .gt_column_spanner {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: bottom;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  overflow-x: hidden;
+  display: inline-block;
+  width: 100%;
+}
+
+#xlnlxaepwg .gt_spanner_row {
+  border-bottom-style: hidden;
+}
+
+#xlnlxaepwg .gt_group_heading {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  text-align: left;
+}
+
+#xlnlxaepwg .gt_empty_group_heading {
+  padding: 0.5px;
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  vertical-align: middle;
+}
+
+#xlnlxaepwg .gt_from_md &gt; :first-child {
+  margin-top: 0;
+}
+
+#xlnlxaepwg .gt_from_md &gt; :last-child {
+  margin-bottom: 0;
+}
+
+#xlnlxaepwg .gt_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin: 10px;
+  border-top-style: solid;
+  border-top-width: 1px;
+  border-top-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 1px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 1px;
+  border-right-color: #D3D3D3;
+  vertical-align: middle;
+  overflow-x: hidden;
+}
+
+#xlnlxaepwg .gt_stub {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xlnlxaepwg .gt_stub_row_group {
+  color: #333333;
+  background-color: #FFFFFF;
+  font-size: 100%;
+  font-weight: initial;
+  text-transform: inherit;
+  border-right-style: solid;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+  padding-left: 5px;
+  padding-right: 5px;
+  vertical-align: top;
+}
+
+#xlnlxaepwg .gt_row_group_first td {
+  border-top-width: 2px;
+}
+
+#xlnlxaepwg .gt_row_group_first th {
+  border-top-width: 2px;
+}
+
+#xlnlxaepwg .gt_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xlnlxaepwg .gt_first_summary_row {
+  border-top-style: solid;
+  border-top-color: #D3D3D3;
+}
+
+#xlnlxaepwg .gt_first_summary_row.thick {
+  border-top-width: 2px;
+}
+
+#xlnlxaepwg .gt_last_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xlnlxaepwg .gt_grand_summary_row {
+  color: #333333;
+  background-color: #FFFFFF;
+  text-transform: inherit;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xlnlxaepwg .gt_first_grand_summary_row {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-top-style: double;
+  border-top-width: 6px;
+  border-top-color: #D3D3D3;
+}
+
+#xlnlxaepwg .gt_last_grand_summary_row_top {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  padding-left: 5px;
+  padding-right: 5px;
+  border-bottom-style: double;
+  border-bottom-width: 6px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xlnlxaepwg .gt_striped {
+  background-color: rgba(128, 128, 128, 0.05);
+}
+
+#xlnlxaepwg .gt_table_body {
+  border-top-style: solid;
+  border-top-width: 2px;
+  border-top-color: #D3D3D3;
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+}
+
+#xlnlxaepwg .gt_footnotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#xlnlxaepwg .gt_footnote {
+  margin: 0px;
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xlnlxaepwg .gt_sourcenotes {
+  color: #333333;
+  background-color: #FFFFFF;
+  border-bottom-style: none;
+  border-bottom-width: 2px;
+  border-bottom-color: #D3D3D3;
+  border-left-style: none;
+  border-left-width: 2px;
+  border-left-color: #D3D3D3;
+  border-right-style: none;
+  border-right-width: 2px;
+  border-right-color: #D3D3D3;
+}
+
+#xlnlxaepwg .gt_sourcenote {
+  font-size: 90%;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+#xlnlxaepwg .gt_left {
+  text-align: left;
+}
+
+#xlnlxaepwg .gt_center {
+  text-align: center;
+}
+
+#xlnlxaepwg .gt_right {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+#xlnlxaepwg .gt_font_normal {
+  font-weight: normal;
+}
+
+#xlnlxaepwg .gt_font_bold {
+  font-weight: bold;
+}
+
+#xlnlxaepwg .gt_font_italic {
+  font-style: italic;
+}
+
+#xlnlxaepwg .gt_super {
+  font-size: 65%;
+}
+
+#xlnlxaepwg .gt_footnote_marks {
+  font-size: 75%;
+  vertical-align: 0.4em;
+  position: initial;
+}
+
+#xlnlxaepwg .gt_asterisk {
+  font-size: 100%;
+  vertical-align: 0;
+}
+
+#xlnlxaepwg .gt_indent_1 {
+  text-indent: 5px;
+}
+
+#xlnlxaepwg .gt_indent_2 {
+  text-indent: 10px;
+}
+
+#xlnlxaepwg .gt_indent_3 {
+  text-indent: 15px;
+}
+
+#xlnlxaepwg .gt_indent_4 {
+  text-indent: 20px;
+}
+
+#xlnlxaepwg .gt_indent_5 {
+  text-indent: 25px;
+}
+&lt;/style&gt;
+  &lt;table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false"&gt;
+  &lt;thead&gt;
+    &lt;tr class="gt_col_headings"&gt;
+      &lt;th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="&amp;lt;strong&amp;gt;Characteristic&amp;lt;/strong&amp;gt;"&gt;&lt;strong&gt;Characteristic&lt;/strong&gt;&lt;/th&gt;
+      &lt;th class="gt_col_heading gt_columns_bottom_border gt_center" rowspan="1" colspan="1" scope="col" id="&amp;lt;strong&amp;gt;N = 132&amp;lt;/strong&amp;gt;&amp;lt;span class=&amp;quot;gt_footnote_marks&amp;quot; style=&amp;quot;white-space:nowrap;font-style:italic;font-weight:normal;&amp;quot;&amp;gt;&amp;lt;sup&amp;gt;1&amp;lt;/sup&amp;gt;&amp;lt;/span&amp;gt;"&gt;&lt;strong&gt;N = 132&lt;/strong&gt;&lt;span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/span&gt;&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody class="gt_table_body"&gt;
+    &lt;tr&gt;&lt;td headers="label" class="gt_row gt_left"&gt;region&lt;/td&gt;
+&lt;td headers="stat_0" class="gt_row gt_center"&gt;&lt;br /&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td headers="label" class="gt_row gt_left"&gt;&nbsp;&nbsp;&nbsp;&nbsp;Africa&lt;/td&gt;
+&lt;td headers="stat_0" class="gt_row gt_center"&gt;53&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td headers="label" class="gt_row gt_left"&gt;&nbsp;&nbsp;&nbsp;&nbsp;Asia&lt;/td&gt;
+&lt;td headers="stat_0" class="gt_row gt_center"&gt;36&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td headers="label" class="gt_row gt_left"&gt;&nbsp;&nbsp;&nbsp;&nbsp;Europe&lt;/td&gt;
+&lt;td headers="stat_0" class="gt_row gt_center"&gt;11&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td headers="label" class="gt_row gt_left"&gt;&nbsp;&nbsp;&nbsp;&nbsp;Latin America &amp;amp; the Caribbean&lt;/td&gt;
+&lt;td headers="stat_0" class="gt_row gt_center"&gt;24&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td headers="label" class="gt_row gt_left"&gt;&nbsp;&nbsp;&nbsp;&nbsp;Oceania&lt;/td&gt;
+&lt;td headers="stat_0" class="gt_row gt_center"&gt;8&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td headers="label" class="gt_row gt_left"&gt;larcster_usage&lt;/td&gt;
+&lt;td headers="stat_0" class="gt_row gt_center"&gt;&lt;br /&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td headers="label" class="gt_row gt_left"&gt;&nbsp;&nbsp;&nbsp;&nbsp;High&lt;/td&gt;
+&lt;td headers="stat_0" class="gt_row gt_center"&gt;20&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td headers="label" class="gt_row gt_left"&gt;&nbsp;&nbsp;&nbsp;&nbsp;Low&lt;/td&gt;
+&lt;td headers="stat_0" class="gt_row gt_center"&gt;33&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td headers="label" class="gt_row gt_left"&gt;&nbsp;&nbsp;&nbsp;&nbsp;Medium&lt;/td&gt;
+&lt;td headers="stat_0" class="gt_row gt_center"&gt;79&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td headers="label" class="gt_row gt_left"&gt;sarc_usage&lt;/td&gt;
+&lt;td headers="stat_0" class="gt_row gt_center"&gt;&lt;br /&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td headers="label" class="gt_row gt_left"&gt;&nbsp;&nbsp;&nbsp;&nbsp;High&lt;/td&gt;
+&lt;td headers="stat_0" class="gt_row gt_center"&gt;33&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td headers="label" class="gt_row gt_left"&gt;&nbsp;&nbsp;&nbsp;&nbsp;Low&lt;/td&gt;
+&lt;td headers="stat_0" class="gt_row gt_center"&gt;33&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td headers="label" class="gt_row gt_left"&gt;&nbsp;&nbsp;&nbsp;&nbsp;Medium&lt;/td&gt;
+&lt;td headers="stat_0" class="gt_row gt_center"&gt;66&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td headers="label" class="gt_row gt_left"&gt;trad_usage&lt;/td&gt;
+&lt;td headers="stat_0" class="gt_row gt_center"&gt;&lt;br /&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td headers="label" class="gt_row gt_left"&gt;&nbsp;&nbsp;&nbsp;&nbsp;High&lt;/td&gt;
+&lt;td headers="stat_0" class="gt_row gt_center"&gt;33&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td headers="label" class="gt_row gt_left"&gt;&nbsp;&nbsp;&nbsp;&nbsp;Low&lt;/td&gt;
+&lt;td headers="stat_0" class="gt_row gt_center"&gt;33&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td headers="label" class="gt_row gt_left"&gt;&nbsp;&nbsp;&nbsp;&nbsp;Medium&lt;/td&gt;
+&lt;td headers="stat_0" class="gt_row gt_center"&gt;66&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td headers="label" class="gt_row gt_left"&gt;none_usage&lt;/td&gt;
+&lt;td headers="stat_0" class="gt_row gt_center"&gt;&lt;br /&gt;&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td headers="label" class="gt_row gt_left"&gt;&nbsp;&nbsp;&nbsp;&nbsp;High&lt;/td&gt;
+&lt;td headers="stat_0" class="gt_row gt_center"&gt;33&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td headers="label" class="gt_row gt_left"&gt;&nbsp;&nbsp;&nbsp;&nbsp;Low&lt;/td&gt;
+&lt;td headers="stat_0" class="gt_row gt_center"&gt;33&lt;/td&gt;&lt;/tr&gt;
+    &lt;tr&gt;&lt;td headers="label" class="gt_row gt_left"&gt;&nbsp;&nbsp;&nbsp;&nbsp;Medium&lt;/td&gt;
+&lt;td headers="stat_0" class="gt_row gt_center"&gt;66&lt;/td&gt;&lt;/tr&gt;
+  &lt;/tbody&gt;
+  
+  &lt;tfoot class="gt_footnotes"&gt;
+    &lt;tr&gt;
+      &lt;td class="gt_footnote" colspan="2"&gt;&lt;span class="gt_footnote_marks" style="white-space:nowrap;font-style:italic;font-weight:normal;"&gt;&lt;sup&gt;1&lt;/sup&gt;&lt;/span&gt; n&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tfoot&gt;
+&lt;/table&gt;
+&lt;/div&gt;</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># save to file </span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>summarytable_file <span class="ot">&lt;-</span> <span class="fu">here</span>(<span class="st">"results"</span>, <span class="st">"tables"</span>, <span class="st">"summarytablecat.rds"</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="fu">saveRDS</span>(summary_table, <span class="at">file =</span> summarytable_file)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="data-exploration-through-figures" class="level1">
+<h1>Data exploration through figures</h1>
+<p>We will make histogram plots for the continuous outcomes in our dataset.</p>
+<p>It is important to consider the type of birth control methods associated with percent of unintended pregnancies as well. We will create a histogram for the <code>pct_upreg_larcster</code>, <code>pct_upreg_sarc</code>, <code>pct_upreg_trad</code>, and <code>pct_upreg_nouse</code> variables.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># explore the percentage of unintended pregnancies related to long acting reversible methods in each country</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>p2 <span class="ot">&lt;-</span> mydata <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>pct_upreg_larcster)) <span class="sc">+</span> </span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>() <span class="sc">+</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Percent Unintended Pregnancy Using Long Acting Reversible Methods"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Percentage"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Number of Countries"</span>)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="eda_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>figure_file <span class="ot">=</span> <span class="fu">here</span>(<span class="st">"results"</span>, <span class="st">"figures"</span>, <span class="st">"exploratory-figures"</span>, <span class="st">"pctupreg_larcster_distribution.png"</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> figure_file, <span class="at">plot=</span>p2) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saving 7 x 5 in image
+`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># explore the percentage of unintended pregnancies related to short acting reversible methods in each country</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>p3 <span class="ot">&lt;-</span> mydata <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>pct_upreg_sarc)) <span class="sc">+</span> </span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>() <span class="sc">+</span> </span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Percent Unintended Pregnancy Using Short Acting Reversible Methods"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Percentage"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Number of Countries"</span>)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="eda_files/figure-html/unnamed-chunk-5-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>figure_file <span class="ot">=</span> <span class="fu">here</span>(<span class="st">"results"</span>, <span class="st">"figures"</span>, <span class="st">"exploratory-figures"</span>, <span class="st">"pctupreg_sarc_distribution.png"</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> figure_file, <span class="at">plot=</span>p3) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saving 7 x 5 in image
+`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># explore the percentage of unintended pregnancies related to traditional methods in each country</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>p4 <span class="ot">&lt;-</span> mydata <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>pct_upreg_trad)) <span class="sc">+</span> </span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>() <span class="sc">+</span> </span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Percent Unintended Pregnancy Using Traditional Methods"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Percentage"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Number of Countries"</span>)</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p4)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="eda_files/figure-html/unnamed-chunk-5-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>figure_file <span class="ot">=</span> <span class="fu">here</span>(<span class="st">"results"</span>, <span class="st">"figures"</span>, <span class="st">"exploratory-figures"</span>, <span class="st">"pctupreg_trad_distribution.png"</span>)</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> figure_file, <span class="at">plot=</span>p4) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saving 7 x 5 in image
+`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># explore the percentage of unintended pregnancies related to no birth control usage in each country</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>p5 <span class="ot">&lt;-</span> mydata <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>pct_upreg_nouse)) <span class="sc">+</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>() <span class="sc">+</span> </span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Percent Unintended Pregnancy Using No Birth Control"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Percentage"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Number of countries"</span>)</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p5)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="eda_files/figure-html/unnamed-chunk-5-4.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>figure_file <span class="ot">=</span> <span class="fu">here</span>(<span class="st">"results"</span>, <span class="st">"figures"</span>, <span class="st">"exploratory-figures"</span>, <span class="st">"pctupreg_nouse_distribution.png"</span>)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> figure_file, <span class="at">plot=</span>p5) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saving 7 x 5 in image
+`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+</div>
+</div>
+<p>P2: This histogram is highly skewed right, which shows that most countries experience a very low percentage of unintended pregnancies related to long acting reversible and sterilization methods.</p>
+<p>P3: This histogram shows that the percentage of unintended pregnancies among those using short acting reversible methods varies more between countries compared to long acting reversible methods. About half of the countries in the dataset report less than 20% of pregnancies are unintended when women use this form of birth control.</p>
+<p>P4: This histogram shows that about half of the countries reported less than 10% percent of unintended pregnancies associated with using traditional birth control methods</p>
+<p>P5: This histogram shows that more countries report a higher percentage of unintended pregnancies among women who do not use any contraception, but it varies widely by country.</p>
+<p>We will now explore the new total usage variables that were created using the number of women using each method across the four age categories. This set of plots revealed large outliers in the ’total_larcster<code>, 'total_sarc', 'total_trad', and</code>total_none` variables, which prevented the graphs from being very useful. The histograms look like most observations for each of these four variables are 0, but that is not possible because the summary table showed that the minimum value for all four of these variables is greater than 0. This distortion is caused by the two large outliers in the data set.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># explore the total number of people using long acting reversible methods in each country</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>p6 <span class="ot">&lt;-</span> mydata <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>total_larcster)) <span class="sc">+</span> </span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>() <span class="sc">+</span> </span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Total Usage of Long Acting Reversible Methods per Country"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Number of Women"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Number of Countries"</span>)</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p6)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="eda_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>figure_file <span class="ot">=</span> <span class="fu">here</span>(<span class="st">"results"</span>, <span class="st">"figures"</span>, <span class="st">"exploratory-figures"</span>, <span class="st">"total_larcster_distribution.png"</span>)</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> figure_file, <span class="at">plot=</span>p6) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saving 7 x 5 in image
+`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># explore the total number of people using short acting reversible methods in each country</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>p7 <span class="ot">&lt;-</span> mydata <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>total_sarc)) <span class="sc">+</span> </span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>() <span class="sc">+</span> </span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Total Usage of Short Acting Reversible Methods per Country"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Number of Women"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Number of Countries"</span>)</span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p7)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="eda_files/figure-html/unnamed-chunk-6-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>figure_file <span class="ot">=</span> <span class="fu">here</span>(<span class="st">"results"</span>, <span class="st">"figures"</span>, <span class="st">"exploratory-figures"</span>, <span class="st">"total_sarc_distribution.png"</span>)</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> figure_file, <span class="at">plot=</span>p7) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saving 7 x 5 in image
+`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># explore the total number of people using traditional methods in each country</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>p8 <span class="ot">&lt;-</span> mydata <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>total_trad)) <span class="sc">+</span> </span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>() <span class="sc">+</span> </span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Total Usage of Traditional Methods per Country"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Number of Women"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Number of Countries"</span>)</span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p8)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="eda_files/figure-html/unnamed-chunk-6-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>figure_file <span class="ot">=</span> <span class="fu">here</span>(<span class="st">"results"</span>, <span class="st">"figures"</span>, <span class="st">"exploratory-figures"</span>, <span class="st">"total_trad_distribution.png"</span>)</span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> figure_file, <span class="at">plot=</span>p8) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saving 7 x 5 in image
+`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># explore the total number of people not using birth control in each country</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>p9 <span class="ot">&lt;-</span> mydata <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>total_none)) <span class="sc">+</span> </span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>() <span class="sc">+</span> </span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Total Usage of No Birth Control Method per Country"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Number of Women"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Number of Countries"</span>)</span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p9)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="eda_files/figure-html/unnamed-chunk-6-4.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>figure_file <span class="ot">=</span> <span class="fu">here</span>(<span class="st">"results"</span>, <span class="st">"figures"</span>, <span class="st">"exploratory-figures"</span>, <span class="st">"total_none_distribution.png"</span>)</span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> figure_file, <span class="at">plot=</span>p9) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saving 7 x 5 in image
+`stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+</div>
+</div>
+<p>The two outliers present in each of these graphs makes them very difficult to interpret. We need to explore where the outliers in these variables are coming from. China and India are the two countries that account for the outliers in all 4 variables, which is likely being skewed by population size. The first method of standardizing we tried is creating proportions using the total count for each birth control method type. After creating these standardized variables, the same issue with outliers remained because China and India still account for the largest proportion of observations. Next, we considered using a scaling factor. We attempted this approach with the <code>total_larcster</code> variable and found the same issues as before. The third attempt at standarization utilized a min-max scaling with z-score normalization, but the outlier issue remained.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co"># find the countries that represent the outliers</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>outliers <span class="ot">&lt;-</span> mydata <span class="sc">%&gt;%</span> <span class="fu">filter</span>(total_larcster <span class="sc">&gt;</span> <span class="dv">25000</span>, </span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>                              total_sarc <span class="sc">&gt;</span> <span class="dv">25000</span>,</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>                              total_trad <span class="sc">&gt;</span> <span class="dv">5000</span>,</span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>                              total_none <span class="sc">&gt;</span> <span class="dv">10000</span>)</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a><span class="co"># standardization attempt 1</span></span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>mydata <span class="ot">&lt;-</span> mydata <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">larcster_st =</span> total_larcster <span class="sc">/</span> <span class="fu">sum</span>(total_larcster),</span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>                            <span class="at">sarc_st =</span> total_sarc <span class="sc">/</span> <span class="fu">sum</span>(total_sarc),</span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>                            <span class="at">trad_st =</span> total_trad <span class="sc">/</span> <span class="fu">sum</span>(total_trad),</span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>                            <span class="at">none_st =</span> total_none <span class="sc">/</span> <span class="fu">sum</span>(total_none))</span>
+<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a><span class="co"># standardization attempt 2</span></span>
+<span id="cb48-14"><a href="#cb48-14" aria-hidden="true" tabindex="-1"></a>scaling_factor_larcster <span class="ot">&lt;-</span> <span class="fu">max</span>(mydata<span class="sc">$</span>total_larcster)</span>
+<span id="cb48-15"><a href="#cb48-15" aria-hidden="true" tabindex="-1"></a>mydata <span class="ot">&lt;-</span> mydata <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">standardized_larcster =</span> total_larcster <span class="sc">/</span> scaling_factor_larcster)</span>
+<span id="cb48-16"><a href="#cb48-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb48-17"><a href="#cb48-17" aria-hidden="true" tabindex="-1"></a><span class="co"># standardization attempt 3</span></span>
+<span id="cb48-18"><a href="#cb48-18" aria-hidden="true" tabindex="-1"></a>min_count <span class="ot">&lt;-</span> <span class="fu">min</span>(mydata<span class="sc">$</span>total_larcster)</span>
+<span id="cb48-19"><a href="#cb48-19" aria-hidden="true" tabindex="-1"></a>max_count <span class="ot">&lt;-</span> <span class="fu">max</span>(mydata<span class="sc">$</span>total_larcster)</span>
+<span id="cb48-20"><a href="#cb48-20" aria-hidden="true" tabindex="-1"></a>scaled_counts <span class="ot">&lt;-</span> (mydata<span class="sc">$</span>total_larcster <span class="sc">-</span> min_count) <span class="sc">/</span> (max_count <span class="sc">-</span> min_count)</span>
+<span id="cb48-21"><a href="#cb48-21" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(scaled_counts)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  [1] 1.591062e-03 3.371842e-05 1.456696e-03 3.767490e-04 1.490567e-03
+  [6] 7.396787e-03 2.555813e-02 3.420894e-04 1.854352e-04 2.704163e-03
+ [11] 1.759740e-04 3.940157e-04 6.955622e-02 1.248450e-04 1.078149e-04
+ [16] 1.273687e-03 5.571843e-03 9.564205e-04 2.145515e-03 2.326986e-03
+ [21] 5.122841e-04 9.969689e-05 3.213944e-05 7.273142e-03 3.166259e-04
+ [26] 1.000000e+00 3.324212e-02 2.660592e-05 6.790316e-05 2.276346e-03
+ [31] 1.956636e-03 7.186353e-03 6.453807e-04 6.448516e-03 5.262748e-03
+ [36] 3.520869e-03 1.796066e-05 1.420109e-02 2.446316e-05 1.899551e-04
+ [41] 5.080233e-06 1.490244e-05 6.727836e-04 6.142075e-05 1.583712e-03
+ [46] 3.093968e-03 2.633911e-06 2.584066e-05 5.880643e-03 9.133568e-05
+ [51] 1.109219e-04 4.930041e-04 4.127989e-03 7.316136e-01 4.546455e-02
+ [56] 5.081705e-02 5.940923e-03 1.091135e-03 9.987604e-04 7.030623e-03
+ [61] 2.119465e-03 1.682084e-02 1.275512e-02 1.695768e-03 6.881139e-04
+ [66] 1.018230e-03 1.266360e-04 2.395578e-04 5.706552e-04 1.976930e-03
+ [71] 5.801232e-03 4.229417e-03 3.087318e-05 1.609675e-03 4.566762e-05
+ [76] 1.774924e-04 9.489958e-02 1.136159e-03 1.554211e-03 2.056146e-05
+ [81] 2.439575e-03 1.184350e-03 1.590412e-04 1.265139e-02 4.346386e-05
+ [86] 2.911069e-03 8.750030e-04 6.350395e-03 0.000000e+00 3.141908e-02
+ [91] 1.334289e-03 1.343474e-03 5.266055e-03 1.486253e-02 4.127934e-04
+ [96] 1.235137e-04 3.543201e-03 2.625023e-02 1.476236e-03 1.655275e-05
+[101] 3.344643e-05 8.628542e-07 2.186681e-03 2.861780e-04 6.727482e-04
+[106] 4.624769e-02 4.313880e-05 9.452741e-03 2.353445e-03 6.270392e-05
+[111] 4.381233e-04 6.245736e-05 9.375885e-05 5.690353e-03 2.287373e-03
+[116] 2.418137e-02 6.670327e-04 7.415865e-06 2.980325e-03 2.763280e-02
+[121] 3.302283e-03 6.178360e-03 8.309507e-03 8.092716e-05 3.993542e-02
+[126] 9.012019e-03 4.548901e-03 2.303694e-02 8.205443e-03 3.595361e-06
+[131] 2.986507e-03 1.990650e-03</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>mean_count <span class="ot">&lt;-</span> <span class="fu">mean</span>(mydata<span class="sc">$</span>total_larcster)</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>sd_count <span class="ot">&lt;-</span> <span class="fu">sd</span>(mydata<span class="sc">$</span>total_larcster)</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>z_score_counts <span class="ot">&lt;-</span> (mydata<span class="sc">$</span>total_larcster <span class="sc">-</span> mean_count) <span class="sc">/</span> sd_count</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>After reviewing the raw data set again, we found the <code>wra</code> variable that accounts for the number of women of reproductive age (15-49) in each country. Once this variable was added to the original processed data set, we could use it to standardize the total counts for each birth control method by population size of women of reprodutive age.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="co"># population size standarization for total counts per birth control method</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>mydata <span class="ot">&lt;-</span> mydata <span class="sc">%&gt;%</span> <span class="fu">mutate</span>(<span class="at">larcster_standard =</span> total_larcster <span class="sc">/</span> wra,</span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>                            <span class="at">sarc_standard =</span> total_sarc <span class="sc">/</span> wra,</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>                            <span class="at">trad_standard =</span> total_trad <span class="sc">/</span> wra, </span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>                            <span class="at">none_standard =</span> total_none <span class="sc">/</span> wra)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We will start exploring how many women use each type of birth control in each country compared to the percent of unintended pregnancies related to that birth control. Plot 10 shows <code>pct_upreg_larcster</code> vs <code>larcster_standard</code> to analyze women using long acting reversible methods and sterilization versus the percentage of unintended pregnancies using those methods. Plot 11 uses <code>pct_upreg_sarc</code> and <code>sarc_standard</code> to examine the same relationship as plot 10 but with short-acting reversible methods. Plot 12 shows <code>pct_upreg_trad</code> versus <code>trad_standard</code>, and plot 13 shows <code>pct_upreg_nouse</code> versus <code>none_standard</code>.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># explore percentage of unintended pregnancies compared to standardized count of women using long-acting reversible and sterilization methods</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>p10 <span class="ot">&lt;-</span> mydata <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>pct_upreg_larcster, <span class="at">y=</span>larcster_standard)) <span class="sc">+</span> </span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span><span class="st">'lm'</span>) <span class="sc">+</span> </span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Percent of Unintended Pregnancies vs Standardzied Count of Women Using LARCs"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Percentage of Unintended Pregnancies"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Standarized Total Number of Women"</span>)</span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p10)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="eda_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>figure_file <span class="ot">=</span> <span class="fu">here</span>(<span class="st">"results"</span>, <span class="st">"figures"</span>, <span class="st">"exploratory-figures"</span>, <span class="st">"pctuppreg_totallarcster.png"</span>)</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> figure_file, <span class="at">plot=</span>p10) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saving 7 x 5 in image
+`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># explore percentage of unintended pregnancies compared to standardized count of women using short acting reversible methods</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>p11 <span class="ot">&lt;-</span> mydata <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>pct_upreg_sarc, <span class="at">y=</span>sarc_standard)) <span class="sc">+</span> </span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span><span class="st">'lm'</span>) <span class="sc">+</span> </span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Percent of Unintended Pregnancies vs Standardzied Count of Women Using SARCs"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Percentage of Unintended Pregnancies"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Standarized Total Number of Women"</span>)</span>
+<span id="cb56-6"><a href="#cb56-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p11)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="eda_files/figure-html/unnamed-chunk-9-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>figure_file <span class="ot">=</span> <span class="fu">here</span>(<span class="st">"results"</span>, <span class="st">"figures"</span>, <span class="st">"exploratory-figures"</span>, <span class="st">"pctupreg_totalsarc.png"</span>)</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> figure_file, <span class="at">plot=</span>p11) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saving 7 x 5 in image
+`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="co"># explore percentage of unintended pregnancies compared to standardized count of women using traditional methods</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>p12 <span class="ot">&lt;-</span> mydata <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>pct_upreg_trad, <span class="at">y=</span>trad_standard)) <span class="sc">+</span> </span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span><span class="st">'lm'</span>) <span class="sc">+</span> </span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Percent of Unintended Pregnancies vs Standardzied Count of Women Using Traditional Methods"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Percentage of Unintended Pregnancies"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Standarized Total Number of Women"</span>)</span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p12)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="eda_files/figure-html/unnamed-chunk-9-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a>figure_file <span class="ot">=</span> <span class="fu">here</span>(<span class="st">"results"</span>, <span class="st">"figures"</span>, <span class="st">"exploratory-figures"</span>, <span class="st">"pctupreg_totaltrad.png"</span>)</span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> figure_file, <span class="at">plot=</span>p12) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saving 7 x 5 in image
+`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="co"># explore percentage of unintended pregnancies compared to standardized count of women not using no method</span></span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>p13 <span class="ot">&lt;-</span> mydata <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>pct_upreg_nouse, <span class="at">y=</span>none_standard)) <span class="sc">+</span> </span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span><span class="st">'lm'</span>) <span class="sc">+</span> </span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Percent of Unintended Pregnancies vs Standardzied Count of Women Using No Method"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Percentage of Unintended Pregnancies"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Standarized Total Number of Women"</span>)</span>
+<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p13)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="eda_files/figure-html/unnamed-chunk-9-4.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>figure_file <span class="ot">=</span> <span class="fu">here</span>(<span class="st">"results"</span>, <span class="st">"figures"</span>, <span class="st">"exploratory-figures"</span>, <span class="st">"pctupreg_totalnone.png"</span>)</span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> figure_file, <span class="at">plot=</span>p13) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saving 7 x 5 in image
+`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+</div>
+<p>P10: As the standardized count of women using LARCs and sterilization methods increases, the percentage of unintended pregnancies tends to increase. There is minimal variation around the linear equation, excluding the two largest percentages accounted for by India and China.</p>
+<p>P11: The same positive trend is shown between the percentage of unintended pregnancies and number of women using SARMs, but there is considerably more variation in this relationship.</p>
+<p>P12: As percentage of unintended pregnancies associated with traditional methods increases, the total number of women using this method increases. There is minimal variation in the trend when percentage of unintended pregnancies is less than 8%, but there is more variation when the percentage is greater than 10%.</p>
+<p>P13: The same expected positive trend is observed for women who are not using a birth control method, but there is considerable variation in this graph across all percentages of unintended pregnancies. Additionally, the lowest percentage in this category is around 35%, which is much higher than the percentages associated with the three birth control methods.</p>
+<p>We are also interested in how these relationships between percent of unintended pregnancies using each birth control method and the number of people using each method varies across region. We adjusted the original scatter plots created above by coloring based on region.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="co"># explore percent unintended pregnancies using long acting reversible and sterilziation methods by region</span></span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>p14 <span class="ot">&lt;-</span> mydata <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>pct_upreg_larcster, <span class="at">y=</span>larcster_standard, <span class="at">color =</span> region)) <span class="sc">+</span> </span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">method=</span><span class="st">'lm'</span>) <span class="sc">+</span> </span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Percent of Unintended Pregnancies vs Standardzied Count of Women Using LARCs"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Percentage of Unintended Pregnancies"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Standarized Total Number of Women"</span>)</span>
+<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p14)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="eda_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>figure_file <span class="ot">=</span> <span class="fu">here</span>(<span class="st">"results"</span>, <span class="st">"figures"</span>, <span class="st">"exploratory-figures"</span>, <span class="st">"pctupreg_larcster_stratified.png"</span>)</span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> figure_file, <span class="at">plot=</span>p14) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saving 7 x 5 in image
+`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="co"># explore percent unintended pregnancies using short acting reversible methods by region</span></span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>p15 <span class="ot">&lt;-</span> mydata <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>pct_upreg_sarc, <span class="at">y=</span>sarc_standard, <span class="at">color =</span> region)) <span class="sc">+</span> </span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span><span class="st">'lm'</span>) <span class="sc">+</span> </span>
+<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Percent of Unintended Pregnancies vs Standardzied Count of Women Using SARCs"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Percentage of Unintended Pregnancies"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Standarized Total Number of Women"</span>)</span>
+<span id="cb72-6"><a href="#cb72-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p15)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="eda_files/figure-html/unnamed-chunk-10-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>figure_file <span class="ot">=</span> <span class="fu">here</span>(<span class="st">"results"</span>, <span class="st">"figures"</span>, <span class="st">"exploratory-figures"</span>, <span class="st">"pctupreg_sarc_stratified.png"</span>)</span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> figure_file, <span class="at">plot=</span>p15) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saving 7 x 5 in image
+`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb76"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><a href="#cb76-1" aria-hidden="true" tabindex="-1"></a><span class="co"># explore percent unintended pregnancies using traditional methods by region</span></span>
+<span id="cb76-2"><a href="#cb76-2" aria-hidden="true" tabindex="-1"></a>p16 <span class="ot">&lt;-</span> mydata <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>pct_upreg_trad, <span class="at">y=</span>trad_standard, <span class="at">color =</span> region)) <span class="sc">+</span> </span>
+<span id="cb76-3"><a href="#cb76-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb76-4"><a href="#cb76-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span><span class="st">'lm'</span>) <span class="sc">+</span>  </span>
+<span id="cb76-5"><a href="#cb76-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Percent of Unintended Pregnancies vs Standardzied Count of Women Using Traditional Methods"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Percentage of Unintended Pregnancies"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Standarized Total Number of Women"</span>)</span>
+<span id="cb76-6"><a href="#cb76-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p16)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="eda_files/figure-html/unnamed-chunk-10-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb78"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1"><a href="#cb78-1" aria-hidden="true" tabindex="-1"></a>figure_file <span class="ot">=</span> <span class="fu">here</span>(<span class="st">"results"</span>, <span class="st">"figures"</span>, <span class="st">"exploratory-figures"</span>, <span class="st">"pctupreg_trad_stratified.png"</span>)</span>
+<span id="cb78-2"><a href="#cb78-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> figure_file, <span class="at">plot=</span>p16) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saving 7 x 5 in image
+`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb80"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><a href="#cb80-1" aria-hidden="true" tabindex="-1"></a><span class="co"># explore percent unintended pregnancies using no method by region</span></span>
+<span id="cb80-2"><a href="#cb80-2" aria-hidden="true" tabindex="-1"></a>p17 <span class="ot">&lt;-</span> mydata <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x=</span>pct_upreg_nouse, <span class="at">y=</span>none_standard, <span class="at">color =</span> region)) <span class="sc">+</span> </span>
+<span id="cb80-3"><a href="#cb80-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>() <span class="sc">+</span> </span>
+<span id="cb80-4"><a href="#cb80-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_smooth</span>(<span class="at">method=</span><span class="st">'lm'</span>) <span class="sc">+</span>   </span>
+<span id="cb80-5"><a href="#cb80-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Percent of Unintended Pregnancies vs Standardzied Count of Women Using No Method"</span>) <span class="sc">+</span> <span class="fu">xlab</span>(<span class="st">"Percentage of Unintended Pregnancies"</span>) <span class="sc">+</span> <span class="fu">ylab</span>(<span class="st">"Standarized Total Number of Women"</span>)</span>
+<span id="cb80-6"><a href="#cb80-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p17)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="eda_files/figure-html/unnamed-chunk-10-4.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb82"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><a href="#cb82-1" aria-hidden="true" tabindex="-1"></a>figure_file <span class="ot">=</span> <span class="fu">here</span>(<span class="st">"results"</span>, <span class="st">"figures"</span>, <span class="st">"exploratory-figures"</span>, <span class="st">"pctupreg_none_stratified.png"</span>)</span>
+<span id="cb82-2"><a href="#cb82-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> figure_file, <span class="at">plot=</span>p17) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saving 7 x 5 in image
+`geom_smooth()` using formula = 'y ~ x'</code></pre>
+</div>
+</div>
+<p>P14: Among women using long acting reversible and sterilization methods, Asia has the highest percentages of unintended pregnancies, followed by Latin America/the Caribbean and Africa.</p>
+<p>P15: This graph for short acting reversible methods shows clearer differences between regions, and Latin America/the Caribbean leads in the percentage of unintended pregnancies in this category, but Africa shows the sharpest increase in percentage of unintended pregnancies as the total population increases.</p>
+<p>P16: Among women using traditional birth control methods, Europe has the sharpest increase in unintended pregnancies as population increases, but Asia has the highest percentage of unintended pregnancies in this category.</p>
+<p>P17: This graph is much different than the other three, which is to be expected at this point. Oceania has the highest percentage of unintended pregnancies when women are not using birth control. The slope of the relationship for each region appears to be similar in this graph with the exception of Oceania having a steeper slope. There are considerably more outliers in this graph with African countries</p>
+<p>Our next group of plots will be violin plots to explore the usage level of each birth control method, a categorical variable, associated with percentage of unintended pregnancies use for each birth control method, a numerical variable.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb84"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><a href="#cb84-1" aria-hidden="true" tabindex="-1"></a><span class="co"># explore long acting reversible and sterilization method usage compared to percent of unintended pregnancies</span></span>
+<span id="cb84-2"><a href="#cb84-2" aria-hidden="true" tabindex="-1"></a>p18 <span class="ot">&lt;-</span> mydata <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> larcster_usage, <span class="at">y =</span> pct_upreg_larcster)) <span class="sc">+</span></span>
+<span id="cb84-3"><a href="#cb84-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>() <span class="sc">+</span></span>
+<span id="cb84-4"><a href="#cb84-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Usage of LARCs and Sterilization vs Percent of Unintended Pregnancies"</span>) <span class="sc">+</span></span>
+<span id="cb84-5"><a href="#cb84-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Long Acting Reversible and Sterilization Usage"</span>, <span class="at">y =</span> <span class="st">"Percentage Unintended Pregnancies"</span>) </span>
+<span id="cb84-6"><a href="#cb84-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p18)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="eda_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a>figure_file <span class="ot">=</span> <span class="fu">here</span>(<span class="st">"results"</span>, <span class="st">"figures"</span>, <span class="st">"exploratory-figures"</span>, <span class="st">"larcster_pctupreg_violin.png"</span>)</span>
+<span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> figure_file, <span class="at">plot=</span>p18) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saving 7 x 5 in image</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="co"># explore short acting reversible method usage compared to percent of unintended pregnancies</span></span>
+<span id="cb87-2"><a href="#cb87-2" aria-hidden="true" tabindex="-1"></a>p19 <span class="ot">&lt;-</span> mydata <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> sarc_usage, <span class="at">y =</span> pct_upreg_sarc)) <span class="sc">+</span></span>
+<span id="cb87-3"><a href="#cb87-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>() <span class="sc">+</span> <span class="fu">ggtitle</span>(<span class="st">"Usage of SARCs vs Percent of Unintended Pregnancies"</span>) <span class="sc">+</span></span>
+<span id="cb87-4"><a href="#cb87-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Short Acting Reversible Usage"</span>, <span class="at">y =</span> <span class="st">"Percentage Unintended Pregnancies"</span>) </span>
+<span id="cb87-5"><a href="#cb87-5" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p19)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="eda_files/figure-html/unnamed-chunk-11-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb88"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><a href="#cb88-1" aria-hidden="true" tabindex="-1"></a>figure_file <span class="ot">=</span> <span class="fu">here</span>(<span class="st">"results"</span>, <span class="st">"figures"</span>, <span class="st">"exploratory-figures"</span>, <span class="st">"sarc_pctupreg_violin.png"</span>)</span>
+<span id="cb88-2"><a href="#cb88-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> figure_file, <span class="at">plot=</span>p19) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saving 7 x 5 in image</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb90"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><a href="#cb90-1" aria-hidden="true" tabindex="-1"></a><span class="co"># explore traditional method usage compared to percent of unintended pregnancies</span></span>
+<span id="cb90-2"><a href="#cb90-2" aria-hidden="true" tabindex="-1"></a>p20 <span class="ot">&lt;-</span> mydata <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> trad_usage, <span class="at">y =</span> pct_upreg_trad)) <span class="sc">+</span></span>
+<span id="cb90-3"><a href="#cb90-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>() <span class="sc">+</span> </span>
+<span id="cb90-4"><a href="#cb90-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Usage of Traditional Method vs Percent of Unintended Pregnancies"</span>) <span class="sc">+</span></span>
+<span id="cb90-5"><a href="#cb90-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"Traditional Method Usage"</span>, <span class="at">y =</span> <span class="st">"Percentage Unintended Pregnancies"</span>) </span>
+<span id="cb90-6"><a href="#cb90-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p20)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="eda_files/figure-html/unnamed-chunk-11-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a>figure_file <span class="ot">=</span> <span class="fu">here</span>(<span class="st">"results"</span>, <span class="st">"figures"</span>, <span class="st">"exploratory-figures"</span>, <span class="st">"trad_pctupreg_violin.png"</span>)</span>
+<span id="cb91-2"><a href="#cb91-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> figure_file, <span class="at">plot=</span>p20) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saving 7 x 5 in image</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="co"># explore no method usage compared to percent of unintended pregnancies</span></span>
+<span id="cb93-2"><a href="#cb93-2" aria-hidden="true" tabindex="-1"></a>p21 <span class="ot">&lt;-</span> mydata <span class="sc">%&gt;%</span> <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> none_usage, <span class="at">y =</span> pct_upreg_nouse)) <span class="sc">+</span></span>
+<span id="cb93-3"><a href="#cb93-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_violin</span>() <span class="sc">+</span>  </span>
+<span id="cb93-4"><a href="#cb93-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"No Birth Control Usage vs Percent of Unintended Pregnancies"</span>) <span class="sc">+</span></span>
+<span id="cb93-5"><a href="#cb93-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x =</span> <span class="st">"No Birth Control Usage"</span>, <span class="at">y =</span> <span class="st">"Percentage Unintended Pregnancies"</span>) </span>
+<span id="cb93-6"><a href="#cb93-6" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(p21)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="eda_files/figure-html/unnamed-chunk-11-4.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+<div class="sourceCode cell-code" id="cb94"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><a href="#cb94-1" aria-hidden="true" tabindex="-1"></a>figure_file <span class="ot">=</span> <span class="fu">here</span>(<span class="st">"results"</span>, <span class="st">"figures"</span>, <span class="st">"exploratory-figures"</span>, <span class="st">"none_pctupreg_violin.png"</span>)</span>
+<span id="cb94-2"><a href="#cb94-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggsave</span>(<span class="at">filename =</span> figure_file, <span class="at">plot=</span>p21) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Saving 7 x 5 in image</code></pre>
+</div>
+</div>
+<p>P18: The distribution of percentage of unintended pregnancies varies a lot among usage levels of long acting reversible and sterilization methods. High usage countries have a consistent percentage of unintended pregnancies, but countries with a medium usage level tend to have lower percentages of unintended pregnancies.</p>
+<p>P19: It appears that the distribution of short acting reversible method usage is skewed towards lower percentages of unintended pregnancies across all usage levels, suggesting that more countries have lower percentage of unintended pregnancies among women using this method.</p>
+<p>P20: Among women using traditional birth control methods, the distribution of percentage of unintended pregnancies is similar among medium and high usage countries, but low usage countries are skewed towards lower percentage of unintended pregnancies.</p>
+<p>P21: While the distribution of percentage of unintended pregnancies is similar across the three usage levels for women not using any birth control method, the high usage countries appear to have a bottleneck in percentage of unintended pregnancies. The high and low usage countries appear to be skewed towards higher levels of unintended pregnancies, but the medium usage countries appear to have lower percentage of unintended pregnancies.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      return note.innerHTML;
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

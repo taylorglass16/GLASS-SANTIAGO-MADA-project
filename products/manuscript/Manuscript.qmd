@@ -8,8 +8,8 @@ format:
     toc: false
     number-sections: true
     highlight-style: github
-bibliography: ../assets/dataanalysis-references.bib
-csl: ../assets/apa.csl
+bibliography: ../../assets/dataanalysis-references.bib
+csl: ../../assets/apa.csl
 ---
 
 This uses MS Word as output format. [See here](https://quarto.org/docs/output-formats/ms-word.html) for more information. 
