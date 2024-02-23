@@ -46,6 +46,10 @@ mydata_cat <- mydata %>% select(region, larcster_usage, sarc_usage, trad_usage, 
 # create a summary table with counts of each level of each categorical variable
 summary_table <- tbl_summary(mydata_cat, statistic = all_categorical() ~ "{n}")
 print(summary_table)
+
+# save to file 
+summarytable_file <- here("results", "tables", "summarytablecat.rds")
+saveRDS(summary_table, file = summarytable_file)
 ```
 
 

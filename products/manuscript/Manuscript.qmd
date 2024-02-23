@@ -24,6 +24,7 @@ library(naniar)
 library(ggplot2)
 ```
 ## Project Part 1  
+
 # Data Source 
 The data source for this project is the Guttmacher Institute, which is a well-known research organization focusing on improving sexual and reproductive health around the world. The data used here is from their Adding It Up project. The goals of this project include estimating the need for, impact of, and costs associated with providing sexual and reproductive health services. Low and middle income countries are the target audience for this research, specifically women of reproductive age (15-49). Some of the variables included in this dataset are modern contraceptive use, unintended pregnancies, unplanned births, and abortions averted. Observations are drawn from nationally representative surveys, including Demographic and Health Surveys, UNICCEF Multiple Indicator Cluster Surveys, US Centers for Disease Control Reproductive Health Surveys, Performance Monitoring for Action Surveys, and others. The UN Population Division is the source of population projections for women in this age group, and estimates of unintended pregnancies are from the Guttmacher Institute, WHO, and other authors, which have been adjusted to 2019. 
 
@@ -77,47 +78,6 @@ We will be looking for patterns in contraceptive methods and higher unintended p
 # How to analyze 
 All of the variables used in this analysis are numeric, so we can build linear regression models to analyze how each method of contraception affects the percentage of unintended pregnancies. We can group countries together based on the subregion variable to compare how these relationships vary across the world as shown in the crude visualization above. There are other interesting variables that can be used for grouping for analysis such as wealth, urban/rural location, and marriage status. 
 
-# Project Part 2
-# Exploring and processing the data 
-The first priority when cleaning the data was analyzing missing values. We found that the `pct_upreg` variable containing the percentage of unintended pregnancies is unreliable due to missing data that could not be explained. We decided to use the variables with percentage of unintended pregnancies related to each birth control method as our outcome variables because they are complete and were found directly based on the AIU protocol information. We printed the summary table here because it was useful in determining missingness and creating a new factor variable for the usage of each birth control method at the factor level later in the processing sequence. 
-```{r}
-# show summary table to numeric variables with missing values
-print(summary_df)
-```
-We explored the distribution of the countries by five categorical variables: `region`, `larcster_usage`, `sarc_usage`, `trad_usage`, and `none_usage`. We found that most countries are located in Africa followed by Asia and Latin America/the Caribbean. Only 20 countries have high usage of long acting reversible and sterilization methods compared to 33 countries with high usage of short acting reversible and traditional methods. It is interesting that the distributions for short acting reversible method, traditional method, and no method usages are the same. 
-```{r}
-print(summary_table)
-```
-
-We created a multitude of exploratory plots to understand our data better. The histograms of percent of unintended pregnancies related to each method of birth control showed discrepancies in skewness. The `pct_upreg_larcster` and `pct_upreg_trad` variables are highly skewed right, which shows that more countries experience lower rates of unintended pregnancies when using these methods. The `pct_upreg_sarc` histogram is not as skewed. It shows that the percentage of unintended pregnancies among those using short acting reversible methods varies more between countries compared to long acting reversible methods. The histogram for `pct_upreg_none` shows that more countries report a higher percentage of unintended pregnancies among women who do not use any contraception, but it varies widely by country. 
-```{r}
-plot(p2)
-plot(p3)
-plot(p4)
-plot(p5)
-```
-
-The next set of variables we explored were the total counts of women using each birth control method. There were two large outliers that prevented the graphs from being useful. After exploring the outliers, we standardized using the population size of reproductive aged women (15-49 years). There is a positive association between the percentage of unintended pregnancies and the total number of women using that method of birth control for all three methods and those not using any method, which is to be expected. There is more variation among those using SARMs and traditional methods compared to those using long-acting reversible methods. Additionally, the lowest percentage in this category is around 35%, which is much higher than the percentages associated with the three birth control methods. 
-```{r}
-plot(p10)
-plot(p11)
-plot(p12)
-plot(p13)
-```
-We stratified these four graphs by region to examine how the relationships differ across each of the 6 regions. The long acting reversible and sterilization methods graph is a little difficult to decipher, but Asia has the highest percentages of unintended pregnancies, followed by Latin America/the Caribbean and Africa. The graph for short acting reversible methods shows clearer differences between regions, and Latin America/the Caribbean leads in the percentage of unintended pregnancies in this category, but Africa shows the sharpest increase in percentage of unintended pregnancies as the total population increases.Among women using traditional birth control methods, Europe has the sharpest increase in unintended pregnancies as population increases, but Asia has the highest percentage of unintended pregnancies in this category. The graph for women not using any birth control methods shows that Oceania has the highest percentage of unintended pregnancies. 
-```{r}
-plot(p14)
-plot(p15)
-plot(p16)
-plot(p17)
-```
-The last set of plots we created to explore the data are violin plots using the categorical usage variables for each birth control method. The first violin plot shows that the distribution of percentage of unintended pregnancies varies a lot among usage levels of long acting reversible and sterilization methods. High usage countries have a consistent percentage of unintended pregnancies, but countries with a medium usage level tend to have lower percentages of unintended pregnancies. It appears that the distribution of short acting reversible method usage is skewed towards lower percentages of unintended pregnancies across all usage levels, suggesting that more countries have lower percentage of unintended pregnancies among women using this method. Among women using traditional birth control methods, the distribution of percentage of unintended pregnancies is similar among medium and high usage countries, but low usage countries are skewed towards lower percentage of unintended pregnancies. While the distribution of percentage of unintended pregnancies is similar across the three usage levels for women not using any birth control method, the high usage countries appear to have a bottleneck in percentage of unintended pregnancies. The high and low usage countries appear to be skewed towards higher levels of unintended pregnancies, but the medium usage countries appear to have lower percentage of unintended pregnancies. 
-```{r}
-plot(p18)
-plot(p19)
-plot(p20)
-plot(p21)
-```
 
 # Summary/Abstract
 _Write a summary of your project._
@@ -164,17 +124,15 @@ _Describe your methods. That should describe the data, the cleaning processes, a
 
 ## Schematic of workflow
 
-Sometimes you might want to show a schematic diagram/figure that was not created with code (if you can do it with code, do it). @fig-schematic is an example of some - completely random/unrelated - schematic that was generated with Biorender.
+Sometimes you might want to show a schematic diagram/figure that was not created with code (if you can do it with code, do it). is an example of some - completely random/unrelated - schematic that was generated with Biorender.
 We store those figures in the `assets` folder.
 
 ```{r}
 #| label: fig-schematic
 #| fig-cap: "A figure that is manually generated and shows some overview/schematic. This has nothing to do with the data, it's just a random one from one of our projects I found and placed here."
 #| echo: FALSE
-knitr::include_graphics(here("products","assets","antigen-recognition.png"))
+# knitr::include_graphics(here("products","assets","antigen-recognition.png")) #commented out for the sake of knitting the file at this stage in the project 
 ```
-
-
 
 
 ## Data aquisition
@@ -194,37 +152,80 @@ _Explain anything related to your statistical analyses._
 
 # Results
 
-## Exploratory/Descriptive analysis
-
-_Use a combination of text/tables/figures to explore and describe your data. Show the most important descriptive results here. Additional ones should go in the supplement. Even more can be in the R and Quarto files that are part of your project._
-
-
-@tbl-summarytable shows a summary of the data.
-
-Note the loading of the data providing a **relative** path using the `../../` notation. (Two dots means a folder up). You never want to specify an **absolute** path like `C:\ahandel\myproject\results\` because if you share this with someone, it won't work for them since they don't have that path. You can also use the `here` R package to create paths. See examples of that below.
-
+## Exploratory/Descriptive analysis (Project Part 2)
+The first priority when cleaning the data was analyzing missing values, and our findings can be seen @tbl-summarytable. We found that the `pct_upreg` variable containing the percentage of unintended pregnancies is unreliable due to missing data that could not be explained. We decided to use the variables with percentage of unintended pregnancies related to each birth control method as our outcome variables because they are complete and were found directly based on the AIU protocol information. We printed the summary table here because it was useful in determining missingness and creating a new factor variable for the usage of each birth control method at the factor level later in the processing sequence. 
 ```{r}
 #| label: tbl-summarytable
-#| tbl-cap: "Data summary table."
+#| tbl-cap: "Summary table of numeric variables"
 #| echo: FALSE
-resulttable=readRDS("../../results/summarytable.rds")
-knitr::kable(resulttable)
+resulttable<- readRDS("../../results/tables/summarytable.rds")
+kable(resulttable)
 ```
 
+We explored the distribution of the countries by five categorical variables: `region`, `larcster_usage`, `sarc_usage`, `trad_usage`, and `none_usage` which is displayed in @tbl-summarytable2. We found that most countries are located in Africa followed by Asia and Latin America/the Caribbean. Only 20 countries have high usage of long acting reversible and sterilization methods compared to 33 countries with high usage of short acting reversible and traditional methods. It is interesting that the distributions for short acting reversible method, traditional method, and no method usages are the same. 
+```{r}
+#| label: tbl-summarytable2
+#| tbl-cap: "Summary table for categorical variables"
+#| echo: FALSE
+resulttable2 <- readRDS("../../results/tables/summarytablecat.rds")
+kable(resulttable2)
+```
 
+We created a multitude of exploratory plots to understand our data better. The histograms of percent of unintended pregnancies related to each method of birth control showed discrepancies in skewness which can be seen @exploratory-result. The `pct_upreg_larcster` and `pct_upreg_trad` variables are highly skewed right, which shows that more countries experience lower rates of unintended pregnancies when using these methods. The `pct_upreg_sarc` histogram is not as skewed. It shows that the percentage of unintended pregnancies among those using short acting reversible methods varies more between countries compared to long acting reversible methods. The histogram for `pct_upreg_none` shows that more countries report a higher percentage of unintended pregnancies among women who do not use any contraception, but it varies widely by country. 
+```{r}
+#| label: exploratory-result
+#| fig-cap: "Histograms of Percentage of Unintended Pregnancy Use by Birth Control Method"
+#| echo: FALSE
+knitr::include_graphics(here("results", "figures", "exploratory-figures", "pctupreg_larcster_distribution.png"))
+knitr::include_graphics(here("results", "figures", "exploratory-figures", "pctupreg_sarc_distribution.png"))
+knitr::include_graphics(here("results", "figures", "exploratory-figures", "pctupreg_trad_distribution.png"))
+knitr::include_graphics(here("results", "figures", "exploratory-figures", "pctupreg_nouse_distribution.png"))
+```
+
+The next set of variables we explored were the total counts of women using each birth control method. There were two large outliers that prevented the graphs from being useful. After exploring the outliers, we standardized using the population size of reproductive aged women (15-49 years). There is a positive association between the percentage of unintended pregnancies and the total number of women using that method of birth control for all three methods and those not using any method, which is to be expected. There is more variation among those using SARMs and traditional methods compared to those using long-acting reversible methods. Additionally, the lowest percentage in this category is around 35%, which is much higher than the percentages associated with the three birth control methods. These figures can be seen @exploratory-result2.
+```{r}
+#| label: exploratory-result2
+#| fig-cap: "Relationship between Percentage of Unintended Pregnancies and Standardized Population Totals"
+#| echo: FALSE
+knitr::include_graphics(here("results", "figures", "exploratory-figures", "pctuppreg_totallarcster.png"))
+knitr::include_graphics(here("results", "figures", "exploratory-figures", "pctupreg_totalsarc.png"))
+knitr::include_graphics(here("results", "figures", "exploratory-figures", "pctupreg_totaltrad.png"))
+knitr::include_graphics(here("results", "figures", "exploratory-figures", "pctupreg_totalnone.png"))
+```
+
+We stratified these four graphs by region to examine how the relationships differ across each of the 6 regions which is shown in @exploratory-result3 . The long acting reversible and sterilization methods graph is a little difficult to decipher, but Asia has the highest percentages of unintended pregnancies, followed by Latin America/the Caribbean and Africa. The graph for short acting reversible methods shows clearer differences between regions, and Latin America/the Caribbean leads in the percentage of unintended pregnancies in this category, but Africa shows the sharpest increase in percentage of unintended pregnancies as the total population increases.Among women using traditional birth control methods, Europe has the sharpest increase in unintended pregnancies as population increases, but Asia has the highest percentage of unintended pregnancies in this category. The graph for women not using any birth control methods shows that Oceania has the highest percentage of unintended pregnancies. 
+```{r}
+#| label: exploratory-result3
+#| fig-cap: "Percentage of Unintended Pregnancies Stratified by Region"
+#| echo: FALSE
+knitr::include_graphics(here("results", "figures", "exploratory-figures", "pctupreg_larcster_stratified.png"))
+knitr::include_graphics(here("results", "figures", "exploratory-figures", "pctupreg_sarc_stratified.png"))
+knitr::include_graphics(here("results", "figures", "exploratory-figures", "pctupreg_trad_stratified.png"))
+knitr::include_graphics(here("results", "figures", "exploratory-figures", "pctupreg_none_stratified.png"))
+```
+
+The last set of plots we created to explore the data are violin plots using the categorical usage variables for each birth control method as shown in @exploratory-result4. The first violin plot shows that the distribution of percentage of unintended pregnancies varies a lot among usage levels of long acting reversible and sterilization methods. High usage countries have a consistent percentage of unintended pregnancies, but countries with a medium usage level tend to have lower percentages of unintended pregnancies. It appears that the distribution of short acting reversible method usage is skewed towards lower percentages of unintended pregnancies across all usage levels, suggesting that more countries have lower percentage of unintended pregnancies among women using this method. Among women using traditional birth control methods, the distribution of percentage of unintended pregnancies is similar among medium and high usage countries, but low usage countries are skewed towards lower percentage of unintended pregnancies. While the distribution of percentage of unintended pregnancies is similar across the three usage levels for women not using any birth control method, the high usage countries appear to have a bottleneck in percentage of unintended pregnancies. The high and low usage countries appear to be skewed towards higher levels of unintended pregnancies, but the medium usage countries appear to have lower percentage of unintended pregnancies. 
+```{r}
+#| label: exploratory-result4
+#| fig-cap: "Violin Plots with Birth Control Usage Levels"
+#| echo: FALSE
+knitr::include_graphics(here("results", "figures", "exploratory-figures", "larcster_pctupreg_violin.png"))
+knitr::include_graphics(here("results", "figures", "exploratory-figures", "sarc_pctupreg_violin.png"))
+knitr::include_graphics(here("results", "figures", "exploratory-figures", "trad_pctupreg_violin.png"))
+knitr::include_graphics(here("results", "figures", "exploratory-figures", "none_pctupreg_violin.png"))
+```
 
 ## Basic statistical analysis
 
 _To get some further insight into your data, if reasonable you could compute simple statistics (e.g. simple models with 1 predictor) to look for associations between your outcome(s) and each individual predictor variable. Though note that unless you pre-specified the outcome and main exposure, any "p<0.05 means statistical significance" interpretation is not valid._
 
-
-@fig-result shows a scatterplot figure produced by one of the R scripts.
+shows a scatterplot figure produced by one of the R scripts.
 
 ```{r}
 #| label: fig-result
 #| fig-cap: "Height and weight stratified by gender."
 #| echo: FALSE
-knitr::include_graphics(here("results","height-weight-stratified.png"))
+# knitr::include_graphics(here("results","height-weight-stratified.png")) #commented out for the sake of knitting our project at this stage
 ```
 
 
@@ -238,8 +239,8 @@ Example @tbl-resulttable2 shows a summary of a linear model fit.
 #| label: tbl-resulttable2
 #| tbl-cap: "Linear model fit table."
 #| echo: FALSE
-resulttable2 = readRDS(here("results","tables-files","resulttable2.rds"))
-knitr::kable(resulttable2)
+# resulttable2 = readRDS(here("results","tables-files","resulttable2.rds"))
+# knitr::kable(resulttable2) #commented out for the sake of knitting our project at this stage
 ```
 
 
