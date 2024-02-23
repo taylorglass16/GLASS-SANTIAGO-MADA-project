@@ -15,10 +15,7 @@ csl: ../assets/apa.csl
 This uses MS Word as output format. [See here](https://quarto.org/docs/output-formats/ms-word.html) for more information. 
 
 ```{r, echo=FALSE, message=FALSE}
-xcode-select --install
 # load a few R packages
-install.packages("dplyr")
-install.packages("naniar")
 library(here)
 library(readr)
 library(knitr)
@@ -82,9 +79,9 @@ All of the variables used in this analysis are numeric, so we can build linear r
 
 # Project Part 2
 # Exploring and processing the data 
-The first priority when cleaning the data was analyzing missing values. We found that the `pct_upreg` variable containing the percentage of unintended pregnancies is unreliable due to missing data that could not be explained. We decided to use the variables with percentage of unintended pregnancies related to each birth control method as our outcome variables because they are complete and were found directly based on the AIU protocol information. We printed the summary table here becacuse it was useful in determining missingness and creating a new factor variable for the usage of each birth control method at the factor level later in the processing sequence. 
+The first priority when cleaning the data was analyzing missing values. We found that the `pct_upreg` variable containing the percentage of unintended pregnancies is unreliable due to missing data that could not be explained. We decided to use the variables with percentage of unintended pregnancies related to each birth control method as our outcome variables because they are complete and were found directly based on the AIU protocol information. We printed the summary table here because it was useful in determining missingness and creating a new factor variable for the usage of each birth control method at the factor level later in the processing sequence. 
 ```{r}
-# show summary table to numeric variables with misssing values
+# show summary table to numeric variables with missing values
 print(summary_df)
 ```
 We explored the distribution of the countries by five categorical variables: `region`, `larcster_usage`, `sarc_usage`, `trad_usage`, and `none_usage`. We found that most countries are located in Africa followed by Asia and Latin America/the Caribbean. Only 20 countries have high usage of long acting reversible and sterilization methods compared to 33 countries with high usage of short acting reversible and traditional methods. It is interesting that the distributions for short acting reversible method, traditional method, and no method usages are the same. 
