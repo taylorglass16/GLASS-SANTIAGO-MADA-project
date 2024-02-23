@@ -104,9 +104,9 @@ This data originates from the Guttmacher Institute's Adding It Up project. The d
 ## Questions/Hypotheses to be addressed
 _State the research questions you plan to answer with this analysis._
 
-1. How does marriage status affect percentage of unintended pregnancies across different types of birth control?
+1. Is there a significant difference in the percentage of unplanned pregnancies between three  contraceptive methods among all countries compared to no usage?
 
-2. Is there a significant difference in the percentage of unplanned pregnancies between reversible contraceptives (LARCs?) among the age groups (20-24) and (35-49)?
+2. How does marriage status affect percentage of usage across three different types of birth control per region? (back-up question)
 
 
 
@@ -232,8 +232,9 @@ Note that this cited reference will show up at the end of the document, the refe
 
 # References
 
-https://pubmed.ncbi.nlm.nih.gov/32981858/
-https://pubmed.ncbi.nlm.nih.gov/30687521/ #This study is set in Senegal 
-https://www.sciencedirect.com/science/article/pii/S001078241730478X 
-https://www.sciencedirect.com/science/article/abs/pii/S0020729211005406 #legal status article
+- https://pubmed.ncbi.nlm.nih.gov/32981858/
+- https://www.sciencedirect.com/science/article/pii/S001078241730478X 
+- https://www.sciencedirect.com/science/article/abs/pii/S0020729211005406 #legal status article
+- https://www.guttmacher.org/report/adding-it-up-investing-in-sexual-reproductive-health-2019-methodology (Guttmacher source)
+- https://pubmed.ncbi.nlm.nih.gov/35332057/ (original source of data)
 
