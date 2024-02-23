@@ -12,7 +12,7 @@ bibliography: ../assets/dataanalysis-references.bib
 csl: ../assets/apa.csl
 ---
 
-This uses MS Word as output format. [See here](https://quarto.org/docs/output-formats/ms-word.html) for more information. You can switch to other formats, like html or pdf. See [the Quarto documentation](https://quarto.org/) for other formats.
+This uses MS Word as output format. [See here](https://quarto.org/docs/output-formats/ms-word.html) for more information. 
 
 ```{r, echo=FALSE, message=FALSE}
 xcode-select --install
@@ -80,6 +80,48 @@ We will be looking for patterns in contraceptive methods and higher unintended p
 # How to analyze 
 All of the variables used in this analysis are numeric, so we can build linear regression models to analyze how each method of contraception affects the percentage of unintended pregnancies. We can group countries together based on the subregion variable to compare how these relationships vary across the world as shown in the crude visualization above. There are other interesting variables that can be used for grouping for analysis such as wealth, urban/rural location, and marriage status. 
 
+# Project Part 2
+# Exploring and processing the data 
+The first priority when cleaning the data was analyzing missing values. We found that the `pct_upreg` variable containing the percentage of unintended pregnancies is unreliable due to missing data that could not be explained. We decided to use the variables with percentage of unintended pregnancies related to each birth control method as our outcome variables because they are complete and were found directly based on the AIU protocol information. We printed the summary table here becacuse it was useful in determining missingness and creating a new factor variable for the usage of each birth control method at the factor level later in the processing sequence. 
+```{r}
+# show summary table to numeric variables with misssing values
+print(summary_df)
+```
+We explored the distribution of the countries by five categorical variables: `region`, `larcster_usage`, `sarc_usage`, `trad_usage`, and `none_usage`. We found that most countries are located in Africa followed by Asia and Latin America/the Caribbean. Only 20 countries have high usage of long acting reversible and sterilization methods compared to 33 countries with high usage of short acting reversible and traditional methods. It is interesting that the distributions for short acting reversible method, traditional method, and no method usages are the same. 
+```{r}
+print(summary_table)
+```
+
+We created a multitude of exploratory plots to understand our data better. The histograms of percent of unintended pregnancies related to each method of birth control showed discrepancies in skewness. The `pct_upreg_larcster` and `pct_upreg_trad` variables are highly skewed right, which shows that more countries experience lower rates of unintended pregnancies when using these methods. The `pct_upreg_sarc` histogram is not as skewed. It shows that the percentage of unintended pregnancies among those using short acting reversible methods varies more between countries compared to long acting reversible methods. The histogram for `pct_upreg_none` shows that more countries report a higher percentage of unintended pregnancies among women who do not use any contraception, but it varies widely by country. 
+```{r}
+plot(p2)
+plot(p3)
+plot(p4)
+plot(p5)
+```
+
+The next set of variables we explored were the total counts of women using each birth control method. There were two large outliers that prevented the graphs from being useful. After exploring the outliers, we standardized using the population size of reproductive aged women (15-49 years). There is a positive association between the percentage of unintended pregnancies and the total number of women using that method of birth control for all three methods and those not using any method, which is to be expected. There is more variation among those using SARMs and traditional methods compared to those using long-acting reversible methods. Additionally, the lowest percentage in this category is around 35%, which is much higher than the percentages associated with the three birth control methods. 
+```{r}
+plot(p10)
+plot(p11)
+plot(p12)
+plot(p13)
+```
+We stratified these four graphs by region to examine how the relationships differ across each of the 6 regions. The long acting reversible and sterilization methods graph is a little difficult to decipher, but Asia has the highest percentages of unintended pregnancies, followed by Latin America/the Caribbean and Africa. The graph for short acting reversible methods shows clearer differences between regions, and Latin America/the Caribbean leads in the percentage of unintended pregnancies in this category, but Africa shows the sharpest increase in percentage of unintended pregnancies as the total population increases.Among women using traditional birth control methods, Europe has the sharpest increase in unintended pregnancies as population increases, but Asia has the highest percentage of unintended pregnancies in this category. The graph for women not using any birth control methods shows that Oceania has the highest percentage of unintended pregnancies. 
+```{r}
+plot(p14)
+plot(p15)
+plot(p16)
+plot(p17)
+```
+The last set of plots we created to explore the data are violin plots using the categorical usage variables for each birth control method. The first violin plot shows that the distribution of percentage of unintended pregnancies varies a lot among usage levels of long acting reversible and sterilization methods. High usage countries have a consistent percentage of unintended pregnancies, but countries with a medium usage level tend to have lower percentages of unintended pregnancies. It appears that the distribution of short acting reversible method usage is skewed towards lower percentages of unintended pregnancies across all usage levels, suggesting that more countries have lower percentage of unintended pregnancies among women using this method. Among women using traditional birth control methods, the distribution of percentage of unintended pregnancies is similar among medium and high usage countries, but low usage countries are skewed towards lower percentage of unintended pregnancies. While the distribution of percentage of unintended pregnancies is similar across the three usage levels for women not using any birth control method, the high usage countries appear to have a bottleneck in percentage of unintended pregnancies. The high and low usage countries appear to be skewed towards higher levels of unintended pregnancies, but the medium usage countries appear to have lower percentage of unintended pregnancies. 
+```{r}
+plot(p18)
+plot(p19)
+plot(p20)
+plot(p21)
+```
+
 # Summary/Abstract
 _Write a summary of your project._
 
@@ -111,7 +153,6 @@ _State the research questions you plan to answer with this analysis._
 
 
 To cite other work (important everywhere, but likely happens first in introduction), make sure your references are in the bibtex file specified in the YAML header above (here `dataanalysis_template_references.bib`) and have the right bibtex key. Then you can include like this:
-
 Examples of reproducible research projects can for instance be found in [@mckay2020; @mckay2020a].
 
 

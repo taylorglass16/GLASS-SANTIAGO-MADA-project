@@ -1,2 +1,2 @@
-Folder for all tables included in the manuscript, usually stored as .rds files. 
+This is a folder for all tables included in the manuscript, stored as .rds files. 
 
