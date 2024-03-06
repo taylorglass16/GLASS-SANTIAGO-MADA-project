@@ -277,3 +277,7 @@ Note that this cited reference will show up at the end of the document, the refe
 - https://www.guttmacher.org/report/adding-it-up-investing-in-sexual-reproductive-health-2019-methodology (Guttmacher source)
 - https://pubmed.ncbi.nlm.nih.gov/35332057/ (original source of data)
 
+```{r}
+sessionInfo()
+```
+
