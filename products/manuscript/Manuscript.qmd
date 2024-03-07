@@ -279,5 +279,10 @@ Note that this cited reference will show up at the end of the document, the refe
 
 ```{r}
 sessionInfo()
+renv::status()
+renv:snapshot()
 ```
+
+
+
 
