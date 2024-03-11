@@ -1,0 +1,143 @@
+---
+title: "Statistical Analysis Script"
+author: "Taylor Glass and Arlyn Santiago"
+date: "03/12/24"
+output: html_document
+---
+## Load necessary packages
+```{r}
+#| message: false
+library(broom) #for cleaning up output from lm()
+library(here) #for data loading/saving
+library(tidymodels) # for model building 
+```
+## Load the cleaned data
+```{r}
+#path to data
+data_location <- here("data","processed-data","processeddata2.rds")
+#load data
+mydata <- readRDS(data_location)
+```
+
+## Data fitting and statistical analysis 
+The first trend we will investigate is if there is a stronger relationship between total usage of one method of birth control and percentage of unintended pregnancies associated with that method across the three birth control methods and no usage options. These models will allow us to predict unintended pregnancies based on population data about number of women using each type of contraception method per country. 
+
+### First Model Fit 
+The first model attempts to predict the percentage of unintended pregnancies among women using long acting reversible  and sterilization methods of contraception, 'pct_upreg_larcster', based on the total number of women using this method of contraception. We will use the version of the variable that has been standardized by population size, larcster_standard.
+```{r}
+# fit linear model using pct_upreg_larcster as outcome, larcster_standard as predictor
+lm_mod <- linear_reg() #specify the type of model
+lmfit1 <- lm_mod %>% 
+            fit(pct_upreg_larcster ~ larcster_standard, mydata) #estimate/train the model 
+
+#generate clean output with estimates and p-values
+tidy(lmfit1) 
+
+# save results from fit into a data frame 
+lmtable1 <- tidy(lmfit1)
+
+# save fit results table  
+table_file1 = here("results", "resulttable1.rds")
+saveRDS(lmtable1, file = table_file1)
+```
+
+### Second Model Fit 
+The second model attempts to predict the percentage of unintended pregnancies among women using short acting reversible methods of contraception 'pct_upreg_sarc' based on the total number of women using this method of contraception. We will use the version of the variable that has been standardized by population size, 'sarc_standard'. 
+```{r}
+# fit linear model using pct_upreg_sarc as outcome, sarc_standard as predictor
+lm_mod <- linear_reg() #specify the type of model
+lmfit2 <- lm_mod %>% 
+            fit(pct_upreg_sarc ~ sarc_standard, mydata) #estimate/train the model 
+
+#generate clean output with estimates and p-values
+tidy(lmfit2) 
+
+# save results from fit into a data frame 
+lmtable2 <- tidy(lmfit2)
+
+# save fit results table  
+table_file2 = here("results", "resulttable2.rds")
+saveRDS(lmtable2, file = table_file2)
+```
+### Third Model Fit 
+The second model attempts to predict the percentage of unintended pregnancies among women using traditional of contraception 'pct_upreg_trad' based on the total number of women using this method of contraception. We will use the version of the variable that has been standardized by population size, 'trad_standard'. 
+```{r}
+# fit linear model using pct_upreg_trad as outcome, trad_standard as predictor
+lm_mod <- linear_reg() #specify the type of model
+lmfit3 <- lm_mod %>% 
+            fit(pct_upreg_trad ~ trad_standard, mydata) #estimate/train the model 
+
+# generate clean output with estimates and p-values
+tidy(lmfit3)
+
+# save results from fit into a data frame 
+lmtable3 <- tidy(lmfit3)
+
+# save fit results table  
+table_file3 = here("results", "resulttable3.rds")
+saveRDS(lmtable3, file = table_file3)
+```
+### Fourth Model Fit 
+The fourth model attempts to predict the percentage of unintended pregnancies among women using no method of contraception 'pct_upreg_nouse' based on the total number of women not using a method of contraception. We will use the version of the variable that has been standardized by population size, 'none_standard'. 
+```{r}
+# fit linear model using pct_upreg_nouse as outcome, none_standard as predictor
+lm_mod <- linear_reg() #specify the type of model
+lmfit4 <- lm_mod %>% 
+            fit(pct_upreg_nouse ~ none_standard, mydata) #estimate/train the model 
+
+# generate clean output with estimates and p-values
+tidy(lmfit4) 
+
+# save results from fit into a data frame 
+lmtable4 <- tidy(lmfit4)
+
+# save fit results table  
+table_file4 = here("results", "resulttable4.rds")
+saveRDS(lmtable4, file = table_file4)
+```
+Based on the coefficient estimates for each parameter, the association between total number of women not using a contraception method is most strongly correlated with percentage of unintended pregnancies among those not using contraceptive methods, followed by those who use traditional methods and short-acting reversible methods. The long acting reversible and sterilization methods shows the weakest association based on these four models. 
+
+
+We want to explore if a model with all the variables of total number of women using each type of contraceptive method would be more accurate in estimating percentage of unintended pregnancies. 
+
+### Fifth Model Fit 
+```{r}
+# fit linear model using pct_upreg_nouse as outcome, none_standard as predictor
+lm_mod <- linear_reg() #specify the type of model
+lmfit5 <- lm_mod %>% #estimate/train the model 
+            fit(pct_upreg_larcster ~ larcster_standard + sarc_standard + trad_standard + none_standard, mydata)      
+
+#generate clean output with estimates and p-values
+tidy(lmfit5) 
+
+# save results from fit into a data frame 
+lmtable5 <- tidy(lmfit5)
+
+# save fit results table  
+table_file5 = here("results", "resulttable5.rds")
+saveRDS(lmtable5, file = table_file5)
+```
+These results show that only 'larcster_standard' showed a positive relationship with percentage of unintended pregnancies associated with long acting reversible and standardization techniques. This is to be expected. 
+
+
+We also want to determine if there is a relationship between the region and percentage of unintended pregnancies associated with each method of contraception. 
+
+### Sixth Model Fit 
+```{r}
+# fit linear model using pct_upreg_nouse as outcome, none_standard as predictor
+lm_mod <- linear_reg() #specify the type of model
+lmfit6 <- lm_mod %>% #estimate/train the model 
+            fit(pct_upreg_larcster ~ region, mydata)      
+
+#generate clean output with estimates and p-values
+tidy(lmfit6) 
+
+# save results from fit into a data frame 
+lmtable6 <- tidy(lmfit6)
+
+# save fit results table  
+table_file6 = here("results", "resulttable6.rds")
+saveRDS(lmtable6, file = table_file6)
+```
+
+

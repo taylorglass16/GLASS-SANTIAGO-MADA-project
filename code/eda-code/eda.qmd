@@ -8,7 +8,7 @@ output: html_document
 # Setup
 
 ```{r}
-#load needed packages. make sure they are installed.
+#load necessary packages
 library(here) #for data loading/saving
 library(dplyr) # for basic piping functions
 library(skimr) # for summarizing data
@@ -16,10 +16,10 @@ library(ggplot2) # for visualizing data
 library(gtsummary) # for creating tables
 ```
 
-Load the data.
+# Load the data
 
 ```{r}
-#Path to data
+#path to data
 data_location <- here("data","processed-data","processeddata.rds")
 #load data
 mydata <- readRDS(data_location)
@@ -165,7 +165,7 @@ z_score_counts <- (mydata$total_larcster - mean_count) / sd_count
 
 After reviewing the raw data set again, we found the `wra` variable that accounts for the number of women of reproductive age (15-49) in each country. Once this variable was added to the original processed data set, we could use it to standardize the total counts for each birth control method by population size of women of reprodutive age. 
 ```{r}
-# population size standarization for total counts per birth control method
+# population size standardization for total counts per birth control method
 mydata <- mydata %>% mutate(larcster_standard = total_larcster / wra,
                             sarc_standard = total_sarc / wra,
                             trad_standard = total_trad / wra, 
@@ -310,4 +310,17 @@ P19: It appears that the distribution of short acting reversible method usage is
 P20: Among women using traditional birth control methods, the distribution of percentage of unintended pregnancies is similar among medium and high usage countries, but low usage countries are skewed towards lower percentage of unintended pregnancies. 
 
 P21: While the distribution of percentage of unintended pregnancies is similar across the three usage levels for women not using any birth control method, the high usage countries appear to have a bottleneck in percentage of unintended pregnancies. The high and low usage countries appear to be skewed towards higher levels of unintended pregnancies, but the medium usage countries appear to have lower percentage of unintended pregnancies. 
+
+# Save data 
+Lastly, we will save this data with the new standardized total usage variables for each method of birth control as the second version of our processed data with only the variables necessary for the statistical analysis and modeling portion of the project. This new dataset is saved in the same location as the first processed dataset. 
+```{r}
+# select variables necessary for statistical analysis/modeling 
+processeddata2 <- mydata %>% select(country, wra, region, pct_upreg_larcster, pct_upreg_sarc, pct_upreg_trad,  pct_upreg_nouse, larcster_usage, sarc_usage, trad_usage, none_usage, larcster_standard, sarc_standard, trad_standard, none_standard)
+
+# save it to the same folder with the first version of the processed data
+save_data_location <- here("data","processed-data","processeddata2.rds")
+saveRDS(processeddata2, file = save_data_location)
+```
+
+
 
