@@ -11,10 +11,11 @@ library(broom) #for cleaning up output from lm()
 library(here) #for data loading/saving
 library(tidymodels) # for model building 
 ```
+
 ## Load the cleaned data
 ```{r}
 #path to data
-data_location <- here("data","processed-data","processeddata2.rds")
+data_location <- here("data","processed-data","processeddata.rds")
 #load data
 mydata <- readRDS(data_location)
 ```
@@ -119,7 +120,6 @@ saveRDS(lmtable5, file = table_file5)
 ```
 These results show that only 'larcster_standard' showed a positive relationship with percentage of unintended pregnancies associated with long acting reversible and standardization techniques. This is to be expected. 
 
-
 We also want to determine if there is a relationship between the region and percentage of unintended pregnancies associated with each method of contraception. 
 
 ### Sixth Model Fit 
@@ -139,5 +139,92 @@ lmtable6 <- tidy(lmfit6)
 table_file6 = here("results", "resulttable6.rds")
 saveRDS(lmtable6, file = table_file6)
 ```
+### Seventh Model Fit 
+```{r}
+# fit linear model using pct_upreg_sarc as outcome, pct_currentlymarried as predictor
+lm_mod <- linear_reg() #specify the type of model
+lmfit7 <- lm_mod %>% #estimate/train the model 
+            fit(pct_upreg_sarc ~ pct_currentlymarried, mydata)      
 
+#generate clean output with estimates and p-values
+tidy(lmfit7) 
 
+# save results from fit into a data frame 
+lmtable7 <- tidy(lmfit7)
+
+# save fit results table  
+table_file7 = here("results", "resulttable7.rds")
+saveRDS(lmtable7, file = table_file7)
+```
+
+# Eighth Model Fit 
+```{r}
+# fit linear model using pct_upreg_sarc as outcome, pct_nevermarried as predictor
+lm_mod <- linear_reg() #specify the type of model
+lmfit8 <- lm_mod %>% #estimate/train the model 
+            fit(pct_upreg_sarc ~ pct_nevermarried, mydata)      
+
+#generate clean output with estimates and p-values
+tidy(lmfit8) 
+
+# save results from fit into a data frame 
+lmtable8 <- tidy(lmfit8)
+
+# save fit results table  
+table_file8 = here("results", "resulttable7.rds")
+saveRDS(lmtable8, file = table_file8)
+```
+
+# Ninth Model Fit 
+```{r}
+# fit linear model using pct_upreg_sarc as outcome, rate_matdeaths as predictor
+lm_mod <- linear_reg() #specify the type of model
+lmfit9 <- lm_mod %>% #estimate/train the model 
+            fit(pct_upreg_sarc ~ rate_matdeaths, mydata)      
+
+#generate clean output with estimates and p-values
+tidy(lmfit9) 
+
+# save results from fit into a data frame 
+lmtable9 <- tidy(lmfit9)
+
+# save fit results table  
+table_file9 = here("results", "resulttable9.rds")
+saveRDS(lmtable9, file = table_file9)
+```
+
+# Tenth Model Fit 
+```{r}
+# fit linear model using pct_upreg_sarc as outcome, rate_matdeaths_upreg as predictor
+lm_mod <- linear_reg() #specify the type of model
+lmfit10 <- lm_mod %>% #estimate/train the model 
+            fit(pct_upreg_sarc ~ rate_matdeaths_upreg, mydata)      
+
+#generate clean output with estimates and p-values
+tidy(lmfit10) 
+
+# save results from fit into a data frame 
+lmtable10 <- tidy(lmfit10)
+
+# save fit results table  
+table_file10 = here("results", "resulttable10.rds")
+saveRDS(lmtable10, file = table_file10)
+```
+
+# Eleventh Model Fit 
+```{r}
+# fit linear model using pct_upreg_sarc as outcome, rate_matdeaths_abs as predictor
+lm_mod <- linear_reg() #specify the type of model
+lmfit11 <- lm_mod %>% #estimate/train the model 
+            fit(pct_upreg_sarc ~ rate_matdeaths_abs, mydata)      
+
+#generate clean output with estimates and p-values
+tidy(lmfit11) 
+
+# save results from fit into a data frame 
+lmtable11 <- tidy(lmfit11)
+
+# save fit results table  
+table_file11 = here("results", "resulttable9.rds")
+saveRDS(lmtable11, file = table_file11)
+```

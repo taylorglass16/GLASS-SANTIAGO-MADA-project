@@ -65,7 +65,7 @@ head(rawdata)
 skimr::skim(rawdata)
 ```
 # Identifying variables to be cleaned 
-We want to explore the relationship between unintended pregnancies and birth control methods across different age groups. We will use three demographic variable: `country`, `region`, and `subregion`. The variable for the total percentage of unintended pregnancies, `pct_upreg` will be the main outcome variable. We could also use `upreg_subreg` to explore unintended pregnancies by subregion. The predictor variables will include percentage of unintended pregnancies across three types of birth control: long acting reversible methods (`pct_upreg_larcster`), short term reversible methods (`pct_upreg_sarc`), traditional methods (`pct_upreg_trad`), and no method (`pct_upreg_nouse`). No method variables can serve as control groups for statistical tests. Covariates will include the number of women using each of these methods across four different age groups: 15-19, 20-24, 25-34, and 35-49. 
+We want to explore the relationship between unintended pregnancies and contraception methods. We will use three predictor variables: total number of women using the contraceptive method, region, number of safe abortions,  . The variable for the total percentage of unintended pregnancies, `pct_upreg` will be the main outcome variable with additional options for outcome variables of total percentage of unintended pregnancies by each contraceptive method: long acting reversible methods (`pct_upreg_larcster`), short term reversible methods (`pct_upreg_sarc`), traditional methods (`pct_upreg_trad`), and no method (`pct_upreg_nouse`). We will use multiple predictor variables including: total number of women using the contraceptive method, region, subregion, percentage of married women, percentage of women never married, total maternal deaths per 100,000 live births, deaths from unintended pregnancy per 100,000 live births, and deaths related to abortion per 100000 abortions. Covariates will include the number of women using each of these methods across four different age groups: 15-19, 20-24, 25-34, and 35-49. These variables will be summed to create total number of women using each type of contraception: 
 -Number of women 15-19 using long-acting reversible methods `larc_1519`
 -Number of women 15-19 using short-acting methods `sarc_1519`
 -Number of women 15-19 using traditional methods `tradmethods_1519`
@@ -84,11 +84,12 @@ We want to explore the relationship between unintended pregnancies and birth con
 -Number of women 35-49 using no method	`nomethod_3549`
 
 
+
 ```{r}
 #| message: false
 # select the outcome variable, predictor variables, and covariates  
 rawdata2 <- rawdata %>% 
-                select(country, wra, region, subregion, pct_upreg, upreg_subreg, pct_upreg_larcster, pct_upreg_sarc, pct_upreg_trad, pct_upreg_nouse, larc_1519, ster_1519, sarc_1519, tradmethods_1519, nomethod_1519, larc_2024, ster_2024, sarc_2024, tradmethods_2024, nomethod_2024, larc_2534, ster_2534, sarc_2534, tradmethods_2534,  nomethod_2534, larc_3549, ster_3549, sarc_3549, tradmethods_3549, nomethod_3549)
+                select(country, wra, region, subregion, pct_currentlymarried, pct_nevermarried, rate_matdeaths, rate_matdeaths_upreg, rate_matdeaths_abs, pct_upreg, upreg_subreg, pct_upreg_larcster, pct_upreg_sarc, pct_upreg_trad, pct_upreg_nouse, larc_1519, ster_1519, sarc_1519, tradmethods_1519, nomethod_1519, larc_2024, ster_2024, sarc_2024, tradmethods_2024, nomethod_2024, larc_2534, ster_2534, sarc_2534, tradmethods_2534,  nomethod_2534, larc_3549, ster_3549, sarc_3549, tradmethods_3549, nomethod_3549)
 
 # take a glimpse at the selected variables 
 skim(rawdata2)
@@ -143,7 +144,7 @@ rawdata2 <- rawdata2 %>%
               select(-upreg_subreg)
 ```
 
-Fortunately, the rest of the variables required for this analysis are complete including the `wra` variable with population size that we will need to standardize population counts later in the exploratory data analysis process. Each of the four variables describing the percentage of unintended pregnancies based on birth control type also need to be converted to traditional percentage format. 
+Fortunately, the rest of the variables required for this analysis are complete including the `wra` variable with population size that we will need to standardize population counts later in the exploratory data analysis process. Each of the four variables describing the percentage of unintended pregnancies based on birth control type and the two variables described percentage of married and non-married women also need to be converted to traditional percentage format. 
 ```{r}
 #| message: false
 # convert percentage variable to typical percentage format
@@ -151,13 +152,18 @@ rawdata2 <- rawdata2 %>%
               mutate(pct_upreg_larcster = pct_upreg_larcster * 100, 
                      pct_upreg_sarc = pct_upreg_sarc * 100, 
                      pct_upreg_trad = pct_upreg_trad * 100, 
-                     pct_upreg_nouse = pct_upreg_nouse * 100)
+                     pct_upreg_nouse = pct_upreg_nouse * 100,
+                     pct_currentlymarried = pct_currentlymarried * 100,
+                     pct_nevermarried = pct_nevermarried * 100)
+  
 
 # ensure mutations worked correctly
 summary(rawdata2$pct_upreg_larcster)
 summary(rawdata2$pct_upreg_sarc)
 summary(rawdata2$pct_upreg_trad)
 summary(rawdata2$pct_upreg_nouse)
+summary(rawdata2$pct_currentlymarried)
+summary(rawdata2$pct_nevermarried)
 ```
 
 We should address the missing data in the general `pct_upreg` here to avoid introducing bias because 18.18% of this variable is missing, and it is essential for answering the research question. After reviewing the codebook, the researchers provided an external source for this variable, which we have included in the references. The numbers in this source do not match what is included in the data set. After exploring the methodology for the Adding It Up study, we found their original data that matches what is recorded in the dataset. When we tried to create our own percentage of unintended pregnancy variable, we found that each birth control method adds up to account for 100% of unintended pregnancies. Since there are 24 observations missing in what should be the total unintended pregnancy variable, it is likely that the variables with the percentages of unintended pregnancies by birth control method were imputed or estimated. Missingness in the collection of data could also explain why the long-acting reversible contraceptives and sterilization method were combined into one category. Based on this discovery, we modified the question that we want to answer with the data to use variables that are complete and reliable: `pct_upreg_larcster`, `pct_upreg_sarc`, `pct_upreg_trad`, and `pct_upreg_nouse`. These variables will allow us to answer the question of is there a significant difference in the percentage of unplanned pregnancies between three contraceptive methods among all countries compared to no usage. 
@@ -182,6 +188,7 @@ rawdata2 <- rawdata2 %>%
 # explore summary of each total to set boundaries for each level of usage
 rawdata2 %>% skim(total_larcster, total_sarc, total_trad, total_none)
 ```
+
 After finding the distribution of number of women using each type of birth control, we can use that information to create a new factor variable denoting low, medium, and high usage for each method. The "low" category will include observations below the 25th percentile. The "medium" category will include observations between the 25th and 75th percentiles. The "high" category will include observations above the 75th percentile. 
 ```{r}
 #| message: false
@@ -271,6 +278,7 @@ rawdata2 <- rawdata2 %>% mutate(larcster_standard = total_larcster / wra,
                             trad_standard = total_trad / wra, 
                             none_standard = total_none / wra)
 ```
+ 
 
 Lastly, we will assign the clean data to a final variable, which makes it easier to add further cleaning steps above if necessary.
 
