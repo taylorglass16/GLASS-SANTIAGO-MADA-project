@@ -225,6 +225,52 @@ rawdata2 <- rawdata2 %>%
 # check if new variable was created correctly 
 class(rawdata2$none_usage)
 ```
+The exploratory data analysis in the eda.qmd file in the code > eda-code folder revealed outliers in the data that need to be addressed. 
+
+The two outliers make the histograms showing the distribution of total usage of birth control method by country very difficult to interpret. We need to explore where the outliers in these variables are coming from. 
+```{r}
+# find the countries that represent the outliers
+outliers <- rawdata2 %>% filter(total_larcster > 25000, 
+                              total_sarc > 25000,
+                              total_trad > 5000,
+                              total_none > 10000)
+
+# print the outliers
+outliers
+```
+
+China and India are the two countries that account for the outliers in all 4 variables, which is likely being skewed by population size. 
+
+The first method of standardizing we tried is creating proportions using the total count for each birth control method type. After creating these standardized variables, the same issue with outliers remained because China and India still account for the largest proportion of observations. Next, we considered using a scaling factor. We attempted this approach with the `total_larcster` variable and found the same issues as before. The third attempt at standarization utilized a min-max scaling with z-score normalization, but the outlier issue remained. 
+```{r}
+# standardization attempt 1
+rawdata2 <- rawdata2 %>% mutate(larcster_st = total_larcster / sum(total_larcster),
+                            sarc_st = total_sarc / sum(total_sarc),
+                            trad_st = total_trad / sum(total_trad),
+                            none_st = total_none / sum(total_none))
+
+# standardization attempt 2
+scaling_factor_larcster <- max(rawdata2$total_larcster)
+rawdata2 <- rawdata2 %>% mutate(standardized_larcster = total_larcster / scaling_factor_larcster)
+
+# standardization attempt 3
+min_count <- min(rawdata2$total_larcster)
+max_count <- max(rawdata2$total_larcster)
+scaled_counts <- (rawdata2$total_larcster - min_count) / (max_count - min_count)
+print(scaled_counts)
+mean_count <- mean(rawdata2$total_larcster)
+sd_count <- sd(rawdata2$total_larcster)
+z_score_counts <- (rawdata2$total_larcster - mean_count) / sd_count
+```
+
+After reviewing the raw data set again, we found the `wra` variable that accounts for the number of women of reproductive age (15-49) in each country. Once this variable was added to the original processed data set, we could use it to standardize the total counts for each birth control method by population size of women of reproductive age. 
+```{r}
+# population size standardization for total counts per birth control method
+rawdata2 <- rawdata2 %>% mutate(larcster_standard = total_larcster / wra,
+                            sarc_standard = total_sarc / wra,
+                            trad_standard = total_trad / wra, 
+                            none_standard = total_none / wra)
+```
 
 Lastly, we will assign the clean data to a final variable, which makes it easier to add further cleaning steps above if necessary.
 
