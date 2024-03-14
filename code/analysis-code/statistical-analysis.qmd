@@ -38,7 +38,7 @@ tidy(lmfit1)
 lmtable1 <- tidy(lmfit1)
 
 # save fit results table  
-table_file1 = here("results", "resulttable1.rds")
+table_file1 = here("results", "tables", "resulttable1.rds")
 saveRDS(lmtable1, file = table_file1)
 ```
 There appears to be a very strong relationship between total number of women using this birth control method and the outcome based on the coefficient estimate of 87.65998.
@@ -57,7 +57,7 @@ tidy(lmfit2)
 lmtable2 <- tidy(lmfit2)
 
 # save fit results table  
-table_file2 = here("results", "resulttable2.rds")
+table_file2 = here("results", "tables", "resulttable2.rds")
 saveRDS(lmtable2, file = table_file2)
 ```
 This model shows that the Latin America/the Carribean region has the strongest association with the outcome variable based on a coefficient estimate of 1.6218844 followed closely by the Asia region. The Oceania region has the weakest association with the outcome variable based on a coefficient estimate of 0.2512100.
@@ -76,7 +76,7 @@ tidy(lmfit3)
 lmtable3 <- tidy(lmfit3)
 
 # save fit results table  
-table_file3 = here("results", "resulttable3.rds")
+table_file3 = here("results", "tables", "resulttable3.rds")
 saveRDS(lmtable3, file = table_file3)
 ```
 This model shows there is a negative relationship between the number of women currently married and the outcome. As the percentage of currently married women increases by 1, the percentage of unintended pregnancies decreases by a factor of 0.4181571.
@@ -95,7 +95,7 @@ tidy(lmfit4)
 lmtable4 <- tidy(lmfit4)
 
 # save fit results table  
-table_file4 = here("results", "resulttable4.rds")
+table_file4 = here("results", "tables", "resulttable4.rds")
 saveRDS(lmtable4, file = table_file4)
 ```
 This model shows a positive relationship between the percentage of women never married and the outcome. As the percentage of women never married increases by 1, the percentage of unintended pregnancies increases by a factor of 0.2474218.  
@@ -114,7 +114,7 @@ tidy(lmfit5)
 lmtable5 <- tidy(lmfit5)
 
 # save fit results table  
-table_file5 = here("results", "resulttable5.rds")
+table_file5 = here("results", "tables", "resulttable5.rds")
 saveRDS(lmtable5, file = table_file5)
 ```
 This model shows that total rate of maternal deaths is slightly negatively correlated with the outcome based on a small coefficient estimate of -0.01482568. 
@@ -133,7 +133,7 @@ tidy(lmfit6)
 lmtable6 <- tidy(lmfit6)
 
 # save fit results table  
-table_file6 = here("results", "resulttable6.rds")
+table_file6 = here("results", "tables", "resulttable6.rds")
 saveRDS(lmtable6, file = table_file6)
 ```
 This model shows that total rate of maternal deaths due to unintended pregnancies has an even weaker association with the outcome based on a small coefficient estimate of -0.003158542. 
@@ -152,7 +152,7 @@ tidy(lmfit7)
 lmtable7 <- tidy(lmfit7)
 
 # save fit results table  
-table_file7 = here("results", "resulttable7.rds")
+table_file7 = here("results", "tables", "resulttable7.rds")
 saveRDS(lmtable7, file = table_file7)
 ```
 This model shows that total rate of maternal deaths due to abortion has the strongest association with the outcome out of the three maternal mortality rates included based on a coefficient estimate of -0.033353527.
@@ -172,7 +172,7 @@ tidy(lmfit8)
 lmtable8 <- tidy(lmfit8)
 
 # save fit results table  
-table_file8 = here("results", "resulttable8.rds")
+table_file8 = here("results", "tables", "resulttable8.rds")
 saveRDS(lmtable8, file = table_file8)
 ```
 This model shows the strongest predictor is the number of women using short acting reversible contraception with a huge coefficient of 85.6433. The next strongest predictor is the European region followed by the Latin America/the Caribbean region and the Asia region, which is a shift from the model with the singular region predictor. The Oceania region now has a negative association with the outcome. Both of the marriage status predictors are associated with a decrease in the outcome. The coefficient estimates for the rate of maternal death due to unintended pregnancies and abortion both flipped from the single predictor models to show a positive association with the outcome. 
