@@ -21,15 +21,15 @@ mydata <- readRDS(data_location)
 ```
 
 ## Data fitting and statistical analysis 
-The first trend we will investigate is if there is a stronger relationship between total usage of one method of birth control and percentage of unintended pregnancies associated with that method across the three birth control methods and no usage options. These models will allow us to predict unintended pregnancies based on population data about number of women using each type of contraception method per country. 
+The outcome of interest in all of the following models is the percentage of unintended pregnancies associated with usage of short acting reversible contraception methods. The predictors used in our models include total number of women using short acting reversible methods standardized by population size, region, percent of women currently married, percent of women never married, total rate of maternal deaths, rate of maternal deaths due to unintended pregnancy, and rate of maternal deaths due to abortion. We are considering adding another predictor using a political freedom index for each country.
 
 ### First Model Fit 
-The first model attempts to predict the percentage of unintended pregnancies among women using long acting reversible  and sterilization methods of contraception, 'pct_upreg_larcster', based on the total number of women using this method of contraception. We will use the version of the variable that has been standardized by population size, larcster_standard.
+The second model attempts to predict the percentage of unintended pregnancies among women using short acting reversible methods of contraception 'pct_upreg_sarc' based on the total number of women using this method of contraception. We will use the version of the variable that has been standardized by population size, 'sarc_standard'. 
 ```{r}
-# fit linear model using pct_upreg_larcster as outcome, larcster_standard as predictor
+# fit linear model using pct_upreg_sarc as outcome, sarc_standard as predictor
 lm_mod <- linear_reg() #specify the type of model
 lmfit1 <- lm_mod %>% 
-            fit(pct_upreg_larcster ~ larcster_standard, mydata) #estimate/train the model 
+            fit(pct_upreg_sarc ~ sarc_standard, mydata) #estimate/train the model 
 
 #generate clean output with estimates and p-values
 tidy(lmfit1) 
@@ -41,14 +41,14 @@ lmtable1 <- tidy(lmfit1)
 table_file1 = here("results", "resulttable1.rds")
 saveRDS(lmtable1, file = table_file1)
 ```
+There appears to be a very strong relationship between total number of women using this birth control method and the outcome based on the coefficient estimate of 87.65998.
 
 ### Second Model Fit 
-The second model attempts to predict the percentage of unintended pregnancies among women using short acting reversible methods of contraception 'pct_upreg_sarc' based on the total number of women using this method of contraception. We will use the version of the variable that has been standardized by population size, 'sarc_standard'. 
 ```{r}
-# fit linear model using pct_upreg_sarc as outcome, sarc_standard as predictor
+# fit linear model using pct_upreg_sarc as outcome, region as predictor
 lm_mod <- linear_reg() #specify the type of model
-lmfit2 <- lm_mod %>% 
-            fit(pct_upreg_sarc ~ sarc_standard, mydata) #estimate/train the model 
+lmfit2 <- lm_mod %>% #estimate/train the model 
+            fit(pct_upreg_larcster ~ region, mydata)      
 
 #generate clean output with estimates and p-values
 tidy(lmfit2) 
@@ -60,16 +60,17 @@ lmtable2 <- tidy(lmfit2)
 table_file2 = here("results", "resulttable2.rds")
 saveRDS(lmtable2, file = table_file2)
 ```
-### Third Model Fit 
-The second model attempts to predict the percentage of unintended pregnancies among women using traditional of contraception 'pct_upreg_trad' based on the total number of women using this method of contraception. We will use the version of the variable that has been standardized by population size, 'trad_standard'. 
-```{r}
-# fit linear model using pct_upreg_trad as outcome, trad_standard as predictor
-lm_mod <- linear_reg() #specify the type of model
-lmfit3 <- lm_mod %>% 
-            fit(pct_upreg_trad ~ trad_standard, mydata) #estimate/train the model 
+This model shows that the Latin America/the Carribean region has the strongest association with the outcome variable based on a coefficient estimate of 1.6218844 followed closely by the Asia region. The Oceania region has the weakest association with the outcome variable based on a coefficient estimate of 0.2512100.
 
-# generate clean output with estimates and p-values
-tidy(lmfit3)
+### Third Model Fit 
+```{r}
+# fit linear model using pct_upreg_sarc as outcome, pct_currentlymarried as predictor
+lm_mod <- linear_reg() #specify the type of model
+lmfit3 <- lm_mod %>% #estimate/train the model 
+            fit(pct_upreg_sarc ~ pct_currentlymarried, mydata)      
+
+#generate clean output with estimates and p-values
+tidy(lmfit3) 
 
 # save results from fit into a data frame 
 lmtable3 <- tidy(lmfit3)
@@ -78,15 +79,16 @@ lmtable3 <- tidy(lmfit3)
 table_file3 = here("results", "resulttable3.rds")
 saveRDS(lmtable3, file = table_file3)
 ```
-### Fourth Model Fit 
-The fourth model attempts to predict the percentage of unintended pregnancies among women using no method of contraception 'pct_upreg_nouse' based on the total number of women not using a method of contraception. We will use the version of the variable that has been standardized by population size, 'none_standard'. 
-```{r}
-# fit linear model using pct_upreg_nouse as outcome, none_standard as predictor
-lm_mod <- linear_reg() #specify the type of model
-lmfit4 <- lm_mod %>% 
-            fit(pct_upreg_nouse ~ none_standard, mydata) #estimate/train the model 
+This model shows there is a negative relationship between the number of women currently married and the outcome. As the percentage of currently married women increases by 1, the percentage of unintended pregnancies decreases by a factor of 0.4181571.
 
-# generate clean output with estimates and p-values
+# Fourth Model Fit 
+```{r}
+# fit linear model using pct_upreg_sarc as outcome, pct_nevermarried as predictor
+lm_mod <- linear_reg() #specify the type of model
+lmfit4 <- lm_mod %>% #estimate/train the model 
+            fit(pct_upreg_sarc ~ pct_nevermarried, mydata)      
+
+#generate clean output with estimates and p-values
 tidy(lmfit4) 
 
 # save results from fit into a data frame 
@@ -96,17 +98,14 @@ lmtable4 <- tidy(lmfit4)
 table_file4 = here("results", "resulttable4.rds")
 saveRDS(lmtable4, file = table_file4)
 ```
-Based on the coefficient estimates for each parameter, the association between total number of women not using a contraception method is most strongly correlated with percentage of unintended pregnancies among those not using contraceptive methods, followed by those who use traditional methods and short-acting reversible methods. The long acting reversible and sterilization methods shows the weakest association based on these four models. 
+This model shows a positive relationship between the percentage of women never married and the outcome. As the percentage of women never married increases by 1, the percentage of unintended pregnancies increases by a factor of 0.2474218.  
 
-
-We want to explore if a model with all the variables of total number of women using each type of contraceptive method would be more accurate in estimating percentage of unintended pregnancies. 
-
-### Fifth Model Fit 
+# Fifth Model Fit 
 ```{r}
-# fit linear model using pct_upreg_nouse as outcome, none_standard as predictor
+# fit linear model using pct_upreg_sarc as outcome, rate_matdeaths as predictor
 lm_mod <- linear_reg() #specify the type of model
 lmfit5 <- lm_mod %>% #estimate/train the model 
-            fit(pct_upreg_larcster ~ larcster_standard + sarc_standard + trad_standard + none_standard, mydata)      
+            fit(pct_upreg_sarc ~ rate_matdeaths, mydata)      
 
 #generate clean output with estimates and p-values
 tidy(lmfit5) 
@@ -118,16 +117,14 @@ lmtable5 <- tidy(lmfit5)
 table_file5 = here("results", "resulttable5.rds")
 saveRDS(lmtable5, file = table_file5)
 ```
-These results show that only 'larcster_standard' showed a positive relationship with percentage of unintended pregnancies associated with long acting reversible and standardization techniques. This is to be expected. 
+This model shows that total rate of maternal deaths is slightly negatively correlated with the outcome based on a small coefficient estimate of -0.01482568. 
 
-We also want to determine if there is a relationship between the region and percentage of unintended pregnancies associated with each method of contraception. 
-
-### Sixth Model Fit 
+# Sixth Model Fit 
 ```{r}
-# fit linear model using pct_upreg_nouse as outcome, none_standard as predictor
+# fit linear model using pct_upreg_sarc as outcome, rate_matdeaths_upreg as predictor
 lm_mod <- linear_reg() #specify the type of model
 lmfit6 <- lm_mod %>% #estimate/train the model 
-            fit(pct_upreg_larcster ~ region, mydata)      
+            fit(pct_upreg_sarc ~ rate_matdeaths_upreg, mydata)      
 
 #generate clean output with estimates and p-values
 tidy(lmfit6) 
@@ -139,12 +136,14 @@ lmtable6 <- tidy(lmfit6)
 table_file6 = here("results", "resulttable6.rds")
 saveRDS(lmtable6, file = table_file6)
 ```
-### Seventh Model Fit 
+This model shows that total rate of maternal deaths due to unintended pregnancies has an even weaker association with the outcome based on a small coefficient estimate of -0.003158542. 
+
+# Seventh Model Fit 
 ```{r}
-# fit linear model using pct_upreg_sarc as outcome, pct_currentlymarried as predictor
+# fit linear model using pct_upreg_sarc as outcome, rate_matdeaths_abs as predictor
 lm_mod <- linear_reg() #specify the type of model
 lmfit7 <- lm_mod %>% #estimate/train the model 
-            fit(pct_upreg_sarc ~ pct_currentlymarried, mydata)      
+            fit(pct_upreg_sarc ~ rate_matdeaths_abs, mydata)      
 
 #generate clean output with estimates and p-values
 tidy(lmfit7) 
@@ -156,13 +155,15 @@ lmtable7 <- tidy(lmfit7)
 table_file7 = here("results", "resulttable7.rds")
 saveRDS(lmtable7, file = table_file7)
 ```
+This model shows that total rate of maternal deaths due to abortion has the strongest association with the outcome out of the three maternal mortality rates included based on a coefficient estimate of -0.033353527.
 
-# Eighth Model Fit 
+### Eighth Model Fit 
+We will explore all 7 predictors using in a multiple linear regression model to determine how the associations  interact. 
 ```{r}
-# fit linear model using pct_upreg_sarc as outcome, pct_nevermarried as predictor
+# fit linear model using pct_upreg_sarc as outcome with all 7 predictors
 lm_mod <- linear_reg() #specify the type of model
 lmfit8 <- lm_mod %>% #estimate/train the model 
-            fit(pct_upreg_sarc ~ pct_nevermarried, mydata)      
+            fit(pct_upreg_sarc ~ sarc_standard + region + pct_currentlymarried + pct_nevermarried + rate_matdeaths + rate_matdeaths_upreg + rate_matdeaths_abs, mydata)      
 
 #generate clean output with estimates and p-values
 tidy(lmfit8) 
@@ -171,60 +172,40 @@ tidy(lmfit8)
 lmtable8 <- tidy(lmfit8)
 
 # save fit results table  
-table_file8 = here("results", "resulttable7.rds")
+table_file8 = here("results", "resulttable8.rds")
 saveRDS(lmtable8, file = table_file8)
 ```
+This model shows the strongest predictor is the number of women using short acting reversible contraception with a huge coefficient of 85.6433. The next strongest predictor is the European region followed by the Latin America/the Caribbean region and the Asia region, which is a shift from the model with the singular region predictor. The Oceania region now has a negative association with the outcome. Both of the marriage status predictors are associated with a decrease in the outcome. The coefficient estimates for the rate of maternal death due to unintended pregnancies and abortion both flipped from the single predictor models to show a positive association with the outcome. 
 
-# Ninth Model Fit 
+
+## Assessing Model Performance
+It is important to consider appropriate metrics to measure model performance. We will use RMSE at this point to compare the model using the number of women using short acting reversible contraception predictor and the model using the percent currently married predictor. 
 ```{r}
-# fit linear model using pct_upreg_sarc as outcome, rate_matdeaths as predictor
-lm_mod <- linear_reg() #specify the type of model
-lmfit9 <- lm_mod %>% #estimate/train the model 
-            fit(pct_upreg_sarc ~ rate_matdeaths, mydata)      
+# create predictions using the sarc_standard predictor model
+poppred <- predict(lmfit1, new_data = mydata) %>% 
+                  select(.pred)
 
-#generate clean output with estimates and p-values
-tidy(lmfit9) 
+# create a data frame with the predictions and true values of Y
+popdata <- bind_cols(poppred, mydata$sarc_standard) %>%
+            rename(sarc_standard = "...2")
 
-# save results from fit into a data frame 
-lmtable9 <- tidy(lmfit9)
+# find RMSE and R squared to determine model fit
+rmse1 <- rmse(popdata, truth = sarc_standard, estimate = .pred)
 
-# save fit results table  
-table_file9 = here("results", "resulttable9.rds")
-saveRDS(lmtable9, file = table_file9)
+# create predictions using the pct_currentlymarriedd predictor model
+marriedpred <- predict(lmfit3, new_data = mydata) %>% 
+                  select(.pred)
+
+# create a data frame with the predictions and true values of Y
+marrieddata <- bind_cols(marriedpred, mydata$pct_currentlymarried) %>%
+            rename(pct_currentlymarried = "...2")
+
+# find RMSE and R squared to determine model fit
+rmse2 <- rmse(marrieddata, truth = pct_currentlymarried, estimate = .pred)
+
+# compare the metrics 
+print(rmse1)
+print(rmse2)
 ```
 
-# Tenth Model Fit 
-```{r}
-# fit linear model using pct_upreg_sarc as outcome, rate_matdeaths_upreg as predictor
-lm_mod <- linear_reg() #specify the type of model
-lmfit10 <- lm_mod %>% #estimate/train the model 
-            fit(pct_upreg_sarc ~ rate_matdeaths_upreg, mydata)      
-
-#generate clean output with estimates and p-values
-tidy(lmfit10) 
-
-# save results from fit into a data frame 
-lmtable10 <- tidy(lmfit10)
-
-# save fit results table  
-table_file10 = here("results", "resulttable10.rds")
-saveRDS(lmtable10, file = table_file10)
-```
-
-# Eleventh Model Fit 
-```{r}
-# fit linear model using pct_upreg_sarc as outcome, rate_matdeaths_abs as predictor
-lm_mod <- linear_reg() #specify the type of model
-lmfit11 <- lm_mod %>% #estimate/train the model 
-            fit(pct_upreg_sarc ~ rate_matdeaths_abs, mydata)      
-
-#generate clean output with estimates and p-values
-tidy(lmfit11) 
-
-# save results from fit into a data frame 
-lmtable11 <- tidy(lmfit11)
-
-# save fit results table  
-table_file11 = here("results", "resulttable9.rds")
-saveRDS(lmtable11, file = table_file11)
-```
+The RMSE metric favors the model with the total number of women using the short acting reversible contraception method over the model with the percentage of women currently married, which is to be expected.
