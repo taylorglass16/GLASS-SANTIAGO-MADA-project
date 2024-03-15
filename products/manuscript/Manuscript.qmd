@@ -53,9 +53,9 @@ The dataset includes 53 African countries, 36 Asian countries, 11 European Count
 # Research Questions
 1) Is there a significant difference in the percentage of unintended pregnancies among short acting reversible contraception users among countries? 
 
-The main outcome variables will be total percentage of unintended pregnancies among women using short acting          reversible contraception methods (`pct_upreg_sarc`).
+The main outcome variables will be total percentage of unintended pregnancies among women using short acting reversible contraception methods (`pct_upreg_sarc`).
 
-The predictor variables will include the total number of people women using each type of birth control                standardized by population size, region, percentage of women currently married, percentage of women never married,    total rate of maternal deaths, rate of maternal deaths due to unintended pregnancy and rate of maternal deaths due    to abortion. 
+The predictor variables will include the total number of people women using each type of birth control standardized by population size, region, percentage of women currently married, percentage of women never married, total rate of maternal deaths, rate of maternal deaths due to unintended pregnancy and rate of maternal deaths due to abortion. 
     
 A full list of variables can be found in the processing-file in the code > processing-code folder. 
 
@@ -89,9 +89,9 @@ _State the research questions you plan to answer with this analysis._
 
 1) Is there a significant difference in the percentage of unintended pregnancies among short acting reversible contraception users among countries? 
 
-The main outcome variables will be total percentage of unintended pregnancies among women using short acting          reversible contraception methods (`pct_upreg_sarc`).
+The main outcome variables will be total percentage of unintended pregnancies among women using short acting reversible contraception methods (`pct_upreg_sarc`).
 
-The predictor variables will include the total number of people women using each type of birth control                standardized by population size, region, percentage of women currently married, percentage of women never married,    total rate of maternal deaths, rate of maternal deaths due to unintended pregnancy and rate of maternal deaths due    to abortion. 
+The predictor variables will include the total number of people women using each type of birth control standardized by population size, region, percentage of women currently married, percentage of women never married, total rate of maternal deaths, rate of maternal deaths due to unintended pregnancy and rate of maternal deaths due to abortion. 
     
 A full list of variables can be found in the processing-file in the code > processing-code folder. 
 
@@ -107,6 +107,105 @@ Reproducing this project requires R, RStudio, and Microsoft word. The README fil
 The next step is exploratory data analysis. The eda.qmd file in the code > eda-code folder contains all the code for this process. We produced a couple summary tables before we began a simple exploration of trends in percentage of unintended pregnancies by country in our first set of histograms. The second set of histograms explore contraceptive usage methods by country. These graphs revealed outliers, so we standardized by population size for each country. The next sets of plots are line graphs showing total usage of contraceptive methods to percentage of unintended pregnancies associated with that method. The last two sets of plots contain line graphs of the relationship between the two variables stratified by region and violin plots displaying the relationship between percentage of unintended pregnancies and the categorical usage variable created during processing. All of these figures are saved in the Supplementary-Material.qmd file in the products > manuscript > supplement folder. This process led us to focus on the percentage of unintended pregnancies among short acting reversible methods as our single outcome because this method is becoming increasingly popular, so we feel that results from this contraception method will be the most relevant.
 
 Step three is the statistical analysis and model fitting portion found in the statistical-analysis.qmd file in the code > analysis-code folder. We explore the single outcome `pct_upreg_sarc` based on 7 predictors with simple linear regression, total number of women using short acting reversible methods, region, percent of currently married women, percent of women who never married, total rate of maternal mortality, rate of maternal mortality by unintended pregnancy, and rate of maternal mortality by abortion. We also assess the performance of the models in this file. Result tables for each model are stored in the results > tables folder. 
+
+```{r}
+# Load libraries
+library(knitr)
+library(kableExtra)
+library(dplyr)
+
+# Descriptive statistics for numeric variables
+pred_summary <- mydata %>%
+  summarise(across(c(wra, pct_currentlymarried,pct_nevermarried,rate_matdeaths, rate_matdeaths_upreg, rate_matdeaths_abs), mean, sd))
+
+# Descriptive statistics for categorical variable (assuming region is a factor)
+summary_factor <- mydata %>%
+  group_by(region) %>%
+  summarise(n = n())
+
+# Combine into a single dataframe
+summary_pred <- rbind(
+  pred_summary %>% summarise(Variable = "pct_upreg_sarc", ., .names = quote(names(.))),
+  pred_summary %>% select(-pct_upreg_sarc),
+  summary_factor %>% summarise(Variable = "region", n)
+)
+
+# Create table 
+kable(summary_pred, caption = "Table Depicting Predictor Variables", booktabs = TRUE) %>%
+  kable_styling(full_width = F, font_size = 10) %>%
+  column_def(widths = c(200, 150, 150))
+
+```
+
+
+We also need to explore the remaining predictor variables: `region`, `pct_currentlymarried`, `pct_nevermarried`, `rate_matdeaths`, `rate_matdeaths_upreg`, and `rate_matdeaths_abs`. Simple histograms will allow us to see the distribution of each variable and ensure there are no outliers. 
+```{r}
+# explore the region predictor
+p22 <- mydata %>% ggplot(aes(x=region)) + 
+  geom_bar() +
+  ggtitle("Countries in Each Region") + 
+  xlab("Region") + ylab("Number of Countries")
+plot(p22)
+figure_file = here("results", "figures", "exploratory-figures", "region_distribution.png")
+ggsave(filename = figure_file, plot=p22) 
+
+# explore the current marriage predictor
+p23 <- mydata %>% ggplot(aes(x=pct_currentlymarried)) + 
+  geom_histogram() +
+  ggtitle("Percent of Women Currently Married") + 
+  xlab("Percentage") + ylab("Number of Countries")
+plot(p23)
+figure_file = here("results", "figures", "exploratory-figures", "married_distribution.png")
+ggsave(filename = figure_file, plot=p23) 
+
+# explore the never married predictor
+p24 <- mydata %>% ggplot(aes(x=pct_nevermarried)) + 
+  geom_histogram() +
+  ggtitle("Percent of Women Never Married") + 
+  xlab("Percentage") + ylab("Number of Countries")
+plot(p24)
+figure_file = here("results", "figures", "exploratory-figures", "married_distribution.png")
+ggsave(filename = figure_file, plot=p24) 
+
+# explore the total maternal mortality rate predictor
+p25 <- mydata %>% ggplot(aes(x=rate_matdeaths)) + 
+  geom_histogram() +
+  ggtitle("Total Rate of Maternal Deaths") + 
+  xlab("Maternal Deaths") + ylab("Number of Countries")
+plot(p25)
+figure_file = here("results", "figures", "exploratory-figures", "married_distribution.png")
+ggsave(filename = figure_file, plot=p25) 
+
+# explore the maternal mortality rate from unintended pregnancies predictor
+p26 <- mydata %>% ggplot(aes(x=rate_matdeaths_upreg)) + 
+  geom_histogram() +
+  ggtitle("Rate of Maternal Deaths from Unintended Pregnancies") + 
+  xlab("Maternal Deaths") + ylab("Number of Countries")
+plot(p26)
+figure_file = here("results", "figures", "exploratory-figures", "married_distribution.png")
+ggsave(filename = figure_file, plot=p26) 
+
+# explore outliers in maternal mortality from unintended pregnancies
+mydata %>% filter(rate_matdeaths_upreg > 6000)
+
+# explore the maternal mortality rate from abortions
+p27 <- mydata %>% ggplot(aes(x=rate_matdeaths_abs)) + 
+  geom_histogram() +
+  ggtitle("Rate of Maternal Deaths from Abortions") + 
+  xlab("Maternal Deaths") + ylab("Number of Countries")
+plot(p27)
+figure_file = here("results", "figures", "exploratory-figures", "married_distribution.png")
+ggsave(filename = figure_file, plot=p27) 
+
+# explore outliers in maternal mortality from abortions
+mydata %>% filter(rate_matdeaths_abs > 500)
+
+```
+
+P26: The distribution of the maternal mortality rate from unintended pregnancies is highly skewed to the right with a couple outliers. We would have expected the highest rates to belong to India and China because they have the most people, but it is Chad and South Sudan that account for the highest rates of maternal mortality in this category. 
+
+P27: The distribution of maternal mortality rate from abortions is also highly skewed to the right. The outliers are accounted for by Gambia and Mauritania in this predictor. 
+
 
 The Manuscript.qmd file for this document can be found in the products > manuscript folder. 
 
@@ -125,6 +224,10 @@ We store those figures in the `assets` folder.
 
 ## Data aquisition
 _As applicable, explain where and how you got the data. If you directly import the data from an online source, you can combine this section with the next._
+
+This research aims to analyze the factors influencing unintended pregnancies and contraception use in low-and-middle-income countries. The Guttmacher Institute's Adding It Up project provides the foundation, offering data on sexual and reproductive health services in these regions.Focusing on women of reproductive age (15-49), the study usese information from nationally representative surveys and population projections to estimate unintended pregnancy rates.
+
+While data on the overall percentage of unintended pregnancies was unavailable, we strategically utilized data on rates related to specific birth control methods. This approach allows us to analyze the relationship between these rates and various social and health factors. Factors like the number of women utilizing different birth control methods, maternal death rates, and marital status will be meticulously examined. All 7 of these predictor variables were found within the study's codebook, which can can be found in the `Data` folder of this project. By discovering these relationships, the research aims to shed light on the complex landscape of contraception use and unintended pregnancy in low-and -middle-income countries. This knowledge can empower policymakers and healthcare providers to make informed decisions that ultimately improve reproductive health outcomes for women.
 
 
 ## Data import and cleaning
