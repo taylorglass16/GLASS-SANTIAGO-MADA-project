@@ -125,6 +125,12 @@ selected_variables <- mydata[c("pct_upreg_sarc", "region", "wra", "pct_currently
 # Converting region from factor to numeric
 selected_variables$region <- as.numeric(as.factor(selected_variables$region))
 
+# Asia = 1
+# Africa = 2
+# Europe = 3
+# Latin America & the Caribbean = 4
+# Oceania = 5
+
 # Create table 
 kable(selected_variables, caption = "Table Depicting Predictor Variables", booktabs = TRUE) %>%
   kable_styling(full_width = F, font_size = 10) 
