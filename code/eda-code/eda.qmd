@@ -87,7 +87,7 @@ kable(selected_variables, caption = "Table Depicting Predictor Variables", bookt
 
 # Save to file 
 summarytable_file <- here("results", "tables", "predictortable.rds")
-saveRDS(predictor_table, file = summarytable_file)
+saveRDS(predictortable, file = summarytable_file)
 ```
 
 # Data exploration through figures
