@@ -23,19 +23,32 @@ library(gtsummary) # for creating tables
 ```
 
 
-
-
-This shows some materials that could go into a supplementary file. Often you want/need references here too. You can use the same reference bib file for this and the main text (as done here) or have separate bib files.
-
 For illustrative purposes, I'm doing the supplement as pdf. For this to work, you need a (La)TeX system installed. It's easy. Just follow [these steps](https://quarto.org/docs/output-formats/pdf-basics.html).
 
-Of course you would choose the format based on needs.
-
-I'm also using a different style for the references here. (vancouver vs apa in the main manuscript). Usually one would have the formatting of the references the same in those two documents, but I want to illustrate how easy it is to switch reference formatting styles, you just need to get the right CSL file and specify it in the YAML header. We could also have a seperate reference bibtext (`.bib`) file, but here we are using the same.
-
 # Overview
+This file provides extra information that is not included in our manuscript or the main processing and exploratory data analysis files. This information provides guidance on our thought processes behind the scenes and explains why we chose a single outcome to study.  
 
-Readers will be able to find our analysis of the different contraception methods through figures we've made for the `pct_upreg_larcster`, `pct_upreg_trad`, and `pct_upreg_nouse` variables.  
+# Code and file information
+
+Explain here what each code/file is and does, and in which order (if any) users need to run thing to reproduce everything.
+Essentially, give a full set of instructions to re-generate everything.
+
+
+{{< pagebreak >}}
+
+
+# Additional Method Details
+
+Often, the main manuscript only allows for an overview description of the methods. Use the supplement to describe all your methods, models and approaches in a lot of detail. Reference specific parts of your code as needed.
+
+{{< pagebreak >}}
+
+
+# Additional results
+
+Show additional results here. Those can be some useful exploratory/descriptive figures or tables, or results from additional analyses that didn't make it into the main text.
+
+Readers will be able to find our analysis of the different contraception methods that we did not select for our main outcome through figures we've made for the `pct_upreg_larcster`, `pct_upreg_trad`, and `pct_upreg_nouse` variables.  
 
 ```{r}
 # explore the percentage of unintended pregnancies related to long acting reversible methods in each country
@@ -100,6 +113,7 @@ figure_file = here("results", "figures", "exploratory-figures", "total_none_dist
 ggsave(filename = figure_file, plot=p9) 
 
 ```
+
 Plot 10 shows `pct_upreg_larcster` vs `larcster_standard` to analyze women using long acting reversible methods and sterilization versus the percentage of unintended pregnancies using those methods.
 
 ```{r}
@@ -145,8 +159,6 @@ ggsave(filename = figure_file, plot=p13)
 
 P13: The same expected positive trend is observed for women who are not using a birth control method, but there is considerable variation in this graph across all percentages of unintended pregnancies. Additionally, the lowest percentage in this category is around 35%, which is much higher than the percentages associated with the three birth control methods. 
 
-
-
 We are also interested in how these relationships between percent of unintended pregnancies using each birth control method and the number of people using each method varies across region. We adjusted the original scatter plots created above by coloring based on region.
 ```{r}
 # explore percent unintended pregnancies using long acting reversible and sterilziation methods by region
@@ -179,7 +191,6 @@ ggsave(filename = figure_file, plot=p17)
 ```
 
 P14: Among women using long acting reversible and sterilization methods, Asia has the highest percentages of unintended pregnancies, followed by Latin America/the Caribbean and Africa.
-
 
 P16: Among women using traditional birth control methods, Europe has the sharpest increase in unintended pregnancies as population increases, but Asia has the highest percentage of unintended pregnancies in this category. 
 
@@ -225,28 +236,24 @@ P20: Among women using traditional birth control methods, the distribution of pe
 P21: While the distribution of percentage of unintended pregnancies is similar across the three usage levels for women not using any birth control method, the high usage countries appear to have a bottleneck in percentage of unintended pregnancies. The high and low usage countries appear to be skewed towards higher levels of unintended pregnancies, but the medium usage countries appear to have lower percentage of unintended pregnancies. 
 
 
-# Code and file information
+## Additional result
+The first priority when cleaning the data was analyzing missing values, and our findings can be seen @tbl-summarytable. We found that the `pct_upreg` variable containing the percentage of unintended pregnancies is unreliable due to missing data that could not be explained. We decided to use the variables with percentage of unintended pregnancies related to each birth control method as our outcome variables because they are complete and were found directly based on the AIU protocol information. We printed the summary table here because it was useful in determining missingness and creating a new factor variable for the usage of each birth control method at the factor level later in the processing sequence. 
+```{r}
+#| label: tbl-summarytable1
+#| tbl-cap: "Summary table to discover missingness"
+#| echo: FALSE
+resulttable1 <- readRDS("../../results/tables/summarytable.rds")
+kable(resulttable1)
+```
 
-Explain here what each code/file is and does, and in which order (if any) users need to run thing to reproduce everything.
-Essentially, give a full set of instructions to re-generate everything.
-
-
-{{< pagebreak >}}
-
-
-# Additional Method Details
-
-Often, the main manuscript only allows for an overview description of the methods. Use the supplement to describe all your methods, models and approaches in a lot of detail. Reference specific parts of your code as needed.
-
-{{< pagebreak >}}
-
-
-# Additional results
-
-Show additional results here. Those can be some useful exploratory/descriptive figures or tables, or results from additional analyses that didn't make it into the main text.
-
-
-## Example additional result
+We explored the distribution of the countries by five categorical variables: `region`, `larcster_usage`, `sarc_usage`, `trad_usage`, and `none_usage` which is displayed in @tbl-summarytable2. We found that most countries are located in Africa followed by Asia and Latin America/the Caribbean. Only 20 countries have high usage of long acting reversible and sterilization methods compared to 33 countries with high usage of short acting reversible and traditional methods. It is interesting that the distributions for short acting reversible method, traditional method, and no method usages are the same. 
+```{r}
+#| label: tbl-summarytable2
+#| tbl-cap: "Summary table for categorical variables"
+#| echo: FALSE
+resulttable2 <- readRDS("../../results/tables/summarytablecat.rds")
+kable(resulttable2)
+```
 
 
 @tbl-resulttable1 shows an additional table summarizing a model fit.

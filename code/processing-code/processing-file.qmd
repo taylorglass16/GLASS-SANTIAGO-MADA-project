@@ -32,10 +32,11 @@ library(here) #to set paths
 data_location <- here("data","raw-data","AIU All Women Dataset.csv")
 rawdata <- read_csv(data_location)
 ```
+There are 132 observations, one row for each low- to middle- income country, of the 399 variable included in the Adding It Up All Women Dataset. Some examples of numeric variables included are percentages of pregnancy outcomes, rates of safe and unsafe abortions, percentage of various contraceptive usages, percentages of care received for various pregnancy complications, and costs for many variables including abortions and STIs. There are three important character variables that can be used to group the numeric variables: country name, region, and sub region. 
 
 # Check data
 
-We will load and examine the codebook first. 
+We will load and examine the codebook to learn more about the dataset. 
 
 ```{r}
 #| message: false
@@ -64,6 +65,7 @@ summary(rawdata)
 head(rawdata)
 skimr::skim(rawdata)
 ```
+
 # Identifying variables to be cleaned 
 We want to explore the relationship between unintended pregnancies and contraception methods. We will use three predictor variables: total number of women using the contraceptive method, region, number of safe abortions,  . The variable for the total percentage of unintended pregnancies, `pct_upreg` will be the main outcome variable with additional options for outcome variables of total percentage of unintended pregnancies by each contraceptive method: long acting reversible methods (`pct_upreg_larcster`), short term reversible methods (`pct_upreg_sarc`), traditional methods (`pct_upreg_trad`), and no method (`pct_upreg_nouse`). We will use multiple predictor variables including: total number of women using the contraceptive method, region, subregion, percentage of married women, percentage of women never married, total maternal deaths per 100,000 live births, deaths from unintended pregnancy per 100,000 live births, and deaths related to abortion per 100000 abortions. Covariates will include the number of women using each of these methods across four different age groups: 15-19, 20-24, 25-34, and 35-49. These variables will be summed to create total number of women using each type of contraception: 
 -Number of women 15-19 using long-acting reversible methods `larc_1519`
