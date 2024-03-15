@@ -55,7 +55,13 @@ The dataset includes 53 African countries, 36 Asian countries, 11 European Count
 
 The main outcome variables will be total percentage of unintended pregnancies among women using short acting reversible contraception methods (`pct_upreg_sarc`).
 
-The predictor variables will include the total number of people women using each type of birth control standardized by population size, region, percentage of women currently married, percentage of women never married, total rate of maternal deaths, rate of maternal deaths due to unintended pregnancy and rate of maternal deaths due to abortion. 
+The predictor variables will include:
+1. The total number of people women using each type of birth control standardized by population size 2. Region
+3. Percentage of women currently married
+4. Percentage of women never married
+5. Total rate of maternal deaths
+6. Rate of maternal deaths due to unintended pregnancy 
+7. Rate of maternal deaths due to abortion. 
     
 A full list of variables can be found in the processing-file in the code > processing-code folder. 
 
@@ -110,30 +116,19 @@ Step three is the statistical analysis and model fitting portion found in the st
 
 ```{r}
 # Load libraries
-library(knitr)
+
 library(kableExtra)
-library(dplyr)
 
-# Descriptive statistics for numeric variables
-pred_summary <- mydata %>%
-  summarise(across(c(wra, pct_currentlymarried,pct_nevermarried,rate_matdeaths, rate_matdeaths_upreg, rate_matdeaths_abs), mean, sd))
+# Selecting variables
+selected_variables <- mydata[c("pct_upreg_sarc", "region", "wra", "pct_currentlymarried", "pct_nevermarried","rate_matdeaths", "rate_matdeaths_upreg", "rate_matdeaths_abs")] 
 
-# Descriptive statistics for categorical variable (assuming region is a factor)
-summary_factor <- mydata %>%
-  group_by(region) %>%
-  summarise(n = n())
-
-# Combine into a single dataframe
-summary_pred <- rbind(
-  pred_summary %>% summarise(Variable = "pct_upreg_sarc", ., .names = quote(names(.))),
-  pred_summary %>% select(-pct_upreg_sarc),
-  summary_factor %>% summarise(Variable = "region", n)
-)
+# Converting region from factor to numeric
+selected_variables$region <- as.numeric(as.factor(selected_variables$region))
 
 # Create table 
-kable(summary_pred, caption = "Table Depicting Predictor Variables", booktabs = TRUE) %>%
-  kable_styling(full_width = F, font_size = 10) %>%
-  column_def(widths = c(200, 150, 150))
+kable(selected_variables, caption = "Table Depicting Predictor Variables", booktabs = TRUE) %>%
+  kable_styling(full_width = F, font_size = 10) 
+ 
 
 ```
 
