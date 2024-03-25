@@ -7,6 +7,7 @@ output: html_document
 ## Load necessary packages
 ```{r}
 #| message: false
+library(dplyr) # for basic syntax
 library(broom) #for cleaning up output from lm()
 library(here) #for data loading/saving
 library(tidymodels) # for model building 
@@ -185,27 +186,45 @@ It is important to consider appropriate metrics to measure model performance. We
 poppred <- predict(lmfit1, new_data = mydata) %>% 
                   select(.pred)
 
-# create a data frame with the predictions and true values of Y
+# create a data frame with the predictions and true values 
 popdata <- bind_cols(poppred, mydata$sarc_standard) %>%
             rename(sarc_standard = "...2")
 
 # find RMSE and R squared to determine model fit
 rmse1 <- rmse(popdata, truth = sarc_standard, estimate = .pred)
+rsq1 <- rsq(popdata, truth = sarc_standard, estimate = .pred)
 
-# create predictions using the pct_currentlymarriedd predictor model
+# create predictions using the pct_currentlymarried predictor model
 marriedpred <- predict(lmfit3, new_data = mydata) %>% 
                   select(.pred)
 
-# create a data frame with the predictions and true values of Y
+# create a data frame with the predictions and true values 
 marrieddata <- bind_cols(marriedpred, mydata$pct_currentlymarried) %>%
             rename(pct_currentlymarried = "...2")
 
 # find RMSE and R squared to determine model fit
 rmse2 <- rmse(marrieddata, truth = pct_currentlymarried, estimate = .pred)
+rsq2 <- rsq(marrieddata, truth = pct_currentlymarried, estimate = .pred)
+
+# create predictions using the rate of maternal deaths predictor model
+matdeathspred <- predict(lmfit5, new_data = mydata) %>% 
+                  select(.pred)
+
+# create a data frame with the predictions and true values 
+matdeathdata <- bind_cols(matdeathspred, mydata$rate_matdeaths) %>%
+            rename(rate_matdeaths = "...2")
+
+# find RMSE and R squared to determine model fit
+rmse3 <- rmse(matdeathdata, truth = rate_matdeaths, estimate = .pred)
+rsq3 <- rsq(matdeathdata, truth = rate_matdeaths, estimate = .pred)
 
 # compare the metrics 
 print(rmse1)
+print(rsq1)
 print(rmse2)
+print(rsq2)
+print(rmse3)
+print(rsq3)
 ```
 
 The RMSE metric favors the model with the total number of women using the short acting reversible contraception method over the model with the percentage of women currently married, which is to be expected.
