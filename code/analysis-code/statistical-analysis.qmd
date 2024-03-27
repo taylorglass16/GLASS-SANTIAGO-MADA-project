@@ -1,5 +1,5 @@
 ---
-title: "Statistical Analysis Script"
+title: "Statistical Analysis"
 author: "Taylor Glass and Arlyn Santiago"
 date: "03/12/24"
 output: html_document
@@ -11,6 +11,8 @@ library(dplyr) # for basic syntax
 library(broom) #for cleaning up output from lm()
 library(here) #for data loading/saving
 library(tidymodels) # for model building 
+library(yardstick) # for finding performance metrics 
+library(rsample) #for splitting the data into testing/training
 ```
 
 ## Load the cleaned data
@@ -25,7 +27,7 @@ mydata <- readRDS(data_location)
 The outcome of interest in all of the following models is the percentage of unintended pregnancies associated with usage of short acting reversible contraception methods. The predictors used in our models include total number of women using short acting reversible methods standardized by population size, region, percent of women currently married, percent of women never married, total rate of maternal deaths, rate of maternal deaths due to unintended pregnancy, and rate of maternal deaths due to abortion. We are considering adding another predictor using a political freedom index for each country.
 
 ### First Model Fit 
-The second model attempts to predict the percentage of unintended pregnancies among women using short acting reversible methods of contraception 'pct_upreg_sarc' based on the total number of women using this method of contraception. We will use the version of the variable that has been standardized by population size, 'sarc_standard'. 
+The first model attempts to predict the percentage of unintended pregnancies among women using short acting reversible methods of contraception 'pct_upreg_sarc' based on the total number of women using this method of contraception. We will use the version of the variable that has been standardized by population size, 'sarc_standard'. 
 ```{r}
 # fit linear model using pct_upreg_sarc as outcome, sarc_standard as predictor
 lm_mod <- linear_reg() #specify the type of model
@@ -60,8 +62,26 @@ lmtable2 <- tidy(lmfit2)
 # save fit results table  
 table_file2 = here("results", "tables", "resulttable2.rds")
 saveRDS(lmtable2, file = table_file2)
+
 ```
-This model shows that the Latin America/the Carribean region has the strongest association with the outcome variable based on a coefficient estimate of 1.6218844 followed closely by the Asia region. The Oceania region has the weakest association with the outcome variable based on a coefficient estimate of 0.2512100.
+This model shows that the Latin America/the Caribbean region has the strongest association with the outcome variable based on a coefficient estimate of 1.6218844 followed closely by the Asia region. The Oceania region has the weakest association with the outcome variable based on a coefficient estimate of 0.2512100.
+
+### ANOVA for region variable
+We want to compare the mean percent of unintended pregnancies among those using short acting reversible methods across the five regions: Asia, Africa, Europe, Latin America and the Caribbean, and Oceania. We will start with an ANOVA test to determine the relationship between region and outcome. We are more interested in pairwise comparisons between the regions, so we also conducted Tukey's Honestly Significant Difference test for pairwise comparisons within ANOVA. 
+```{r}
+# conduct an ANOVA test with the region variable
+regionANOVA <- aov(pct_upreg_sarc ~ region, data = mydata)
+
+# explore ANOVA results 
+summary(regionANOVA)
+
+# add Tukey's HSD test for pairwise comparisons
+tukey_result <- TukeyHSD(regionANOVA)
+
+# explore the pairwise comparisons
+tidy(tukey_result)
+```
+ANOVA results show that the region variable is statistically significantly associated with the outcome variable given the p-value less than 0.001. The Tukey HSD test revealed the largest differences in the outcome between the Oceania region and Latin America/the Caribbean, Europe, and Asia. The relationships between Oceania and Europe and Latin America/the Caribbean are statistically significant with p-values less than 0.0001. Oceania is clearly experiencing the lowest percentage of unintended pregnancies among short acting reversible method users.  The lowest difference in outcome between regions is between Asia and Africa, but this is not a statistically significant assocaition. Two statistically significant differences in the outcome exist between Latin America/the Caribbean and Europe with Africa, which shows that Africa is experiencing higher levels of the outcome. 
 
 ### Third Model Fit 
 ```{r}
@@ -178,10 +198,32 @@ saveRDS(lmtable8, file = table_file8)
 ```
 This model shows the strongest predictor is the number of women using short acting reversible contraception with a huge coefficient of 85.6433. The next strongest predictor is the European region followed by the Latin America/the Caribbean region and the Asia region, which is a shift from the model with the singular region predictor. The Oceania region now has a negative association with the outcome. Both of the marriage status predictors are associated with a decrease in the outcome. The coefficient estimates for the rate of maternal death due to unintended pregnancies and abortion both flipped from the single predictor models to show a positive association with the outcome. 
 
+### Nineth model fit 
+It is important to create the null model for future assessment of model performance, which just calculates the mean outcome without any predictors present. 
+```{r}
+# create a null model
+null_model <- null_model(mode = "regression") %>% 
+    set_engine("parsnip") %>%
+    fit(pct_upreg_sarc ~ 1, data = mydata)
+
+#generate clean output with estimates and p-values
+tidy(null_model) 
+
+# save results from fit into a data frame 
+nulltable <- tidy(null_model)
+
+# save fit results table  
+table_file9 = here("results", "tables", "resulttable9.rds")
+saveRDS(nulltable, file = table_file9)
+```
+
 
 ## Assessing Model Performance
-It is important to consider appropriate metrics to measure model performance. We will use RMSE at this point to compare the model using the number of women using short acting reversible contraception predictor and the model using the percent currently married predictor. 
+It is important to consider appropriate metrics to measure model performance. We will use RMSE at this point to compare 3 models: one with the number of women using short acting reversible contraception predictor, one using the percent never married predictor, and one using the rate of maternal deaths due to abortion predictor. We chose these predictors because they have the strongest associations with the outcomes based on the single linear regression models shown above. 
 ```{r}
+# set seed for reproducibility 
+set.seed(2468)
+
 # create predictions using the sarc_standard predictor model
 poppred <- predict(lmfit1, new_data = mydata) %>% 
                   select(.pred)
@@ -190,41 +232,85 @@ poppred <- predict(lmfit1, new_data = mydata) %>%
 popdata <- bind_cols(poppred, mydata$sarc_standard) %>%
             rename(sarc_standard = "...2")
 
-# find RMSE and R squared to determine model fit
+# find RMSE to determine model fit
 rmse1 <- rmse(popdata, truth = sarc_standard, estimate = .pred)
-rsq1 <- rsq(popdata, truth = sarc_standard, estimate = .pred)
 
-# create predictions using the pct_currentlymarried predictor model
-marriedpred <- predict(lmfit3, new_data = mydata) %>% 
+# create predictions using the pct_nevermarried predictor model
+marriedpred <- predict(lmfit4, new_data = mydata) %>% 
                   select(.pred)
 
 # create a data frame with the predictions and true values 
-marrieddata <- bind_cols(marriedpred, mydata$pct_currentlymarried) %>%
-            rename(pct_currentlymarried = "...2")
+marrieddata <- bind_cols(marriedpred, mydata$pct_nevermarried) %>%
+            rename(pct_nevermarried = "...2")
 
-# find RMSE and R squared to determine model fit
-rmse2 <- rmse(marrieddata, truth = pct_currentlymarried, estimate = .pred)
-rsq2 <- rsq(marrieddata, truth = pct_currentlymarried, estimate = .pred)
+# find RMSE to determine model fit
+rmse2 <- rmse(marrieddata, truth = pct_nevermarried, estimate = .pred)
 
-# create predictions using the rate of maternal deaths predictor model
-matdeathspred <- predict(lmfit5, new_data = mydata) %>% 
+# create predictions using the rate of maternal deaths due to abortion predictor model
+matdeathspred <- predict(lmfit7, new_data = mydata) %>% 
                   select(.pred)
 
 # create a data frame with the predictions and true values 
-matdeathdata <- bind_cols(matdeathspred, mydata$rate_matdeaths) %>%
-            rename(rate_matdeaths = "...2")
+matdeathdata <- bind_cols(matdeathspred, mydata$rate_matdeaths_abs) %>%
+            rename(rate_matdeaths_abs = "...2")
 
-# find RMSE and R squared to determine model fit
-rmse3 <- rmse(matdeathdata, truth = rate_matdeaths, estimate = .pred)
-rsq3 <- rsq(matdeathdata, truth = rate_matdeaths, estimate = .pred)
+# find RMSE to determine model fit
+rmse3 <- rmse(matdeathdata, truth = rate_matdeaths_abs, estimate = .pred)
 
 # compare the metrics 
 print(rmse1)
-print(rsq1)
 print(rmse2)
-print(rsq2)
 print(rmse3)
-print(rsq3)
 ```
 
-The RMSE metric favors the model with the total number of women using the short acting reversible contraception method over the model with the percentage of women currently married, which is to be expected.
+The RMSE metric favors the model with the percentage of women never married because it has the lowest RMSE value of 17.01493. The model with the total number of women using short acting reversible methods is slightly worse with an RMSE 18.22695. The model with the rate of maternal deaths due to abortion performs much worse, with a high RMSE value of 129.482. 
+
+It is important to determine if our model with the region predictor performs well because the main question to be answered by this analysis depends on this predictor. Since region is a categorical variable, we cannot evaluate the RMSE performance metric.  
+```{r}
+# set seed for reproducibility 
+set.seed(2468)
+
+# create predictions using the sarc_standard predictor model
+regionpred <- predict(lmfit2, new_data = mydata) %>% 
+                  select(.pred)
+
+# create a data frame with the predictions and true values 
+regiondata <- bind_cols(regionpred, mydata$region) %>%
+            rename(region = "...2")
+
+# find RMSE to determine model fit
+rmse4 <- rmse(regiondata, truth = region, estimate = .pred)
+```
+
+We want to see how the model with all 7 predictors performs in comparison to the single predictor models. 
+```{r}
+# set seed for reproducibility 
+set.seed(2468)
+
+# create predictions using the multiple linear regression model
+allpred <- predict(lmfit8, new_data = mydata) %>% 
+                  select(.pred)
+
+# create a data frame with the predictions and true values 
+alldata <- bind_cols(allpred, mydata$pct_upreg_sarc) %>%
+            rename(pct_upreg_sarc = "...2")
+
+# find RMSE to determine model fit
+rmse5 <- rmse(alldata, truth = pct_upreg_sarc, estimate = .pred)
+print(rmse5)
+```
+As expected, this model performs better than the single predictor models with a low RMSE score of 4.209. 
+
+## Cross-Validation to Assess Model Performance
+While the RMSE performance is a good place to start for evaluating model performance, we need to determine how well the model performs on data it has not seen before to determine its usefulness. We will use the cross-validation process to do this. The first step is to split the data into testing and training portions. 
+```{r}
+# set seed for reproducibility
+set.seed(2468)
+
+# put 75% into the training data
+datasplit <- initial_split(mydata, prop = 3/4)
+
+# create data frames for the two sets
+train_data <- training(datasplit)
+test_data <- testing(datasplit)
+```
