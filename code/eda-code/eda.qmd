@@ -72,14 +72,8 @@ We also wanted a summary table with the predictor information to include in our 
 # Selecting variables
 selected_variables <- mydata[c("pct_upreg_sarc", "region", "wra", "pct_currentlymarried", "pct_nevermarried","rate_matdeaths", "rate_matdeaths_upreg", "rate_matdeaths_abs")] 
 
-# Converting region from factor to numeric
-selected_variables$region <- as.numeric(as.factor(selected_variables$region))
-
-# Asia = 1
-# Africa = 2
-# Europe = 3
-# Latin America & the Caribbean = 4
-# Oceania = 5
+selected_variables <- selected_variables %>% 
+  arrange(region)
 
 # Create table 
 kable(selected_variables, caption = "Table Depicting Predictor Variables", booktabs = TRUE) %>%
