@@ -48,7 +48,7 @@ For the purpose of this project, we chose several numeric variables from the dat
 ## Questions/Hypotheses to be addressed
 _State the research questions you plan to answer with this analysis._
 
-1) Is there a significant difference in the percentage of unintended pregnancies among short acting reversible contraception users among countries? 
+1) Is there a significant difference in the percentage of unintended pregnancies among short acting reversible contraception users among region? 
 
 The main outcome variables will be total percentage of unintended pregnancies among women using short acting reversible contraception methods (`pct_upreg_sarc`).
 

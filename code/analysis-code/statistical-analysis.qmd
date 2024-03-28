@@ -81,7 +81,7 @@ tukey_result <- TukeyHSD(regionANOVA)
 # explore the pairwise comparisons
 tidy(tukey_result)
 ```
-ANOVA results show that the region variable is statistically significantly associated with the outcome variable given the p-value less than 0.001. The Tukey HSD test revealed the largest differences in the outcome between the Oceania region and Latin America/the Caribbean, Europe, and Asia. The relationships between Oceania and Europe and Latin America/the Caribbean are statistically significant with p-values less than 0.0001. Oceania is clearly experiencing the lowest percentage of unintended pregnancies among short acting reversible method users.  The lowest difference in outcome between regions is between Asia and Africa, but this is not a statistically significant assocaition. Two statistically significant differences in the outcome exist between Latin America/the Caribbean and Europe with Africa, which shows that Africa is experiencing higher levels of the outcome. 
+ANOVA results show that the region variable is statistically significantly associated with the outcome variable given the p-value less than 0.001. The Tukey HSD test revealed the largest differences in the outcome between the Oceania region and Latin America/the Caribbean, Europe, and Asia. The relationships between Oceania and Europe and Latin America/the Caribbean are statistically significant with p-values less than 0.0001. Oceania is clearly experiencing the lowest percentage of unintended pregnancies among short acting reversible method users.  The lowest difference in outcome between regions is between Asia and Africa, but this is not a statistically significant association. Two statistically significant differences in the outcome exist between Latin America/the Caribbean and Europe with Africa, which shows that Africa is experiencing higher levels of the outcome. 
 
 ### Third Model Fit 
 ```{r}
@@ -178,13 +178,24 @@ saveRDS(lmtable7, file = table_file7)
 ```
 This model shows that total rate of maternal deaths due to abortion has the strongest association with the outcome out of the three maternal mortality rates included based on a coefficient estimate of -0.033353527.
 
+### Assessing correlation between predictors
+There are some variables that are intuitively correlated, which means they should not be included in the same model. We want to explore those correlations before building our multivariate linear regression model. 
+```{r}
+# find correlation coefficients 
+cor(mydata$pct_currentlymarried, mydata$pct_nevermarried)
+cor(mydata$rate_matdeaths, mydata$rate_matdeaths_upreg)
+cor(mydata$rate_matdeaths, mydata$rate_matdeaths_abs)
+cor(mydata$rate_matdeaths_upreg, mydata$rate_matdeaths_abs)
+```
+The percent of currently married women and the percent of never married women have a correlation coefficient of -0.8588, so these two variables are highly correlated. The total rate of maternal deaths and rate of maternal deaths due to unintended pregnancies is the most highly correlated pair with a coefficient of 0.8904. The correlation between total rate of maternal deaths and rate of maternal deaths due to abortion is slightly lower with a coefficient of 0.8023. The two variables with the least correlation out of these four pairs are rate of maternal deaths due to unintended pregnancies and rate of maternal deaths due to abortion with a coefficient of 0.6486. Based on these associations, we will only include the percent of currently married women in the multivariate model because it has a slightly larger effect on the outcome with a more significant p-value in its single predictor model compared to the percent of never married women predictor. We will include both the rate of maternal deaths due to unintended pregnancies and rate of maternal deaths due to abortion beccause the total rate of maternal deaths is so highly correlated with each of these variables.
+
 ### Eighth Model Fit 
-We will explore all 7 predictors using in a multiple linear regression model to determine how the associations  interact. 
+Based on the exploration of correlation between predictors, we include 5 predictors in the multiple linear regression model to determine how the associations interact. 
 ```{r}
 # fit linear model using pct_upreg_sarc as outcome with all 7 predictors
 lm_mod <- linear_reg() #specify the type of model
 lmfit8 <- lm_mod %>% #estimate/train the model 
-            fit(pct_upreg_sarc ~ sarc_standard + region + pct_currentlymarried + pct_nevermarried + rate_matdeaths + rate_matdeaths_upreg + rate_matdeaths_abs, mydata)      
+            fit(pct_upreg_sarc ~ sarc_standard + region + pct_currentlymarried + rate_matdeaths_upreg + rate_matdeaths_abs, mydata)      
 
 #generate clean output with estimates and p-values
 tidy(lmfit8) 
@@ -216,7 +227,27 @@ nulltable <- tidy(null_model)
 table_file9 = here("results", "tables", "resulttable9.rds")
 saveRDS(nulltable, file = table_file9)
 ```
+We also want to observe models with different combinations of predictors to determine if there is any evidence of interaction or effect measure modification. Multivariate analysis allows for the assessment of the association between each predictor and the outcome while adjusting for the effects of other variables. 
 
+### Tenth Model fit 
+We will create a model with all 3 rate of maternal mortality predictors to compare to the three models with each predictor on its own to further explore the correlation between these variables. 
+```{r}
+# fit linear model using pct_upreg_sarc as outcome with rate of maternal mortality predictors
+lm_mod <- linear_reg() #specify the type of model
+lmfit10 <- lm_mod %>% #estimate/train the model 
+            fit(pct_upreg_sarc ~ rate_matdeaths + rate_matdeaths_upreg + rate_matdeaths_abs, mydata)      
+
+#generate clean output with estimates and p-values
+tidy(lmfit10) 
+
+# save results from fit into a data frame 
+lmtable10 <- tidy(lmfit10)
+
+# save fit results table  
+table_file10 = here("results", "tables", "resulttable10.rds")
+saveRDS(lmtable10, file = table_file10)
+```
+It appears that there is an association between these three variables because the direction of the association between rate of maternal deaths and outcome has flipped. This model shows that rate of maternal deaths is associated with an increase in the outcome by a factor of 0.011267, while the single predictor model showed a slightly negatively correlation with the outcome based on a small coefficient estimate of -0.01482568. The other two variables retain their negative association with the outcome variable with similar coefficient measurements. 
 
 ## Assessing Model Performance
 It is important to consider appropriate metrics to measure model performance. We will use RMSE at this point to compare 3 models: one with the number of women using short acting reversible contraception predictor, one using the percent never married predictor, and one using the rate of maternal deaths due to abortion predictor. We chose these predictors because they have the strongest associations with the outcomes based on the single linear regression models shown above. 
@@ -229,41 +260,53 @@ poppred <- predict(lmfit1, new_data = mydata) %>%
                   select(.pred)
 
 # create a data frame with the predictions and true values 
-popdata <- bind_cols(poppred, mydata$sarc_standard) %>%
-            rename(sarc_standard = "...2")
+popdata <- bind_cols(poppred, mydata$pct_upreg_sarc) %>%
+            rename(pct_upreg_sarc = "...2")
 
 # find RMSE to determine model fit
-rmse1 <- rmse(popdata, truth = sarc_standard, estimate = .pred)
+rmse1 <- rmse(popdata, truth = pct_upreg_sarc, estimate = .pred)
 
-# create predictions using the pct_nevermarried predictor model
-marriedpred <- predict(lmfit4, new_data = mydata) %>% 
+# create predictions using the pct_curmarried predictor model
+marriedpred <- predict(lmfit3, new_data = mydata) %>% 
                   select(.pred)
 
 # create a data frame with the predictions and true values 
-marrieddata <- bind_cols(marriedpred, mydata$pct_nevermarried) %>%
-            rename(pct_nevermarried = "...2")
+marrieddata <- bind_cols(marriedpred, mydata$pct_upreg_sarc) %>%
+            rename(pct_upreg_sarc = "...2")
 
 # find RMSE to determine model fit
-rmse2 <- rmse(marrieddata, truth = pct_nevermarried, estimate = .pred)
+rmse2 <- rmse(marrieddata, truth = pct_upreg_sarc, estimate = .pred)
 
 # create predictions using the rate of maternal deaths due to abortion predictor model
-matdeathspred <- predict(lmfit7, new_data = mydata) %>% 
+matdeaths_abspred <- predict(lmfit7, new_data = mydata) %>% 
                   select(.pred)
 
 # create a data frame with the predictions and true values 
-matdeathdata <- bind_cols(matdeathspred, mydata$rate_matdeaths_abs) %>%
-            rename(rate_matdeaths_abs = "...2")
+matdeath_absdata <- bind_cols(matdeaths_abspred, mydata$pct_upreg_sarc) %>%
+            rename(pct_upreg_sarc = "...2")
 
 # find RMSE to determine model fit
-rmse3 <- rmse(matdeathdata, truth = rate_matdeaths_abs, estimate = .pred)
+rmse3 <- rmse(matdeath_absdata, truth = pct_upreg_sarc, estimate = .pred)
+
+# create predictions using the null model
+nullpred <- predict(lmfit9, new_data = mydata) %>% 
+                  select(.pred)
+
+# create a data frame with the predictions and true values 
+nulldata <- bind_cols(nullpred, mydata$pct_upreg_sarc) %>%
+            rename(pct_upreg_sarc = "...2")
+
+# find RMSE to determine model fit
+rmse4 <- rmse(nulldata, truth = pct_upreg_sarc, estimate = .pred)
 
 # compare the metrics 
 print(rmse1)
 print(rmse2)
 print(rmse3)
+print(rmse4)
 ```
 
-The RMSE metric favors the model with the percentage of women never married because it has the lowest RMSE value of 17.01493. The model with the total number of women using short acting reversible methods is slightly worse with an RMSE 18.22695. The model with the rate of maternal deaths due to abortion performs much worse, with a high RMSE value of 129.482. 
+The RMSE metric favors the model with the total number of women using short acting reversible contraception methods based on a low RMSE value of 5.143319. The model with the percentage of women currently married performs worse with an RMSE value of 10.17591. The same conclusion can be drawn for the model with the rate of maternal mortality due to abortions predictor only, given the RMSE value of 10.14128. The null model has an RMSE value of 9.842267, so all models should have an RMSE lower than this to be considered useful. 
 
 It is important to determine if our model with the region predictor performs well because the main question to be answered by this analysis depends on this predictor. Since region is a categorical variable, we cannot evaluate the RMSE performance metric.  
 ```{r}
@@ -275,14 +318,64 @@ regionpred <- predict(lmfit2, new_data = mydata) %>%
                   select(.pred)
 
 # create a data frame with the predictions and true values 
-regiondata <- bind_cols(regionpred, mydata$region) %>%
-            rename(region = "...2")
+regiondata <- bind_cols(regionpred, mydata$pct_upreg_sarc) %>%
+            rename(pct_upreg_sarc = "...2")
 
 # find RMSE to determine model fit
-rmse4 <- rmse(regiondata, truth = region, estimate = .pred)
+rmse5 <- rmse(regiondata, truth = pct_upreg_sarc, estimate = .pred)
+print(rmse5)
 ```
 
-We want to see how the model with all 7 predictors performs in comparison to the single predictor models. 
+The results of this RMSE value are disappointing because 18.11857 is much larger than the null model's RMSE of 9.842267. However, this issue could possibly be explained by the fact that Africa has the most significant differences in our outcome compared to the other regions. We will still include this predictor in our multivariate regression model based on the significant Tukey conclusions and the large differences in outcome displayed in our exploratory data analysis results. 
+
+After examining the relationship between the rate of maternal mortality variables, we want to determine which model performs the best. We have already found the RMSE value for the rate of maternal deaths due to abortion, which is stored as `rmse3`. We need to find the RMSE values for the other two single predictor models and the model with all 3 predictors.  
+```{r}
+# create predictions using the rate of maternal deaths predictor model
+matdeathsallpred <- predict(lmfit5, new_data = mydata) %>% 
+                  select(.pred)
+
+# create a data frame with the predictions and true values 
+matdeathalldata <- bind_cols(matdeathsallpred, mydata$pct_upreg_sarc) %>%
+            rename(pct_upreg_sarc = "...2")
+
+# find RMSE to determine model fit
+rmse6 <- rmse(matdeathalldata, truth = pct_upreg_sarc, estimate = .pred)
+print(rmse6)
+
+# create predictions using the rate of maternal deaths from unintended pregnancies predictor model
+matdeaths_upregpred <- predict(lmfit6, new_data = mydata) %>% 
+                  select(.pred)
+
+# create a data frame with the predictions and true values 
+matdeath_upregdata <- bind_cols(matdeaths_upregpred, mydata$pct_upreg_sarc) %>%
+            rename(pct_upreg_sarc = "...2")
+
+# find RMSE to determine model fit
+rmse7 <- rmse(matdeath_upregdata, truth = pct_upreg_sarc, estimate = .pred)
+print(rmse7)
+
+
+# create predictions using model with all three rate predictors
+totalratepred <- predict(lmfit10, new_data = mydata) %>% 
+                  select(.pred)
+
+# create a data frame with the predictions and true values 
+totalratedata <- bind_cols(totalratepred, mydata$pct_upreg_sarc) %>%
+            rename(pct_upreg_sarc = "...2")
+
+# find RMSE to determine model fit
+rmse8 <- rmse(totalratedata, truth = pct_upreg_sarc, estimate = .pred)
+print(rmse8)
+
+# display RMSE values for each model
+print(rmse6) #rate of maternal mortality predictor only
+print(rmse7) #rate of maternal mortality due to unintended pregnancy predictor only
+print(rmse3) #rate of maternal mortality due to abortion predictor only
+print(rmse8) #all 3 rates of maternal mortality predictors together 
+```
+The RMSE values shows that the three single predictor models perform worse than the null model, which is not ideal. The model with all 3 maternal morality rate predictors performs exactly the same as the null model, which makes sense because the coefficients estimating the effect of each predictor on the outcome are so small. 
+
+We want to see how the model with all 5 predictors performs in comparison to the single predictor models. 
 ```{r}
 # set seed for reproducibility 
 set.seed(2468)
@@ -296,10 +389,10 @@ alldata <- bind_cols(allpred, mydata$pct_upreg_sarc) %>%
             rename(pct_upreg_sarc = "...2")
 
 # find RMSE to determine model fit
-rmse5 <- rmse(alldata, truth = pct_upreg_sarc, estimate = .pred)
-print(rmse5)
+rmse9 <- rmse(alldata, truth = pct_upreg_sarc, estimate = .pred)
+print(rmse9)
 ```
-As expected, this model performs better than the single predictor models with a low RMSE score of 4.209. 
+As expected, this model performs better than the single predictor models with the lowest RMSE score of 4.209. 
 
 ## Cross-Validation to Assess Model Performance
 While the RMSE performance is a good place to start for evaluating model performance, we need to determine how well the model performs on data it has not seen before to determine its usefulness. We will use the cross-validation process to do this. The first step is to split the data into testing and training portions. 
@@ -313,4 +406,9 @@ datasplit <- initial_split(mydata, prop = 3/4)
 # create data frames for the two sets
 train_data <- training(datasplit)
 test_data <- testing(datasplit)
+```
+
+We will only cross-validate the multivariate regression model `lmfit8` because it performs the best in terms of RMSE. 
+```{r}
+
 ```
