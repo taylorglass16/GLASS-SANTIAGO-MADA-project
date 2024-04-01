@@ -66,7 +66,9 @@ Reproducing this project requires R, RStudio, and Microsoft word. The README fil
 
 The next step is exploratory data analysis. The eda.qmd file in the code > eda-code folder contains all the code for this process. We produced a couple summary tables before we began a simple exploration of trends in percentage of unintended pregnancies by country in our first set of histograms. The second set of histograms explore contraceptive usage methods by country. These graphs revealed outliers, so we standardized by population size for each country. The next sets of plots are line graphs showing total usage of contraceptive methods to percentage of unintended pregnancies associated with that method. The last two sets of plots contain line graphs of the relationship between the two variables stratified by region and violin plots displaying the relationship between percentage of unintended pregnancies and the categorical usage variable created during processing. All of these figures are saved in the Supplementary-Material.qmd file in the products > manuscript > supplement folder. This process led us to focus on the percentage of unintended pregnancies among short acting reversible methods as our single outcome because this method is becoming increasingly popular, so we feel that results from this contraception method will be the most relevant. Additionally, the exploratory data analysis process showed that the distribution of this outcome variable is less skewed than the other options, and the stratification by region is clearer, which allows for better understanding. 
 
-Step three is the statistical analysis and model fitting portion found in the statistical-analysis.qmd file in the code > analysis-code folder. We explore the single outcome `pct_upreg_sarc` based on 7 predictors with simple linear regression, total number of women using short acting reversible methods, region, percent of currently married women, percent of women who never married, total rate of maternal mortality, rate of maternal mortality by unintended pregnancy, and rate of maternal mortality by abortion. We also assess the performance of the models in this file. Result tables for each model are stored in the results > tables folder. 
+Step three is the statistical analysis and model fitting portion found in the statistical-analysis.qmd file in the code > analysis-code folder. We explore the single outcome `pct_upreg_sarc` based on 7 predictors with simple linear regression, total number of women using short acting reversible methods, region, percent of currently married women, percent of women who never married, total rate of maternal mortality, rate of maternal mortality by unintended pregnancy, and rate of maternal mortality by abortion. We also explore the differences in the outcome between regions using an ANOVA test and Tukey's Honestly Significant Difference test for pairwise comparisons within ANOVA. Result tables for each model and test are stored in the results > tables folder. 
+
+Step four is to critically analyze the performance of our models to determine which one performs the best in predicting our outcome, which is also done in the statistical-analysis.qmd file in the code > analysis-code folder. We chose 2 performance metrics to find for each of our 9 models: Root Mean Square Error (RMSE) and Mean Absolute Error (MAE). We chose these performance metrics because they are commonly used for linear regression models like the ones we have created. RMSE provides an average magnitude of the error in the predictors, and MAE provides an average absolute difference between the predicted and actual values. We include both metrics to increase the validity of our results. Once we decided on the final model, we use cross-validation to determine how well it will perform on data it has not seen before.  
 
 
 The Manuscript.qmd file for this document can be found in the products > manuscript folder. 
@@ -98,7 +100,7 @@ _Write code that reads in the file and cleans it so it's ready for analysis. Sin
 
 ## Statistical analysis
 _Explain anything related to your statistical analyses._
-We began with a simple linear regression model with each of the 7 predictor variables. We also included a multiple linear regression model with all 7 predictors. We included the RMSE for two of the models to begin exploring model fit. 
+We began with a simple linear regression model with each of the 7 predictor variables to determine the association betwen each variable and the outcome. We explored the region variable further because our main goal is to understand the difference in outcome by region. We used ANOVA to determine the difference between regions, and we added Tukey's Honeslty Significant Difference test to examine pairwise associations. This led to discovering correlations between some of the predictors, which we examined through correlation coefficients. We tried out a combination of these correlated predictors in 2 different models to further examine the interactions. After considering which predictors are most impactful on our outcome, we narrowed the final predictors down to a list of 5. We included a multiple linear regression model with all 5 of these predictors. We used the RMSE and MAE performance metrics to evaluate all 9 models that we created to determine which one fit best. Lastly, we used cross-validation to determine how well our multiple linear regression model performs on data it has not seen before. 
 
 {{< pagebreak >}}
 
@@ -183,10 +185,18 @@ The second model we created used the region predictor, which revealed that the L
 #| echo: FALSE
 readRDS(here("results","tables", "resulttable2.rds")) 
 ```
-We created one model with all 7 predictors using multiple linear regression. This model shows the strongest predictor is the number of women using short acting reversible contraception. The next strongest predictor is the European region followed by the Latin America/the Caribbean region and the Asia region, which is a shift from the model with the singular region predictor. The Oceania region now has a negative association with the outcome. Both of the marriage status predictors are associated with a decrease in the outcome. The coefficient estimates for the rate of maternal death due to unintended pregnancies and abortion both flipped from the single predictor models to show a positive association with the outcome. 
+The Tukey HSD test for the region predictor, shown in @statistical-analysis3, revealed the largest differences in the outcome between the Oceania region and Latin America/the Caribbean, Europe, and Asia. The differences between Oceania and Europe and Latin America/the Caribbean are the largest. Oceania is clearly experiencing the lowest percentage of unintended pregnancies among short acting reversible method users. Two more significant differences in the outcome exist between Latin America/the Caribbean and Europe with Africa, which shows that Africa is experiencing higher levels of the outcome. 
 ```{r}
-#| label: basic-statistical-analysis
-#| fig-cap: "Multiple Linear Regression with 7 Predictors"
+#| label: statistical-analysis3
+#| fig-cap: "Tukey HSD Test Results"
+#| echo: FALSE
+readRDS(here("results","tables", "resulttable13.rds")) 
+```
+
+We created one model with all 5 predictors using multiple linear regression, shown in @statistcal-analysis4. This model shows the strongest predictor is the number of women using short acting reversible contraception. The next strongest predictor is the European region followed by the Latin America/the Caribbean region and the Asia region, which is a shift from the model with the singular region predictor. The Oceania region now has a negative association with the outcome. The currently married predictor is associated with a weak decrease in the outcome. The coefficient estimates for the rate of maternal death due to unintended pregnancies and abortion both show a very weak positive association with the outcome. 
+```{r}
+#| label: statistical-analysis4
+#| fig-cap: "Multiple Linear Regression with 5 Predictors"
 #| echo: FALSE
 readRDS(here("results","tables", "resulttable8.rds")) 
 ```
