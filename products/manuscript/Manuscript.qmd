@@ -73,19 +73,6 @@ Step four is to critically analyze the performance of our models to determine wh
 
 The Manuscript.qmd file for this document can be found in the products > manuscript folder. 
 
-## Schematic of workflow
-
-Sometimes you might want to show a schematic diagram/figure that was not created with code (if you can do it with code, do it). is an example of some - completely random/unrelated - schematic that was generated with Biorender.
-We store those figures in the `assets` folder.
-
-```{r}
-#| label: fig-schematic
-#| fig-cap: "A figure that is manually generated and shows some overview/schematic. This has nothing to do with the data, it's just a random one from one of our projects I found and placed here."
-#| echo: FALSE
-# knitr::include_graphics(here("products","assets","antigen-recognition.png")) #commented out for the sake of knitting the file at this stage in the project 
-```
-
-
 ## Data aquisition
 _As applicable, explain where and how you got the data. If you directly import the data from an online source, you can combine this section with the next._
 
@@ -185,14 +172,19 @@ The second model we created used the region predictor, which revealed that the L
 #| echo: FALSE
 readRDS(here("results","tables", "resulttable2.rds")) 
 ```
-The Tukey HSD test for the region predictor, shown in @statistical-analysis3, revealed the largest differences in the outcome between the Oceania region and Latin America/the Caribbean, Europe, and Asia. The differences between Oceania and Europe and Latin America/the Caribbean are the largest. Oceania is clearly experiencing the lowest percentage of unintended pregnancies among short acting reversible method users. Two more significant differences in the outcome exist between Latin America/the Caribbean and Europe with Africa, which shows that Africa is experiencing higher levels of the outcome. 
+Details about the 9 different models we created can be found in the statistical-analysis.qmd file in the code > analysis-code folder along with an exploration of the correlation between predictors.
+
+## Full analysis
+
+_Use one or several suitable statistical/machine learning methods to analyze your data and to produce meaningful figures, tables, etc. This might again be code that is best placed in one or several separate R scripts that need to be well documented. You want the code to produce figures and data ready for display as tables, and save those. Then you load them here._
+
+We wanted to analyze the differences in the outcome between regions further, so we completed an ANOVA test and subsequet Tukey HSD test. The Tukey HSD test for the region predictor, shown in @statistical-analysis3, revealed the largest differences in the outcome between the Oceania region and Latin America/the Caribbean, Europe, and Asia. The differences between Oceania and Europe and Latin America/the Caribbean are the largest. Oceania is clearly experiencing the lowest percentage of unintended pregnancies among short acting reversible method users. Two more significant differences in the outcome exist between Latin America/the Caribbean and Europe with Africa, which shows that Africa is experiencing higher levels of the outcome. 
 ```{r}
 #| label: statistical-analysis3
 #| fig-cap: "Tukey HSD Test Results"
 #| echo: FALSE
 readRDS(here("results","tables", "resulttable13.rds")) 
 ```
-
 We created one model with all 5 predictors using multiple linear regression, shown in @statistcal-analysis4. This model shows the strongest predictor is the number of women using short acting reversible contraception. The next strongest predictor is the European region followed by the Latin America/the Caribbean region and the Asia region, which is a shift from the model with the singular region predictor. The Oceania region now has a negative association with the outcome. The currently married predictor is associated with a weak decrease in the outcome. The coefficient estimates for the rate of maternal death due to unintended pregnancies and abortion both show a very weak positive association with the outcome. 
 ```{r}
 #| label: statistical-analysis4
@@ -200,20 +192,49 @@ We created one model with all 5 predictors using multiple linear regression, sho
 #| echo: FALSE
 readRDS(here("results","tables", "resulttable8.rds")) 
 ```
-The full statistical analysis can be found in the statistical-analysis.qmd file in the code > analysis-code folder.
-
-## Full analysis
-
-_Use one or several suitable statistical/machine learning methods to analyze your data and to produce meaningful figures, tables, etc. This might again be code that is best placed in one or several separate R scripts that need to be well documented. You want the code to produce figures and data ready for display as tables, and save those. Then you load them here._
-
-Example @tbl-resulttable2 shows a summary of a linear model fit.
-
+To determine which model performed the best, we started by examining the RMSE and MAE performance metrics. We found that the model with the standardized total count of women using the short acting reversible contraception method performed the best in a single predictor model compared to the percent of currently married women and the rate of maternal mortality due to abortion. @statistical-analysis5 shows the RMSE and MAE values for each of these three models compared to the null model with no predictors. The model with the population size using SARCs is the only single predictor model that performs better than the null. The full model with all 5 predictors peforms the best with the lowest RMSE and MAE values. 
 ```{r}
-#| label: tbl-resulttable2
-#| tbl-cap: "Linear model fit table."
+#| label: statistical-analysis5
+#| fig-cap: "Performance Metric Comparisons"
 #| echo: FALSE
-# resulttable2 = readRDS(here("results","tables-files","resulttable2.rds"))
-# knitr::kable(resulttable2) #commented out for the sake of knitting our project at this stage
+readRDS(here("results","tables", "resulttable14.rds")) 
+```
+We used cross-validation of the two best models to determine how well the model performs on data it has not seen yet by splitting the data into testing and training pieces. The cross-validated results, shown in @statistical-analysis6 lead to the same conclusion: the multiple linear regression model with 5 predictors performs better. The RMSE value for the single predictor model with `sarc_standard` is 4.822226, which is lower the the first RMSE value of 5.143319. While the RMSE value for the multiple linear regression model is slightly higher than the first time it was calculated, it is still lower than the single predictor model. Additionally, the standard error of the RMSE for the multiple linear regression model is 0.2768, which is lower than the standard error of the RMSE for the single predictor model of 0.3528. This means there is higher variance in the single predictor model. The R-squared value of 0.8206 for the multiple linear regression model is higher than 0.7861 for the single predictor model, which means the multiple linear regression model accounts for more of the variability in the data. Overall, the multiple linear regression model performs better.
+```{r}
+#| label: statistical-analysis6
+#| fig-cap: "Cross Validation Performance Metric Comparisons"
+#| echo: FALSE
+readRDS(here("results","tables", "resulttable15.rds")) 
+```
+
+Since we determined that the full model with all 5 predictors performs best, we graphed the predicted versus observed values using this model with both the testing and training data to further examine model performance. As seen in @statistical-analysis7, the training model predictions, shown in teal, hover pretty closely around the expected relationship between the outcome and the 5 predictors, which is depicted as the 45 degree line. The testing model predictions, shown in coral, are much more extreme than the training model predictions because they are farther from the 45 degree line. While there is some overlap between the two sets of predictions, it is likely that our model is overfitting the data. 
+```{r}
+#| label: statistical-analysis7
+#| fig-cap: "Evaluating Final Model Performance on Test Data"
+#| echo: FALSE
+knitr::include_graphics(here("results", "figures", "final-figures", "fullmodelpred.png"))
+```
+We went one step further to examine the uncertainty in the full model predictions using the bootstrap method with 100 resamples of the training data. The figure shown in @statistical-analysis8 displays the 95% confidence intervals, shown as dark blue lines, for the predictions made by the model. The confidence intervals are narrow, which shows there is minimal uncertainty in the model prediction. For the predictions that do not fall on the expected 45 degree line, the confidence intervals do not intersect with the line either. These findings increase the validity of the conclusion that the model is overfitting the data because there is not much uncertainty in the predictions. 
+```{r}
+#| label: statistical-analysis8
+#| fig-cap: "Evaluation of Uncertainty in Full Model Predictions"
+#| echo: FALSE
+knitr::include_graphics(here("results", "figures", "final-figures", "bootstrappred.png"))
+```
+
+Since we have evidence that our model overfits the data, the last technique we want to use to explore our full model is Lasso regression. This technique could reveal predictors that should not be included in our final model, which could reduce the risk of overfitting. As seen in @statistical-analysis9, the LASSO regression coefficients are much smaller than the first full model we created without the regularization penalty, but all 5 predictors remain in the model. The `sarc_standard` predictor still has the strongest relationship with the outcome. The percent of women currently married, rate of maternal deaths due to unintended pregnancies, and rate of maternal deaths to due to abortion all have weak negative associations with the outcome. This process confirms that our final model should contain all 5 predictors. 
+```{r}
+#| label: statistical-analysis9
+#| fig-cap: "LASSO Regression Results"
+#| echo: FALSE
+readRDS(here("results","tables", "resulttable16.rds")) 
+```
+It is important to tune the hyperparameters associated with LASSO regression to determine the model that fits best, which is shown in @statistical-analysis10. As the regularization penalty increases past 1, we see that the RMSE value increases exponentially. The lowest RMSE for the model is slightly greater than 5 when the regularization penalty is less than 1. When the regularization penalty increases to 10, the RMSE increases to almost 11. Since we originally chose 0.1 as our penalty parameter, we found one of the best performing models with the LASSO regression based on an RMSE value slightly greater than 5, which i comparable to the RMSE found in the first regression model with all 5 predictors. 
+```{r}
+#| label: statistical-analysis10
+#| fig-cap: "Parameter Tuning for LASSO Regression"
+#| echo: FALSE
+knitr::include_graphics(here("results", "figures", "final-figures", "lassoparameters.png"))
 ```
 
 

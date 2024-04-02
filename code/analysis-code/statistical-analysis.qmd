@@ -15,6 +15,7 @@ library(yardstick) # for finding performance metrics
 library(rsample) #for splitting the data into testing/training
 library(knitr) # to create performance metric tables 
 library(parsnip) # to create a workflow for cross-validation
+library(glmnet) # for LASSO regression
 ```
 
 ## Load the cleaned data
@@ -393,8 +394,7 @@ rmse8 <- rmse(totalratedata, truth = pct_upreg_sarc, estimate = .pred)
 mae8 <- mae(matdeathalldata, truth = pct_upreg_sarc, estimate = .pred)
 
 # create a matrix with RMSE and MAE values
-results2 <- as.table(matrix(c(rmse6$.estimate, mae6$.estimate, rmse7$.estimate, mae7$.estimate, rmse3$.estimate, mae3$.estimate,
-                              rmse8$.estimate, mae8$.estimate, rmse4$.estimate, mae4$.estimate), nrow = 5, ncol = 2, byrow = TRUE))
+results2 <- as.table(matrix(c(rmse6$.estimate, mae6$.estimate, rmse7$.estimate, mae7$.estimate, rmse3$.estimate, mae3$.estimate, rmse8$.estimate, mae8$.estimate, rmse4$.estimate, mae4$.estimate), nrow = 5, ncol = 2, byrow = TRUE))
 
 # add column names
 colnames(results2) <- c("RMSE", "MAE")
@@ -433,6 +433,28 @@ print(rmse9)
 print(mae9)
 ```
 As expected, this model performs better than the single predictor models with the lowest RMSE score of 4.361363 and lowest MAE score of 3.386193. 
+
+We want to have a table comparing the RMSE and MAE values for the three single predictor models of interest along with the full model with all 5 predictors, which will all be compared to the null model. 
+```{r}
+# create a matrix with RMSE and MAE values
+results3 <- as.table(matrix(c(rmse1$.estimate, mae1$.estimate, rmse2$.estimate, mae2$.estimate,
+                             rmse3$.estimate, mae3$.estimate, rmse9$.estimate, mae9$.estimate,
+                             rmse4$.estimate, mae4$.estimate), nrow = 5, ncol = 2, byrow = TRUE))
+
+# add column names
+colnames(results3) <- c("RMSE", "MAE")
+
+# add row names
+rownames(results3) <- c("Population Size Using SARCs", "Percent Currently Married", 
+                       "Rate of Maternal Deaths due to Abortion", "Full Model with 5 Predictors", "Null Model")
+
+# print the table
+kable(results3)
+
+# save performance metrics results table  
+table_file14 = here("results", "tables", "resulttable14.rds")
+saveRDS(results3, file = table_file14)
+```
 
 ## Cross-Validation to Assess Model Performance
 While the RMSE and MAE performance metrics are a good place to start for evaluating model performance, we need to determine how well the model performs on data it has not seen before to determine its usefulness. We will use the cross-validation process to do this. The first step is to split the data into testing and training portions. 
@@ -485,7 +507,26 @@ my_resample2 <- my_workflow2 %>%
 collect_metrics(my_resample)
 collect_metrics(my_resample2)
 ```
-The cross-validated results lead to the same conclusion: the multiple linear regression model with 5 predictors performs better. The RMSE value for the single predictor model with `sarc_standard` is 4.822226, which is lower the the first RMSE value of 5.143319. While the RMSE value for the multiple linear regression model is slightly higher than the first time it was calculated, it is still slightly lower at 4.405716. Additionally, the standard error the multiple linear regression model is 0.2768, which is lower than the standard error for the single predictor model of 0.3528. This means there is higher variance in the single predictor model. The R-squared value of 0.8206 for the multiple linear regression model is higher than 0.7861 for the single predictor model, which means the multiple linear regression model accounts for more of the variability in the data. Overall, the multiple linear regression model performs better.
+The cross-validated results lead to the same conclusion: the multiple linear regression model with 5 predictors performs better. The RMSE value for the single predictor model with `sarc_standard` is 4.822226, which is lower the the first RMSE value of 5.143319. While the RMSE value for the multiple linear regression model is slightly higher than the first time it was calculated, it is still slightly lower at 4.405716. Additionally, the standard error of the RMSE for the multiple linear regression model is 0.2768, which is lower than the standard error of the RMSE for the single predictor model of 0.3528. This means there is higher variance in the single predictor model. The R-squared value of 0.8206 for the multiple linear regression model is higher than 0.7861 for the single predictor model, which means the multiple linear regression model accounts for more of the variability in the data. Overall, the multiple linear regression model performs better.
+
+We want a table displaying these results as well. 
+```{r}
+# create a matrix with RMSE and MAE values
+results4 <- as.table(matrix(c(4.822226, 0.25279125, 0.786067, 0.04292202, 4.405716, 0.27679502, 0.820600, 0.02815933), nrow = 2, ncol = 4, byrow = TRUE))
+
+# add column names
+colnames(results4) <- c("RMSE", "Standard Error", "R-Squared", "Standard Error")
+
+# add row names
+rownames(results4) <- c("Single Predictor Model", "Full Predictor Model")
+
+# print the table
+kable(results4)
+
+# save performance metrics results table  
+table_file15 = here("results", "tables", "resulttable15.rds")
+saveRDS(results4, file = table_file15)
+```
 
 Since we have concluded that the model with all 5 predictors performs the best, we will use this model to make predictions for the test data. We will create a graph to show how well the model performed on the training and testing data. 
 ```{r}
@@ -508,12 +549,149 @@ plotdata <- data.frame(
   model = rep(c("Observed", "Training Model", "Testing Model"), each = nrow(train_data))) # add label indicating the model
 
 # create a visual representation with 2 sets of predicted and observed values 
-ggplot(plotdata, aes(x = observed)) +
-  geom_point(aes(y = training_model2, color = "training model"), shape = 3) +
-  geom_point(aes(y = test_model2, color = "testing model"), shape = 3) +
-  geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "black") + #add the 45 degree line
-  xlim(0, 50) + #limit the x-axis values
-  ylim(0, 50) + #limit the y-axis values
-  labs(x = "Observed Values", y = "Predicted Values", title = "Comparing Training and Testing Data on MLR Model")
+figure1 <- ggplot(plotdata, aes(x = observed)) +
+              geom_point(aes(y = training_model2, color = "training model"), shape = 3) +
+              geom_point(aes(y = test_model2, color = "testing model"), shape = 3) +
+              geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "black") + #add the 45               degree line
+              xlim(0, 50) + #limit the x-axis values
+              ylim(0, 50) + #limit the y-axis values
+              labs(x = "Observed Values", y = "Predicted Values", title = "Comparing Training and Testing Data on MLR Model")
+figure1
+
+# save final figure
+figure_file = here("results", "figures", "final-figures", "fullmodelpred.png")
+ggsave(filename = figure_file, plot=figure1) 
 ```
 The training model predictions, shown in teal, hover pretty closely around the expected relationship between the outcome and the 5 predictors, which is depicted as the 45 degree line. The testing model predictions, shown in coral, are much more extreme than the training model predictions because they are farther from the 45 degree line. While there is some overlap between the two sets of predictions, it is likely that our model is overfitting the data. 
+
+To examine the uncertainty in the model further, we will use the bootstrapping method to resample our data 100 times to find confidence intervals for our predictions. 
+```{r}
+# set the seed for reproducibility
+set.seed(2468)
+
+# create 100 bootstraps with the training data
+bootstraps <- bootstraps(train_data, times = 100)
+
+# create empty vector to store predictions list 
+preds_bs <- vector("list", length = length(bootstraps))
+
+# write a loop to fit the model to each bootstrap and make predictions
+for (i in 1:length(bootstraps)) {
+  
+  bootstrap_sample <- analysis(bootstraps$splits[[i]])  # isolate the bootstrap sample
+  
+  model <- lm(pct_upreg_sarc ~ sarc_standard + region + pct_currentlymarried + rate_matdeaths_upreg + rate_matdeaths_abs, data = bootstrap_sample) # fit the model using the bootstrap sample
+  
+  predictions <- predict(model, newdata = train_data) # make predictions with the training data
+  
+  preds_bs[[i]] <- predictions # store predictions in the empty vector
+}
+# create an empty array to store the predictions
+num_samples <- length(preds_bs)
+num_datapoints <- length(preds_bs[[1]])  
+preds_array <- array(NA, dim = c(num_samples, num_datapoints))
+
+# fill the array with predictions from bootstrappping
+for (i in 1:num_samples) {
+  preds_array[i,] <- unlist(preds_bs[[i]])
+}
+
+# find the median and 95% confidence intervals of each prediction
+preds <- preds_array %>%
+          apply(2, quantile,  c(0.05, 0.5, 0.95)) %>%
+          t()
+
+# create a data frame with all the necessary variables
+finalbootstrap <- data.frame(
+  observed = c(train_data$pct_upreg_sarc), 
+  point_estimates = c(trainpred$.pred),
+  medians = preds[, 2],
+  lower_bound = preds[, 1],
+  upper_bound = preds[, 3]
+)
+
+# create visualization with all 5 variables 
+figure2 <- ggplot(finalbootstrap, aes(x = observed, y = point_estimates)) +
+              geom_point(color = "black") +  
+              geom_point(aes(y = medians), color = "coral") + 
+              geom_errorbar(aes(ymin = lower_bound, ymax = upper_bound), width = 0.1, color = "blue") + 
+              geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "black") +  # add 45                 degree line
+              xlim(0, 50) + # limit the x-axis values
+              ylim(0, 50) + # limit the y-axis values
+              labs(x = "Observed Values", y = "Predicted Values", title = "Uncertainty in Predictions with Final Model")
+figure2
+
+# save final figure
+figure_file2 = here("results", "figures", "final-figures", "bootstrappred.png")
+ggsave(filename = figure_file2, plot=figure2) 
+```
+This figure shows that 95% confidence intervals, shown as dark blue lines, for the predictions that do not fall on the expected 45 degree line do not intersect with the line either. The dark blue lines show that the confidence intervals are narrow, which increases the validity of the conclusion that the model is overfitting the data because there is not much uncertainty in the predictions. 
+
+Since we have evidence that our model overfits the data, the last technique we want to use to explore our full model is Lasso regression. This regression analysis shrinks the coefficients towards the mean, which allows it to perform subset selection. Coefficients can reach zero, and that results in that variable being removed from the model. This technique could reveal predictors that should not be included in our final model, which could reduce the risk of overfitting. 
+```{r}
+# set seed for reproducibility
+set.seed(2468)
+
+# LASSO regression workflow
+lasso_mod <- linear_reg(penalty = 0.1, mixture = 1, mode = "regression") %>% #set the penalty
+                set_engine("glmnet") 
+
+lasso_results <- lasso_mod %>% 
+            fit(pct_upreg_sarc ~ sarc_standard + region + pct_currentlymarried + rate_matdeaths_upreg +
+                  rate_matdeaths_abs, data = mydata) 
+
+# print results 
+tidy(lasso_results) 
+
+# save results from fit into a data frame 
+lmtable11 <- tidy(lasso_results)
+
+# save fit results table  
+table_file16 = here("results", "tables", "resulttable16.rds")
+saveRDS(lmtable11, file = table_file16)
+```
+As expected, the coefficients are much smaller than the first full model we created without the regularization penalty, but all 5 predictors remain in the model. The `sarc_standard` predictor still has the strongest relationship with the outcome. The percent of women currently married, rate of maternal deaths due to unintended pregnancies, and rate of maternal deaths to due to abortion all have weak negative associations with the outcome. The direction of the relationship between the rate of maternal deaths due to abortions and the outcome flipped from the first full regression model to this model, but the coefficient is so small that this difference is not significant.  
+
+It is important to tune the hyperparameters associated with LASSO regression to determine which model fits best. We will use a grid search to ensure that we try all combinations of the parameters in our grid. We will complete the tuning process with a 5-fold cross-validation repeated 5 times. 
+```{r}
+# set seed for reproducibility
+set.seed(2468)
+
+# repeat lasso model workflow
+lasso_mod2 <- linear_reg(penalty = tune(), mixture = 1, mode = "regression") %>% # allow for tuning
+                set_engine("glmnet") 
+
+# change variable type of region for tune_grid()
+mydata$region <- as.numeric(mydata$region)
+
+# define the recipe
+recipe <- recipe(pct_upreg_sarc ~ sarc_standard + region + pct_currentlymarried + rate_matdeaths_upreg +
+                  rate_matdeaths_abs, data = mydata) 
+
+# define the workflow
+workflow <- workflow() %>%
+  add_recipe(recipe) %>%
+  add_model(lasso_mod2)
+
+# define a parameter grid with 50 values linearly spaced on a log scale
+model_grid <- grid_regular(penalty(range = c(log10(1e-5), log10(1e2))), levels = 50)
+
+# create the real samples cross-validation 
+real_samples <- vfold_cv(mydata, v = 5, repeats = 5)
+
+# tune the model 
+tuned_model <- workflow %>% 
+                tune_grid(resamples = real_samples,
+                          grid = model_grid,
+                          metrics = metric_set(rmse))
+
+# observe the tuning process
+figure3 <- tuned_model %>% 
+             autoplot()
+figure3
+
+# save the final figure 
+figurefile3 <- here("results", "figures", "final-figures", "lassoparameters.png")
+ggsave(filename = figurefile3, plot = figure3)
+```
+As the regularization penalty increases past 1, we see that the RMSE value increases exponentially. The lowest RMSE for the model is slightly greater than 5 when the regularization penalty is less than 1. When the regularization penalty increases to 10, the RMSE increases to almost 11. These observations are expected because the RMSE can only increase in LASSO regression because the penalty parameter is added to the SSR term to determine the value of the cost function. It is expected that the model will perform worse according to the RMSE scale as the penalty parameter increases. This plot shows that penalty parameters less than 1 are preferable for model performance. Since we originally chose 0.1 as our penalty parameter, we found one of the best performing models with the LASSO regression.
