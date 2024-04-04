@@ -26,6 +26,15 @@ library(ggplot2)
 
 # Summary/Abstract
 _Write a summary of your project._
+Our study investigates the association between unintended pregnancy rates and short-acting reversible contraception (SARC) use across low- and middle-income countries. Data from the Guttmacher Institute's Adding It Up project was used, which included information on reproductive-aged women (15-49) and various demographic factors. Single and multivariate linear regression models were employed to examine relationships between predictor variables and the outcome variable (unintended pregnancy rate).
+
+The exploratory data analysis revealed a less skewed distribution of unintended pregnancies among SARC users compared to other contraceptive methods. This led researchers to focus on SARC use for the remainder of the study. The Latin America/Caribbean region displayed the strongest association with unintended pregnancy rates, followed by Asia. The Oceania and Europe region had weaker associations. Marriage status (both currently and never married) was inversely associated with unintended pregnancy rates. This means that as the percent of women who are currently married or never married increases, the unintended preganacy rate decreses. Maternal mortality rates, however, showed a positive correlation.
+
+A full model incorporating five predictors (total SARC users, region, marital status, and maternal mortality rates due to unintended pregnancy and abortion) was built. Despite performing the best among the evaluated models and being validated through cross-validation, the full model exhibited tendencies towards overfitting the data.
+
+Lasso regression, a technique that performs variable selection, was then employed to address these overfitting concerns. The analysis identified the total number of SARC users as the strongest predictor, followed by region. Marital status and maternal mortality rates displayed weaker negative associations with unintended pregnancy rates. While the direction of the association between abortion-related maternal mortality and unintended pregnancy rates flipped in the Lasso model, the coefficient (effect size) remained minimal.
+
+Overall, this study highlights the influence of regional variations, SARC use, and marital status on unintended pregnancy rates in low- and middle-income countries. The findings suggest a need for further investigation into the factors influencing maternal mortality rates and unintended pregnancies.
 
 
 {{< pagebreak >}}
