@@ -70,14 +70,20 @@ saveRDS(summary_table, file = summarytable_file)
 We also wanted a summary table with the predictor information to include in our manuscript.
 ```{r}
 # Selecting variables
-selected_variables <- mydata[c("pct_upreg_sarc", "region", "wra", "pct_currentlymarried", "pct_nevermarried","rate_matdeaths", "rate_matdeaths_upreg", "rate_matdeaths_abs")] 
+selected_variables <- mydata[c("pct_upreg_sarc","pct_currentlymarried","pct_nevermarried","rate_matdeaths", "rate_matdeaths_upreg", "rate_matdeaths_abs","region", "wra")] 
 
-selected_variables <- selected_variables %>% 
-  arrange(region)
 
 # Create table 
-kable(selected_variables, caption = "Table Depicting Predictor Variables", booktabs = TRUE) %>%
-  kable_styling(full_width = F, font_size = 10) 
+selected_variables %>%
+  tbl_summary(
+    by = region,
+    label = list(wra ~ "Number of women of reproductive age, 15-49"),
+    type = all_continuous() ~ "continuous2",
+    statistic = list(all_continuous() ~ c("{mean}","{min}, {max}"))) %>%
+modify_header(label ~ "**Predictor Variable**") %>%
+modify_caption("**Table 1. Predictor Variables**") %>%
+modify_spanning_header(all_stat_cols() ~ "Region")
+
 
 # Save to file 
 summarytable_file <- here("results", "tables", "predictortable.rds")
