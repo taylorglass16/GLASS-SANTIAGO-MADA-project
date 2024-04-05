@@ -695,3 +695,5 @@ figurefile3 <- here("results", "figures", "final-figures", "lassoparameters.png"
 ggsave(filename = figurefile3, plot = figure3)
 ```
 As the regularization penalty increases past 1, we see that the RMSE value increases exponentially. The lowest RMSE for the model is slightly greater than 5 when the regularization penalty is less than 1. When the regularization penalty increases to 10, the RMSE increases to almost 11. These observations are expected because the RMSE can only increase in LASSO regression because the penalty parameter is added to the SSR term to determine the value of the cost function. It is expected that the model will perform worse according to the RMSE scale as the penalty parameter increases. This plot shows that penalty parameters less than 1 are preferable for model performance. Since we originally chose 0.1 as our penalty parameter, we found one of the best performing models with the LASSO regression.
+
+We are considering adding a random forest model to further examine the variance in our model. 

@@ -23,32 +23,67 @@ library(gtsummary) # for creating tables
 ```
 
 
-For illustrative purposes, I'm doing the supplement as pdf. For this to work, you need a (La)TeX system installed. It's easy. Just follow [these steps](https://quarto.org/docs/output-formats/pdf-basics.html).
-
 # Overview
 This file provides extra information that is not included in our manuscript or the main processing and exploratory data analysis files. This information provides guidance on our thought processes behind the scenes and explains why we chose a single outcome to study.  
 
 # Code and file information
 
-Explain here what each code/file is and does, and in which order (if any) users need to run thing to reproduce everything.
-Essentially, give a full set of instructions to re-generate everything.
+Reproducing this project requires R, RStudio, Microsoft word, and LaTex. The README files in each folder contain descriptions of the documents located in that folder to help guide users through the reproducible processes. 
 
+Begin with the processing-file.qmd in the code > processing-code folder. This file loads the original dataset from the Guttmacher Institute's Adding It Up project, loads the codebook for the dataset, and glimpses at the data. The processing-code.qmd file shows how we modified existing variable, created new variables, and saved the processed data. The processed data is saved in the data > processed-data folder as processeddata.rds. 
+
+Visit the eda.qmd file in the code > eda-code folder to find code for the exploratory data analysis process. This code generates all the exploratory figures presented in the Exploratory/descriptive analysis results in the manuscript.qmd file as well as additional figures for the outcome not selected for the final analysis as shown later in this supplementary material.  All exploratory figures are saved in the results > figures > exploratory-figures folder.
+
+Continue to the statistical-analysis.qmd file in the code > analysis-code folder to find code for the statistical analysis and model building portion of the study. All model results tables are stored in the results > tables folder. All model figures examining model performance are stored in the results > figures > final-figures folder. 
+
+View the manuscript in the products > manuscript folder to find a summary of the study along with the most important findings and final conclusions. This supplemental material is stored in the products > manuscript > supplement folder. 
 
 {{< pagebreak >}}
 
 
 # Additional Method Details
 
-Often, the main manuscript only allows for an overview description of the methods. Use the supplement to describe all your methods, models and approaches in a lot of detail. Reference specific parts of your code as needed.
+We only briefly mentioned that we used cross-validation, bootstrapping, and LASSO regression to test our models in the methods section of our manuscript. Cross-validation was chosen as a method for determining how well the model performs on data it has not seen before because that is the main point of building models. Our original models, found in resulttables1-10 in the results > tables folder, are created using all of the data. The cross-validation process built models with 75% of the data that was designated as the training data, and the remaining 25% was used as testing data. Our dataset is small with only 132 observations, so the insights provided here are not robust. However, we still want to know how well these variables predict our outcome to determine how meaningful each predictor is, so we completed cross-validation anyways to answer this question. We also used this approach due to the risk of overfitting in our model based on interaction between variables. Plotting the observed and predicted values for our model allowed us to look for systematic deviations from the expected relationship visualized with a 45 degree line as shown in @supplement-1. Since we did conclude that the model overfits the data based on unhealthy deviations of the testing data from the 45 degree line, our use of cross-validation is appropriate and useful. Lastly, this approach is an easily interpretable way to increase confidence in the performance of our models based on metrics because both proceses lead to the same conclusions. 
+```{r}
+#| label: supplement-1
+#| fig-cap: "Evaluating Final Model Performance on Test Data"
+#| echo: FALSE
+knitr::include_graphics(here("results", "figures", "final-figures", "fullmodelpred.png"))
+```
+
+Bootstrapping was chosen to determine variability and uncertainty in the data. This process is similar to cross-validation, but the resampling process simulates a new dataset by performing sampling with replacement to obtain the same sample size as the original dataset. This is crucial for our small dataset of 132 observations, which is why we chose to bootstrap with 100 resamples. We are still limited by our small sample size for this approach, but it is worth completing for the purpose of investigating uncertainty. The model estimates parameters for each of the 100 samples, which creates a distribution of parameter estimates that can be used to create confidence intervals. We chose to create standard 95% confidence intervals based on convention, which can be seen in @supplement-2. 
+```{r}
+#| label: supplement-2
+#| fig-cap: "Evaluation of Uncertainty in Full Model Predictions"
+#| echo: FALSE
+knitr::include_graphics(here("results", "figures", "final-figures", "bootstrappred.png"))
+```
+
+LASSO regression is important in this study because we need to manage the bias-variance tradeoff since we have evidence that our model overfits the data. By applying a penalty parameter to the cost function, LASSO regression shrinks the coefficients of the parameter estimates, so these estimates will always be smaller than the ones provided by the original linear model. As the penalty parameter increases, a larger penalty term is added to the SSR, which increases the value of the cost function. As the penalty increases, the RMSE value increases, and the performance of the model is considered worse and worse comparatively. We chose a parameter of 0.1 first because that is standard for LASSO regression, but we also completed a parameter tuning process to validate that choice. As shown in @supplement-3, the RMSE performance metric increases exponentially when the penalty parameter increases past 1, which validates our previous selection of 0.1 for the penalty parameter because that will produce the lowest RMSE possible. Since coefficients can be reduced all the way to zero, this analysis completes feature selection as well. Shrinking the coefficients also helps combat colinearity in variables, which we established between the percent of currently married women and percent of never married women, and the three rates of maternal mortality, respectively. LASSO models are also easier to interpet, which increases the validity of our findings.
+```{r}
+#| label: supplement-3
+#| fig-cap: "Parameter Tuning for LASSO Regression"
+#| echo: FALSE
+knitr::include_graphics(here("results", "figures", "final-figures", "lassoparameters.png"))
+```
+
+# Additional data cleaning explanation
+The first priority when cleaning the data was analyzing missing values, and our findings can be seen @tbl-summarytable. We found that the `pct_upreg` variable containing the percentage of unintended pregnancies is unreliable due to missing data that could not be explained. This variable is only 82% complete, but the individual percent of unintended pregnancy variables correponding with different types of birth control methods are each 100% complete. Since the missingness of this data is not well explained except by the hypothesis that this variable was found using methods outside of the AIU protocol, we decided to use the variables with percentage of unintended pregnancies related to each birth control method as our outcome variables because they are complete and were found directly based on the AIU protocol information. We printed the summary table here because it was useful in determining missingness and creating a new factor variable for the usage of each birth control method at the factor level later in the processing sequence. 
+```{r}
+#| label: tbl-summarytable2
+#| tbl-cap: "Summary table to discover missingness"
+#| echo: FALSE
+resulttable2 <- readRDS("../../results/tables/summarytable.rds")
+kable(resulttable2)
+```
+
 
 {{< pagebreak >}}
 
 
 # Additional results
 
-Show additional results here. Those can be some useful exploratory/descriptive figures or tables, or results from additional analyses that didn't make it into the main text.
-
-Readers will be able to find our analysis of the different contraception methods that we did not select for our main outcome through figures we've made for the `pct_upreg_larcster`, `pct_upreg_trad`, and `pct_upreg_nouse` variables.  
+Readers will be able to find our analysis of the different contraception methods that we did not select for our main outcome through figures we've made for the `pct_upreg_larcster`, `pct_upreg_trad`, and `pct_upreg_nouse` variables in this section.  
 
 ```{r}
 # explore the percentage of unintended pregnancies related to long acting reversible methods in each country
@@ -235,47 +270,23 @@ P20: Among women using traditional birth control methods, the distribution of pe
 
 P21: While the distribution of percentage of unintended pregnancies is similar across the three usage levels for women not using any birth control method, the high usage countries appear to have a bottleneck in percentage of unintended pregnancies. The high and low usage countries appear to be skewed towards higher levels of unintended pregnancies, but the medium usage countries appear to have lower percentage of unintended pregnancies. 
 
-
-## Additional result
-The first priority when cleaning the data was analyzing missing values, and our findings can be seen @tbl-summarytable. We found that the `pct_upreg` variable containing the percentage of unintended pregnancies is unreliable due to missing data that could not be explained. We decided to use the variables with percentage of unintended pregnancies related to each birth control method as our outcome variables because they are complete and were found directly based on the AIU protocol information. We printed the summary table here because it was useful in determining missingness and creating a new factor variable for the usage of each birth control method at the factor level later in the processing sequence. 
+We explored the distribution of the countries by five categorical variables: `region`, `larcster_usage`, `sarc_usage`, `trad_usage`, and `none_usage` which is displayed in @tbl-summarytable1. These variables were not used in the main final analysi of the paper. We found that most countries are located in Africa followed by Asia and Latin America/the Caribbean. Only 20 countries have high usage of long acting reversible and sterilization methods compared to 33 countries with high usage of short acting reversible and traditional methods. It is interesting that the distributions for short acting reversible method, traditional method, and no method usages are the same. 
 ```{r}
 #| label: tbl-summarytable1
-#| tbl-cap: "Summary table to discover missingness"
+#| tbl-cap: "Summary table for categorical variables"
 #| echo: FALSE
-resulttable1 <- readRDS("../../results/tables/summarytable.rds")
+resulttable1 <- readRDS("../../results/tables/summarytablecat.rds")
 kable(resulttable1)
 ```
 
-We explored the distribution of the countries by five categorical variables: `region`, `larcster_usage`, `sarc_usage`, `trad_usage`, and `none_usage` which is displayed in @tbl-summarytable2. We found that most countries are located in Africa followed by Asia and Latin America/the Caribbean. Only 20 countries have high usage of long acting reversible and sterilization methods compared to 33 countries with high usage of short acting reversible and traditional methods. It is interesting that the distributions for short acting reversible method, traditional method, and no method usages are the same. 
+# Additional data cleaning explanation
+The first priority when cleaning the data was analyzing missing values, and our findings can be seen @tbl-summarytable. We found that the `pct_upreg` variable containing the percentage of unintended pregnancies is unreliable due to missing data that could not be explained. We decided to use the variables with percentage of unintended pregnancies related to each birth control method as our outcome variables because they are complete and were found directly based on the AIU protocol information. We printed the summary table here because it was useful in determining missingness and creating a new factor variable for the usage of each birth control method at the factor level later in the processing sequence. 
 ```{r}
 #| label: tbl-summarytable2
-#| tbl-cap: "Summary table for categorical variables"
+#| tbl-cap: "Summary table to discover missingness"
 #| echo: FALSE
-resulttable2 <- readRDS("../../results/tables/summarytablecat.rds")
+resulttable2 <- readRDS("../../results/tables/summarytable.rds")
 kable(resulttable2)
-```
-
-
-@tbl-resulttable1 shows an additional table summarizing a model fit.
-
-```{r}
-#| label: tbl-resulttable1
-#| tbl-cap: "Another fit table."
-#| echo: FALSE
-resulttable1 = readRDS(here("results","resulttable1.rds"))
-knitr::kable(resulttable1)
-```
-
-
-
-@fig-result2 shows a scatterplot figure produced by one of the R scripts.
-
-
-```{r}
-#| label: fig-result2
-#| fig-cap: "Height and weight."
-#| echo: FALSE
-knitr::include_graphics(here("results","height_weight.png"))
 ```
 
 
@@ -285,8 +296,6 @@ knitr::include_graphics(here("results","height_weight.png"))
 # Discussion
 
 Any additional discussion regarding the supplementary material/findings.
-
-These papers [@mckay2020; @mckay2020a] are good examples of papers published using a fully reproducible setup similar to the one shown in this template. 
 
 {{< pagebreak >}}
 
