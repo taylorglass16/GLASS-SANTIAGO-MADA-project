@@ -74,7 +74,7 @@ selected_variables <- mydata[c("pct_upreg_sarc","pct_currentlymarried","pct_neve
 
 
 # Create table 
-selected_variables %>%
+predictortable <-selected_variables %>%
   tbl_summary(
     by = region,
     label = list(wra ~ "Number of women of reproductive age, 15-49"),
