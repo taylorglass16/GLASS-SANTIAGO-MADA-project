@@ -30,7 +30,7 @@ Our study investigates the association between unintended pregnancy rates and sh
 
 The exploratory data analysis revealed a less skewed distribution of unintended pregnancies among SARC users compared to other contraceptive methods. This led researchers to focus on SARC use for the remainder of the study. The Latin America/Caribbean region displayed the strongest association with unintended pregnancy rates, followed by Asia. The Oceania and Europe region had weaker associations. Marriage status (both currently and never married) was inversely associated with unintended pregnancy rates. This means that as the percent of women who are currently married or never married increases, the unintended preganacy rate decreses. Maternal mortality rates, however, showed a positive correlation.
 
-A full model incorporating five predictors (total SARC users, region, marital status, and maternal mortality rates due to unintended pregnancy and abortion) was built. Despite performing the best among the evaluated models and being validated through cross-validation, the full model exhibited tendencies towards overfitting the data.
+A full model incorporating five predictors (total SARC users, region, marital status, and maternal mortality rates due to unintended pregnancy and abortion) was built. Despite performing the best among the evaluated models and being validated through cross-validation and bootstrap method, the full model exhibited tendencies towards overfitting the data.
 
 Lasso regression, a technique that performs variable selection, was then employed to address these overfitting concerns. The analysis identified the total number of SARC users as the strongest predictor, followed by region. Marital status and maternal mortality rates displayed weaker negative associations with unintended pregnancy rates. While the direction of the association between abortion-related maternal mortality and unintended pregnancy rates flipped in the Lasso model, the coefficient (effect size) remained minimal.
 
@@ -261,24 +261,15 @@ _Discuss what you perceive as strengths and limitations of your analysis._
 ## Conclusions
 _What are the main take-home messages?_
 
-_Include citations in your Rmd file using bibtex, the list of references will automatically be placed at the end_
 
-This paper [@leek2015] discusses types of analyses. 
-
-These papers [@mckay2020; @mckay2020a] are good examples of papers published using a fully reproducible setup similar to the one shown in this template. 
-
-Note that this cited reference will show up at the end of the document, the reference formatting is determined by the CSL file specified in the YAML header. Many more style files for almost any journal [are available](https://www.zotero.org/styles). You also specify the location of your bibtex reference file in the YAML. You can call your reference file anything you like, I just used the generic word `references.bib` but giving it a more descriptive name is probably better.
 
 
 {{< pagebreak >}}
 
 # References
+_Include citations in your Rmd file using bibtex, the list of references will automatically be placed at the end_
 
-- https://pubmed.ncbi.nlm.nih.gov/32981858/
-- https://www.sciencedirect.com/science/article/pii/S001078241730478X 
-- https://www.sciencedirect.com/science/article/abs/pii/S0020729211005406 #legal status article
-- https://www.guttmacher.org/report/adding-it-up-investing-in-sexual-reproductive-health-2019-methodology (Guttmacher source)
-- https://pubmed.ncbi.nlm.nih.gov/35332057/ (original source of data)
+[@heviaLegalStatusEmergency2012], [@jonathanmarcbearakCountryspecificEstimatesUnintended2022], [@kavanaughContraceptiveMethodUse2018], [@rivetContraceptionUseAttitudes2021]
 
 
 
