@@ -129,10 +129,10 @@ The outliers were explored and addressed in the processing-file.qmd in the code 
 Plot 3 uses `pct_upreg_sarc` and `sarc_standard` to examine the relationship with short-acting reversible methods. 
 ```{r}
 # explore percentage of unintended pregnancies compared to standardized count of women using short acting reversible methods
-plot_3 <- mydata %>% ggplot(aes(x=pct_upreg_sarc, y=sarc_standard)) + 
+plot_3 <- mydata %>% ggplot(aes(x=sarc_standard, y=pct_upreg_sarc)) + 
   geom_point() + 
   geom_smooth(method='lm') + 
-  ggtitle("Percent of Unintended Pregnancies vs Standardzied Count of Women Using SARCs") + xlab("Percentage of Unintended Pregnancies") + ylab("Standarized Total Number of Women")
+  ggtitle("Percent of Unintended Pregnancies vs Standardzied Count of Women Using SARCs") + xlab("Standarized Total Number of Women") + ylab("Percentage of Unintended Pregnancies")
 plot(plot_3)
 figure_file = here("results", "figures", "exploratory-figures", "pctupreg_totalsarc.png")
 ggsave(filename = figure_file, plot=plot_3) 
@@ -140,7 +140,7 @@ ggsave(filename = figure_file, plot=plot_3)
 ```
 
 
-Plot 3: The same positive trend is shown between the percentage of unintended pregnancies and number of women using SARMs, but there is considerably more variation in this relationship. 
+Plot 3: The same positive trend is shown between the percentage of unintended pregnancies and number of women using SARCs, but there is considerably more variation in this relationship. The outcome of interest should increase as the number of women using short acting-reversible contraception increases because more women are at risk of experiencing an unintended pregnancy due to this contraception if they are using this type of contraception in the first place. This percentage does not reflect the effectiveness of short-acting reversible contraception, but it does classify the reason for an unintended pregnancy. As explained in the supplementary material, the dataset includes the percentage of unintended pregnancies among long-acting reversible contraception and sterilization users, traditional birth control users, and users who do not use a method of birth control. It makes sense that our outcome would increase as more women put themselves at risk of experiencing the outcome through becoming classified as short-acting reversible contraception users. This association is a little challenging to contextualize since we could not analyze all 4 classifications for the percentage of unintended pregnancies. 
 
 
 We are also interested in how these relationships between percent of unintended pregnancies using Short Acting Reversible Methods and the number of people using each method varies across region. We adjusted the original scatter plots created above by coloring based on region. 
