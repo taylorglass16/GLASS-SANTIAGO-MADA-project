@@ -69,26 +69,6 @@ saveRDS(lmtable2, file = table_file2)
 ```
 This model shows that the Latin America/the Caribbean region has the strongest association with the outcome variable based on a coefficient estimate of 1.6218844 followed closely by the Asia region. The Oceania region has the weakest association with the outcome variable based on a coefficient estimate of 0.2512100.
 
-### ANOVA for region variable
-We want to compare the mean percent of unintended pregnancies among those using short acting reversible methods across the five regions: Asia, Africa, Europe, Latin America and the Caribbean, and Oceania. We will start with an ANOVA test to determine the relationship between region and outcome. We are more interested in pairwise comparisons between the regions, so we also conducted Tukey's Honestly Significant Difference test for pairwise comparisons within ANOVA. 
-```{r}
-# conduct an ANOVA test with the region variable
-regionANOVA <- aov(pct_upreg_sarc ~ region, data = mydata)
-
-# explore ANOVA results 
-summary(regionANOVA)
-
-# add Tukey's HSD test for pairwise comparisons
-tukey_result <- TukeyHSD(regionANOVA)
-
-# explore the pairwise comparisons
-tidy(tukey_result)
-
-# save fit results table  
-table_file13 = here("results", "tables", "resulttable13.rds")
-saveRDS(tukey_result, file = table_file13)
-```
-ANOVA results show that the region variable is statistically significantly associated with the outcome variable given the p-value less than 0.001. The Tukey HSD test revealed the largest differences in the outcome between the Oceania region and Latin America/the Caribbean, Europe, and Asia. The relationships between Oceania and Europe and Latin America/the Caribbean are statistically significant with p-values less than 0.0001. Oceania is clearly experiencing the lowest percentage of unintended pregnancies among short acting reversible method users.  The lowest difference in outcome between regions is between Asia and Africa, but this is not a statistically significant association. Two statistically significant differences in the outcome exist between Latin America/the Caribbean and Europe with Africa, which shows that Africa is experiencing higher levels of the outcome. 
 
 ### Third Model Fit 
 ```{r}
@@ -299,7 +279,7 @@ rmse3 <- rmse(matdeath_absdata, truth = pct_upreg_sarc, estimate = .pred)
 mae3 <- mae(matdeath_absdata, truth = pct_upreg_sarc, estimate = .pred)
 
 # create predictions using the null model
-nullpred <- predict(lmfit9, new_data = mydata) %>% 
+nullpred <- predict(null_model, new_data = mydata) %>% 
                   select(.pred)
 
 # create a data frame with the predictions and true values 
