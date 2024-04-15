@@ -16,6 +16,7 @@ library(rsample) #for splitting the data into testing/training
 library(knitr) # to create performance metric tables 
 library(parsnip) # to create a workflow for cross-validation
 library(glmnet) # for LASSO regression
+library(ranger) # for random forest model 
 ```
 
 ## Load the cleaned data
@@ -542,7 +543,7 @@ figure1
 figure_file = here("results", "figures", "final-figures", "fullmodelpred.png")
 ggsave(filename = figure_file, plot=figure1) 
 ```
-The training model predictions, shown in teal, hover pretty closely around the expected relationship between the outcome and the 5 predictors, which is depicted as the 45 degree line. The testing model predictions, shown in coral, are much more extreme than the training model predictions because they are farther from the 45 degree line. While there is some overlap between the two sets of predictions, it is likely that our model is overfitting the data. 
+The training model predictions, shown in teal, hover pretty closely around the expected relationship between the outcome and the 5 predictors, which is depicted as the 45 degree line. The testing model predictions, shown in coral, are much more extreme than the training model predictions because they are farther from the 45 degree line. While there is some overlap between the two sets of predictions, it is likely that our model is overfitting the data because the testing observations are so far from the expected relationship. 
 
 To examine the uncertainty in the model further, we will use the bootstrapping method to resample our data 100 times to find confidence intervals for our predictions. 
 ```{r}
@@ -676,4 +677,112 @@ ggsave(filename = figurefile3, plot = figure3)
 ```
 As the regularization penalty increases past 1, we see that the RMSE value increases exponentially. The lowest RMSE for the model is slightly greater than 5 when the regularization penalty is less than 1. When the regularization penalty increases to 10, the RMSE increases to almost 11. These observations are expected because the RMSE can only increase in LASSO regression because the penalty parameter is added to the SSR term to determine the value of the cost function. It is expected that the model will perform worse according to the RMSE scale as the penalty parameter increases. This plot shows that penalty parameters less than 1 are preferable for model performance. Since we originally chose 0.1 as our penalty parameter, we found one of the best performing models with the LASSO regression.
 
-We are considering adding a random forest model to further examine the variance in our model. 
+We also want to explore a random forest model with all 5 main predictors since the previous cross-validation process revealed high overfitting of the multivariate linear regression model. We will use RMSE, MAE, and R squared as performance metrics to compare it to the previous LASSO regression model. 
+```{r}
+#| message: false
+# set seed for reproducibility
+set.seed(2468)
+
+# create workflow for random forest model
+rf_mod <- rand_forest(mode = "regression") %>% # specify the model type
+            set_engine("ranger", seed = 2468) #  set seed for reproducibility internally
+
+random_forest <- rf_mod %>% 
+                    fit(pct_upreg_sarc ~ sarc_standard + region + pct_currentlymarried + rate_matdeaths_upreg +
+                    rate_matdeaths_abs, data = mydata) # include all predictors
+
+# create predictions using the random forest model
+RFpred <- predict(random_forest, new_data = mydata) %>% 
+                  select(.pred)
+
+# create a data frame with the predictions and true values 
+RFdata <- bind_cols(allpred, mydata$pct_upreg_sarc) %>%
+            rename(pct_upreg_sarc = "...2")
+
+# find performance metrics to determine model fit
+rmse10 <- rmse(RFdata, truth = pct_upreg_sarc, estimate = .pred)
+mae10 <- mae(RFdata, truth = pct_upreg_sarc, estimate = .pred)
+rsq10 <- rsq(RFdata, truth = pct_upreg_sarc, estimate = .pred)
+
+# print performance metric results 
+print(rmse10)
+print(mae10)
+print(rsq10)
+
+# visualize random forest predictions verus observed values 
+figure4 <-ggplot(RFdata, aes(x=.pred, y= pct_upreg_sarc)) + 
+                geom_point() +
+                geom_abline(linetype = "dashed") + 
+                labs(x="Predicted Values", y="Observed Values", title="Random Forest Model Predictions and Observations")
+figure4
+
+# save the random forest figure 
+figurefile4 <- here("results", "figures", "final-figures", "randomforestpred.png")
+ggsave(filename = figurefile4, plot = figure4)
+```
+The random forest model has an RMSE of 4.361363, an MAE of 3.386193, and an R-squared of 0.8369754. Compared to the previous model with an RMSE of 4.361363, an MAE of 3.386193, and an R-squared of 0.820600, the random forest model performs very similarly. The RMSE and MAE values are exactly the same beause the same 5 predictors are used for the outcome, but the R-squared value shows that the random forest model performs slightly better. Since a higher R-squared value represents smaller differences between the observed and predicted values, we can conclude that this model is predicting our outcome with slightly higher accuracy. The plot of the predicted versus observed values shows strong correlation for predicted values less than 15, but the deviation from the expected values increases as the predicted values increase. 
+
+It is crucial to tune the parameters associated with the random forest model, so we will do that before concluding that it outperforms the LASO regression model. We updated the workflow to allow for tuning of 2 variables: `mtry`, the number of variable to possibly split at in each node, and `min_n`, the minimal node size. We set the number of trees to 300 because it strikes a good balance between achieving the best performance metrics and the processing time required to do so. 
+```{r}
+#| message: false
+# set seed for reproducibility
+set.seed(2468)
+
+# define the recipe
+recipe <- recipe(pct_upreg_sarc ~ sarc_standard + region + pct_currentlymarried + rate_matdeaths_upreg +
+                    rate_matdeaths_abs, data = mydata) 
+
+# update workflow accordingly 
+rf_mod2 <- rand_forest(mode = "regression",
+                      mtry = tune(),  # allow for tuning
+                      min_n = tune(), # allow for tuning
+                      trees = 300) %>% 
+                          set_engine("ranger", seed = 2468) 
+
+# use updated workflow
+RFworkflow <- workflow() %>%
+  add_recipe(recipe) %>%
+  add_model(rf_mod2) 
+
+# define a 5 by 5 parameter grid
+RFparameter_grid <- grid_regular(mtry(range = c(1,5)),
+                            min_n(range = c(1,15)),
+                            levels = 5)
+
+# create the real samples cross-validation 
+real_samples <- vfold_cv(mydata, v = 5, repeats = 5)
+
+# tune the random forest model 
+tuned_RFmod <- RFworkflow %>% 
+                    tune_grid(resamples = real_samples,
+                          grid = RFparameter_grid,
+                          metrics = metric_set(rmse))
+
+# observe the tuning process
+rf_tune_plot <- tuned_RFmod %>% 
+              autoplot()
+rf_tune_plot
+
+# save plot 
+figure_file5 = here("results", "figures", "final-figures", "randomforesttune.png")
+ggsave(filename = figure_file5, plot=rf_tune_plot) 
+```
+Based on the red line that shows the lowest possible RMSE score, our random forest model performs the best with a node size of 1 and 4 predictors. This begs us to ask the question of which one of the 5 predictors included in our model should be dropped to improve model performance because all previous performance metrics suggested that including all 5 predictors created the best model. 
+
+Since both of these models are overfitting the data, we think it is wise to examine an information criterion to determine how well our model might perform on unseen data. Even though cross-validation is a better approach for answering this question because it actually resamples the data, the concern of overfitting justifies finding the AIC value in this case. This measure still evaluates the trade-off between good fit to the data, shown by a low cost function, and model complexity based on the number of parameters. We will compare the single predictor model with the standarized `sarc_standard` variable and the full model because the models have already been shown to have the best performance metrics. 
+```{r}
+#| message: false
+# define single predictor model in format conducive to finding AIC
+singlemod <- glm(pct_upreg_sarc ~ sarc_standard, data = mydata)
+
+# find AIC value 
+summary(singlemod)
+
+# define full predictor model in format conducive to finding AIC 
+fullmod <- glm(pct_upreg_sarc ~ sarc_standard + region + pct_currentlymarried + rate_matdeaths_upreg + rate_matdeaths_abs, data = mydata)
+
+# find AIC value
+summary(fullmod)
+```
+
+The single predictor model has an AIC of 812.95, and the full predictor model has an AIC of 803.21. The full predictor model has a lower AIC score, and the difference between the two models is 9.74, which means the difference between the two model is meaningful given that it is so close to 10. A lower AIC indicates a better performance, and the rule of thumb is that a difference of 10 between 2 models is meaningful. However, information criterion are not limited by an arbitrary cutoff point, so we feel confident that there is a difference between these two models. 

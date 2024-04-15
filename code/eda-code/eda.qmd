@@ -128,7 +128,6 @@ The outliers were explored and addressed in the processing-file.qmd in the code 
 
 Plot 3 uses `pct_upreg_sarc` and `sarc_standard` to examine the relationship with short-acting reversible methods. 
 ```{r}
-
 # explore percentage of unintended pregnancies compared to standardized count of women using short acting reversible methods
 plot_3 <- mydata %>% ggplot(aes(x=pct_upreg_sarc, y=sarc_standard)) + 
   geom_point() + 
