@@ -24,7 +24,7 @@ library(gtsummary) # for creating tables
 
 
 # Overview
-This file provides extra information that is not included in our manuscript or the main processing and exploratory data analysis files. This information provides guidance on our thought processes behind the scenes and explains why we chose a single outcome to study.  
+This file provides extra information that is not included in our manuscript or the main processing and exploratory data analysis files. This information provides guidance on our thought processes behind the scenes and explains why we chose a single outcome to study. The plots below are numbered based off of order of creation, they are not numbered in order. 
 
 # Code and file information
 

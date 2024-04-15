@@ -99,49 +99,49 @@ To begin exploring our outcome, we will create a histogram for the `pct_upreg_sa
 ```{r}
 
 # Explore the percentage of unintended pregnancies related to short acting reversible methods in each country
-p3 <- mydata %>% ggplot(aes(x=pct_upreg_sarc)) + 
+plot_1 <- mydata %>% ggplot(aes(x=pct_upreg_sarc)) + 
   geom_histogram() + 
   ggtitle("Percent Unintended Pregnancy Using Short Acting Reversible Methods") + xlab("Percentage") + ylab("Number of Countries")
-plot(p3)
+plot(plot_1)
 figure_file = here("results", "figures", "exploratory-figures", "pctupreg_sarc_distribution.png")
-ggsave(filename = figure_file, plot=p3) 
+ggsave(filename = figure_file, plot=plot_1) 
 
 ```
 
-P3: This histogram shows that the percentage of unintended pregnancies among those using short acting reversible methods varies more between countries compared to long acting reversible methods. About half of the countries in the dataset report less than 20% of pregnancies are unintended when women use this form of birth control. 
+Plot 1: This histogram shows that the percentage of unintended pregnancies among those using short acting reversible methods varies more between countries compared to long acting reversible methods. About half of the countries in the dataset report less than 20% of pregnancies are unintended when women use this form of birth control. 
 
 
 We will now explore the new total usage variables that were created using the number of women using each method across the 'total_sarc' variable. 
 ```{r}
 
 # Explore the total number of people using Short Acting Reversible Methods in each country
-p7 <- mydata %>% ggplot(aes(x=total_sarc)) + 
+plot_2 <- mydata %>% ggplot(aes(x=total_sarc)) + 
   geom_histogram() + 
   ggtitle("Total Usage of Short Acting Reversible Methods per Country") + xlab("Number of Women") + ylab("Number of Countries")
-plot(p7)
+plot(plot_2)
 figure_file = here("results", "figures", "exploratory-figures", "total_sarc_distribution.png")
-ggsave(filename = figure_file, plot=p7) 
+ggsave(filename = figure_file, plot=plot_2) 
 
 ```
 
 The outliers were explored and addressed in the processing-file.qmd in the code > processing-code folder. Now that we have standardized population variables, We will start exploring how many women use each type of birth control in each country compared to the percent of unintended pregnancies related to that birth control. 
 
-Plot 11 uses `pct_upreg_sarc` and `sarc_standard` to examine the same relationship as plot 10 but with short-acting reversible methods. 
+Plot 3 uses `pct_upreg_sarc` and `sarc_standard` to examine the relationship with short-acting reversible methods. 
 ```{r}
 
 # explore percentage of unintended pregnancies compared to standardized count of women using short acting reversible methods
-p11 <- mydata %>% ggplot(aes(x=pct_upreg_sarc, y=sarc_standard)) + 
+plot_3 <- mydata %>% ggplot(aes(x=pct_upreg_sarc, y=sarc_standard)) + 
   geom_point() + 
   geom_smooth(method='lm') + 
   ggtitle("Percent of Unintended Pregnancies vs Standardzied Count of Women Using SARCs") + xlab("Percentage of Unintended Pregnancies") + ylab("Standarized Total Number of Women")
-plot(p11)
+plot(plot_3)
 figure_file = here("results", "figures", "exploratory-figures", "pctupreg_totalsarc.png")
-ggsave(filename = figure_file, plot=p11) 
+ggsave(filename = figure_file, plot=plot_3) 
 
 ```
 
 
-P11: The same positive trend is shown between the percentage of unintended pregnancies and number of women using SARMs, but there is considerably more variation in this relationship. 
+Plot 3: The same positive trend is shown between the percentage of unintended pregnancies and number of women using SARMs, but there is considerably more variation in this relationship. 
 
 
 We are also interested in how these relationships between percent of unintended pregnancies using Short Acting Reversible Methods and the number of people using each method varies across region. We adjusted the original scatter plots created above by coloring based on region. 
@@ -149,110 +149,109 @@ We are also interested in how these relationships between percent of unintended 
 ```{r}
 
 # explore percent unintended pregnancies using short acting reversible methods by region
-p15 <- mydata %>% ggplot(aes(x=pct_upreg_sarc, y=sarc_standard, color = region)) + 
+plot_4 <- mydata %>% ggplot(aes(x=pct_upreg_sarc, y=sarc_standard, color = region)) + 
   geom_point() + 
   geom_smooth(method='lm') + 
   ggtitle("Percent of Unintended Pregnancies vs Standardzied Count of Women Using SARCs") + xlab("Percentage of Unintended Pregnancies") + ylab("Standarized Total Number of Women")
-plot(p15)
+plot(plot_4)
 figure_file = here("results", "figures", "exploratory-figures", "pctupreg_sarc_stratified.png")
-ggsave(filename = figure_file, plot=p15) 
+ggsave(filename = figure_file, plot=plot_4) 
 
 ```
 
-P15: This graph for short acting reversible methods shows clearer differences between regions, and Latin America/the Caribbean leads in the percentage of unintended pregnancies in this category, but Africa shows the sharpest increase in percentage of unintended pregnancies as the total population increases.  
+Plot 4: This graph for short acting reversible methods shows clearer differences between regions, and Latin America/the Caribbean leads in the percentage of unintended pregnancies in this category, but Africa shows the sharpest increase in percentage of unintended pregnancies as the total population increases.  
 
 
 Our next group of plots will be violin plots to explore the usage level of Short Acting Reversible Methods, a categorical variable, associated with percentage of unintended pregnancies use for each birth control method, a numerical variable.
 ```{r}
 
 # explore short acting reversible method usage compared to percent of unintended pregnancies
-p19 <- mydata %>% ggplot(aes(x = sarc_usage, y = pct_upreg_sarc)) +
+plot_5 <- mydata %>% ggplot(aes(x = sarc_usage, y = pct_upreg_sarc)) +
   geom_violin() + ggtitle("Usage of SARCs vs Percent of Unintended Pregnancies") +
   labs(x = "Short Acting Reversible Usage", y = "Percentage Unintended Pregnancies") 
-plot(p19)
+plot(plot_5)
 figure_file = here("results", "figures", "exploratory-figures", "sarc_pctupreg_violin.png")
-ggsave(filename = figure_file, plot=p19) 
+ggsave(filename = figure_file, plot=plot_5) 
 
 ```
 
-P19: It appears that the distribution of short acting reversible method usage is skewed towards lower percentages of unintended pregnancies across all usage levels, suggesting that more countries have lower percentage of unintended pregnancies among women using this method. 
+Plot 5: It appears that the distribution of short acting reversible method usage is skewed towards lower percentages of unintended pregnancies across all usage levels, suggesting that more countries have lower percentage of unintended pregnancies among women using this method. 
 
 We also need to explore the remaining predictor variables: `region`, `pct_currentlymarried`, `pct_nevermarried`, `rate_matdeaths`, `rate_matdeaths_upreg`, and `rate_matdeaths_abs`. Simple histograms will allow us to see the distribution of each variable and ensure there are no outliers. 
 ```{r}
 # explore the region predictor
-p22 <- mydata %>% ggplot(aes(x=region)) + 
+plot_6 <- mydata %>% ggplot(aes(x=region)) + 
   geom_bar() +
   ggtitle("Countries in Each Region") + 
   xlab("Region") + ylab("Number of Countries")
-plot(p22)
+plot(plot_6)
 figure_file = here("results", "figures", "exploratory-figures", "region_distribution.png")
-ggsave(filename = figure_file, plot=p22) 
+ggsave(filename = figure_file, plot=plot_6) 
 
 # explore the current marriage predictor
-p23 <- mydata %>% ggplot(aes(x=pct_currentlymarried)) + 
+plot_7 <- mydata %>% ggplot(aes(x=pct_currentlymarried)) + 
   geom_histogram() +
   ggtitle("Percent of Women Currently Married") + 
   xlab("Percentage") + ylab("Number of Countries")
-plot(p23)
+plot(plot_7)
 figure_file = here("results", "figures", "exploratory-figures", "currmarried_distribution.png")
 ggsave(filename = figure_file, plot=p23) 
 
 # explore the never married predictor
-p24 <- mydata %>% ggplot(aes(x=pct_nevermarried)) + 
+plot_8 <- mydata %>% ggplot(aes(x=pct_nevermarried)) + 
   geom_histogram() +
   ggtitle("Percent of Women Never Married") + 
   xlab("Percentage") + ylab("Number of Countries")
-plot(p24)
+plot(plot_8)
 figure_file = here("results", "figures", "exploratory-figures", "nevmarried_distribution.png")
-ggsave(filename = figure_file, plot=p24) 
+ggsave(filename = figure_file, plot=plot_8) 
 
 # explore the total maternal mortality rate predictor
-p25 <- mydata %>% ggplot(aes(x=rate_matdeaths)) + 
+plot_9 <- mydata %>% ggplot(aes(x=rate_matdeaths)) + 
   geom_histogram() +
   ggtitle("Total Rate of Maternal Deaths") + 
   xlab("Maternal Deaths") + ylab("Number of Countries")
-plot(p25)
+plot(plot_9)
 figure_file = here("results", "figures", "exploratory-figures", "matdeaths_distribution.png")
-ggsave(filename = figure_file, plot=p25) 
+ggsave(filename = figure_file, plot=plot_9) 
 
 # explore outliers in maternal mortality from unintended pregnancies
 mydata %>% filter(rate_matdeaths > 1000)
 
 # explore the maternal mortality rate from unintended pregnancies predictor
-p26 <- mydata %>% ggplot(aes(x=rate_matdeaths_upreg)) + 
+plot_10 <- mydata %>% ggplot(aes(x=rate_matdeaths_upreg)) + 
   geom_histogram() +
   ggtitle("Rate of Maternal Deaths from Unintended Pregnancies") + 
   xlab("Maternal Deaths") + ylab("Number of Countries")
-plot(p26)
+plot(plot_10)
 figure_file = here("results", "figures", "exploratory-figures", "matdeathsupreg_distribution.png")
-ggsave(filename = figure_file, plot=p26) 
+ggsave(filename = figure_file, plot=plot_10) 
 
 # explore outliers in maternal mortality from unintended pregnancies
 mydata %>% filter(rate_matdeaths_upreg > 6000)
 
 # explore the maternal mortality rate from abortions
-p27 <- mydata %>% ggplot(aes(x=rate_matdeaths_abs)) + 
+plot_11 <- mydata %>% ggplot(aes(x=rate_matdeaths_abs)) + 
   geom_histogram() +
   ggtitle("Rate of Maternal Deaths from Abortions") + 
   xlab("Maternal Deaths") + ylab("Number of Countries")
-plot(p27)
+plot(plot_11)
 figure_file = here("results", "figures", "exploratory-figures", "matdeathsabs_distribution.png")
-ggsave(filename = figure_file, plot=p27) 
+ggsave(filename = figure_file, plot=plot_11) 
 
 # explore outliers in maternal mortality from abortions
 mydata %>% filter(rate_matdeaths_abs > 500)
 
 ```
-P22: The Africa region accounts for most of the observations with about 53 countries, followed by Asia that includes. about 35 countries. Latin America/the Caribbean accounts for about 25 countries. Europe and Oceania account for the least number of observations. 
+Plot 6: The Africa region accounts for most of the observations with about 53 countries, followed by Asia that includes. about 35 countries. Latin America/the Caribbean accounts for about 25 countries. Europe and Oceania account for the least number of observations. 
 
-P23: The distribution of women currently married is approximately normal with an average around 57% and no major outliers. 
+Plot 7: The distribution of women currently married is approximately normal with an average around 57% and no major outliers. 
+Plot 8: The distribution of women never married is slightly skewed to the right with an average around 30%, but there are a few outliers greater than 60%.
 
-P24: The distribution of women never married is slightly skewed to the right with an average around 30%, but there are a few outliers greater than 60%.
+Plot 9: The distribution of the total maternal mortality rate is highly skewed to the right with a couple outliers. We would have expected the highest rates to belong to India and China because they have the most people, but it is Chad, Sierra Leone, and South Sudan that account for the highest rates of total maternal mortality.
 
-P25: The distribution of the total maternal mortality rate is highly skewed to the right with a couple outliers. We would have expected the highest rates to belong to India and China because they have the most people, but it is Chad, Sierra Leone, and South Sudan that account for the highest rates of total maternal mortality.
+Plot 10: The distribution of the maternal mortality rate from unintended pregnancies is highly skewed to the right with a couple outliers, which is to be expected based on the trend shown in the previous histogram. Chad and South Sudan also account for the highest rates of maternal mortality in this category. 
 
-P26: The distribution of the maternal mortality rate from unintended pregnancies is highly skewed to the right with a couple outliers, which is to be expected based on the trend shown in the previous histogram. Chad and South Sudan also account for the highest rates of maternal mortality in this category. 
-
-P27: The distribution of maternal mortality rate from abortions is also highly skewed to the right. The outliers are accounted for by Gambia and Mauritania in this predictor. 
+Plot 11: The distribution of maternal mortality rate from abortions is also highly skewed to the right. The outliers are accounted for by Gambia and Mauritania in this predictor. 
 
 

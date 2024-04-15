@@ -96,7 +96,7 @@ We began with a simple linear regression model with each of the 7 predictor vari
 After deciding on a single outcome variable, we created a summary table with that outcome and the seven predictors we will use to predict it, which can be seen @tbl-summarytable.
 ```{r}
 #| label: tbl-summarytable
-#| tbl-cap: "Summary table of numeric variables"
+#| tbl-cap: "Table 1: Summary Table Of Numeric Variables"
 #| echo: FALSE
 predictortable<- readRDS(here("results", "tables", "predictortable.rds"))
 predictortable
@@ -105,7 +105,7 @@ predictortable
 We created a multitude of exploratory plots to understand our data better. The first @exploratory-result shows the distribution of the outcome variable: percent of unintended pregnancies due to short acting reversible methods. The `pct_upreg_sarc` variable is slightly skewed to the right with an average around 12%.
 ```{r}
 #| label: exploratory-result
-#| fig-cap: "Histograms of Percentage of Unintended Pregnancy Use by Birth Control Method"
+#| fig-cap: "Plot 1: Histogram Depicting Number of Countries With Percent Unintended Pregnancy Using SARC"
 #| echo: FALSE
 knitr::include_graphics(here("results", "figures", "exploratory-figures", "pctupreg_sarc_distribution.png"))
 ```
@@ -113,15 +113,15 @@ knitr::include_graphics(here("results", "figures", "exploratory-figures", "pctup
 The next set of variables we explored were the total counts of women using each birth control method. There were two large outliers that prevented the graphs from being useful. After exploring the outliers, we standardized using the population size of reproductive aged women (15-49 years). There is a positive association between the percentage of unintended pregnancies among short acting reversible method users and the total number of women using that method of birth control, which is to be expected. This association is displayed in @exploratory-result2.
 ```{r}
 #| label: exploratory-result2
-#| fig-cap: "Relationship between Percentage of Unintended Pregnancies and Standardized Population Total"
+#| fig-cap: "Figure 1: Graph Depciting Percent Unintended Pregnancy by Standarized Count of Total Women"
 #| echo: FALSE
 knitr::include_graphics(here("results", "figures", "exploratory-figures", "pctupreg_totalsarc.png"))
 ```
 
-We stratified these four graphs by region to examine how the relationship differs across each of the t regions which is shown in @exploratory-result3 . The graph for short acting reversible methods shows clearer differences between regions, and Latin America/the Caribbean leads in the percentage of unintended pregnancies in this category, but Africa shows the sharpest increase in percentage of unintended pregnancies as the total population increases.
+We stratified these four graphs by region to examine how the relationship differs across each of the regions which is shown in @exploratory-result3 . The graph for short acting reversible methods shows clearer differences between regions, and Latin America/the Caribbean leads in the percentage of unintended pregnancies in this category, but Africa shows the sharpest increase in percentage of unintended pregnancies as the total population increases.
 ```{r}
 #| label: exploratory-result3
-#| fig-cap: "Percentage of Unintended Pregnancies Stratified by Region"
+#| fig-cap: "Figure 2: Graph Depicting Percent Unintended Pregnancies Using SARC by region"
 #| echo: FALSE
 knitr::include_graphics(here("results", "figures", "exploratory-figures", "pctupreg_sarc_stratified.png"))
 ```
@@ -129,7 +129,7 @@ knitr::include_graphics(here("results", "figures", "exploratory-figures", "pctup
 We also created violin plots using the categorical usage variables for each birth control method as shown in @exploratory-result4. It appears that the distribution of short acting reversible method usage is skewed towards lower percentages of unintended pregnancies across all usage levels, suggesting that more countries have lower percentage of unintended pregnancies among women using this method. The high usage countries appear to have a bottleneck in percentage of unintended pregnancies. The high and low usage countries appear to be skewed towards higher levels of unintended pregnancies, but the medium usage countries appear to have lower percentage of unintended pregnancies. 
 ```{r}
 #| label: exploratory-result4
-#| fig-cap: "Violin Plots with Birth Control Usage Levels"
+#| fig-cap: "Plot 5: Violin Plot Depicitng Usage of SARc Per Region"
 #| echo: FALSE
 knitr::include_graphics(here("results", "figures", "exploratory-figures", "sarc_pctupreg_violin.png"))
 ```
@@ -154,7 +154,7 @@ We completed a simple linear regression analysis with each of the 7 predictors s
 
 ```{r}
 #| label: statistical-analysis1
-#| fig-cap: "Strongest Predictor: sarc_standard"
+#| fig-cap: "Table 2: Strongest Predictor: sarc_standard"
 #| echo: FALSE
 readRDS(here("results","tables", "resulttable1.rds")) 
 ```
@@ -162,38 +162,32 @@ readRDS(here("results","tables", "resulttable1.rds"))
 The second model we created used the region predictor, which revealed that the Latin America/the Caribbean region had the strongest relationship with the outcome variable followed closely by the Asia region. The Oceania region does not appear to have a strong effect on the outcome variable with the Europe region only showing a slightly larger association. These associations can be seen in @statistical-analysis2.
 ```{r}
 #| label: statistical-analysis2
-#| fig-cap: "Regional Predictor"
+#| fig-cap: "Table 3: Regional Predictor"
 #| echo: FALSE
 readRDS(here("results","tables", "resulttable2.rds")) 
 ```
 Details about the 9 different models we created can be found in the statistical-analysis.qmd file in the code > analysis-code folder along with an exploration of the correlation between predictors.
 
 ## Full analysis
-We wanted to analyze the differences in the outcome between regions further, so we completed an ANOVA test and subsequet Tukey HSD test. The Tukey HSD test for the region predictor, shown in @statistical-analysis3, revealed the largest differences in the outcome between the Oceania region and Latin America/the Caribbean, Europe, and Asia. The differences between Oceania and Europe and Latin America/the Caribbean are the largest. Oceania is clearly experiencing the lowest percentage of unintended pregnancies among short acting reversible method users. Two more significant differences in the outcome exist between Latin America/the Caribbean and Europe with Africa, which shows that Africa is experiencing higher levels of the outcome. 
-```{r}
-#| label: statistical-analysis3
-#| fig-cap: "Tukey HSD Test Results"
-#| echo: FALSE
-readRDS(here("results","tables", "resulttable13.rds")) 
-```
+
 We created one model with all 5 predictors using multiple linear regression, shown in @statistcal-analysis4. This model shows the strongest predictor is the number of women using short acting reversible contraception. The next strongest predictor is the European region followed by the Latin America/the Caribbean region and the Asia region, which is a shift from the model with the singular region predictor. The Oceania region now has a negative association with the outcome. The currently married predictor is associated with a weak decrease in the outcome. The coefficient estimates for the rate of maternal death due to unintended pregnancies and abortion both show a very weak positive association with the outcome. 
 ```{r}
 #| label: statistical-analysis4
-#| fig-cap: "Multiple Linear Regression with 5 Predictors"
+#| fig-cap: "Table 4: Multiple Linear Regression with 5 Predictors"
 #| echo: FALSE
 readRDS(here("results","tables", "resulttable8.rds")) 
 ```
 To determine which model performed the best, we started by examining the RMSE and MAE performance metrics. We found that the model with the standardized total count of women using the short acting reversible contraception method performed the best in a single predictor model compared to the percent of currently married women and the rate of maternal mortality due to abortion. @statistical-analysis5 shows the RMSE and MAE values for each of these three models compared to the null model with no predictors. The model with the population size using SARCs is the only single predictor model that performs better than the null. The full model with all 5 predictors peforms the best with the lowest RMSE and MAE values. 
 ```{r}
 #| label: statistical-analysis5
-#| fig-cap: "Performance Metric Comparisons"
+#| fig-cap: "Table 5: Performance Metric Comparisons"
 #| echo: FALSE
 readRDS(here("results","tables", "resulttable14.rds")) 
 ```
 We used cross-validation of the two best models to determine how well the model performs on data it has not seen yet by splitting the data into testing and training pieces. The cross-validated results, shown in @statistical-analysis6 lead to the same conclusion: the multiple linear regression model with 5 predictors performs better. The RMSE value for the single predictor model with `sarc_standard` is 4.822226, which is lower the the first RMSE value of 5.143319. While the RMSE value for the multiple linear regression model is slightly higher than the first time it was calculated, it is still lower than the single predictor model. Additionally, the standard error of the RMSE for the multiple linear regression model is 0.2768, which is lower than the standard error of the RMSE for the single predictor model of 0.3528. This means there is higher variance in the single predictor model. The R-squared value of 0.8206 for the multiple linear regression model is higher than 0.7861 for the single predictor model, which means the multiple linear regression model accounts for more of the variability in the data. Overall, the multiple linear regression model performs better.
 ```{r}
 #| label: statistical-analysis6
-#| fig-cap: "Cross Validation Performance Metric Comparisons"
+#| fig-cap: "Table 6: Cross Validation Performance Metric Comparisons"
 #| echo: FALSE
 readRDS(here("results","tables", "resulttable15.rds")) 
 ```
@@ -201,14 +195,14 @@ readRDS(here("results","tables", "resulttable15.rds"))
 Since we determined that the full model with all 5 predictors performs best, we graphed the predicted versus observed values using this model with both the testing and training data to further examine model performance. As seen in @statistical-analysis7, the training model predictions, shown in teal, hover pretty closely around the expected relationship between the outcome and the 5 predictors, which is depicted as the 45 degree line. The testing model predictions, shown in coral, are much more extreme than the training model predictions because they are farther from the 45 degree line. While there is some overlap between the two sets of predictions, it is likely that our model is overfitting the data. 
 ```{r}
 #| label: statistical-analysis7
-#| fig-cap: "Evaluating Final Model Performance on Test Data"
+#| fig-cap: "Figure 3: Evaluating Final Model Performance on Test Data"
 #| echo: FALSE
 knitr::include_graphics(here("results", "figures", "final-figures", "fullmodelpred.png"))
 ```
 We went one step further to examine the uncertainty in the full model predictions using the bootstrap method with 100 resamples of the training data. The figure shown in @statistical-analysis8 displays the 95% confidence intervals, shown as dark blue lines, for the predictions made by the model. The confidence intervals are narrow, which shows there is minimal uncertainty in the model prediction. For the predictions that do not fall on the expected 45 degree line, the confidence intervals do not intersect with the line either. These findings increase the validity of the conclusion that the model is overfitting the data because there is not much uncertainty in the predictions. 
 ```{r}
 #| label: statistical-analysis8
-#| fig-cap: "Evaluation of Uncertainty in Full Model Predictions"
+#| fig-cap: "Figure 4: Evaluation of Uncertainty in Full Model Predictions"
 #| echo: FALSE
 knitr::include_graphics(here("results", "figures", "final-figures", "bootstrappred.png"))
 ```
@@ -216,14 +210,14 @@ knitr::include_graphics(here("results", "figures", "final-figures", "bootstrappr
 Since we have evidence that our model overfits the data, the last technique we want to use to explore our full model is Lasso regression. This technique could reveal predictors that should not be included in our final model, which could reduce the risk of overfitting. As seen in @statistical-analysis9, the LASSO regression coefficients are much smaller than the first full model we created without the regularization penalty, but all 5 predictors remain in the model. The `sarc_standard` predictor still has the strongest relationship with the outcome. The percent of women currently married, rate of maternal deaths due to unintended pregnancies, and rate of maternal deaths to due to abortion all have weak negative associations with the outcome. This process confirms that our final model should contain all 5 predictors. 
 ```{r}
 #| label: statistical-analysis9
-#| fig-cap: "LASSO Regression Results"
+#| fig-cap: "Table 7: LASSO Regression Results"
 #| echo: FALSE
 readRDS(here("results","tables", "resulttable16.rds")) 
 ```
 It is important to tune the hyperparameters associated with LASSO regression to determine the model that fits best, which is shown in @statistical-analysis10. As the regularization penalty increases past 1, we see that the RMSE value increases exponentially. The lowest RMSE for the model is slightly greater than 5 when the regularization penalty is less than 1. When the regularization penalty increases to 10, the RMSE increases to almost 11. Since we originally chose 0.1 as our penalty parameter, we found one of the best performing models with the LASSO regression based on an RMSE value slightly greater than 5, which i comparable to the RMSE found in the first regression model with all 5 predictors. 
 ```{r}
 #| label: statistical-analysis10
-#| fig-cap: "Parameter Tuning for LASSO Regression"
+#| fig-cap: "Figure 5: Parameter Tuning for LASSO Regression"
 #| echo: FALSE
 knitr::include_graphics(here("results", "figures", "final-figures", "lassoparameters.png"))
 ```
