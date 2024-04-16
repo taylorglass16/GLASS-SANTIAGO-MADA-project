@@ -769,20 +769,4 @@ ggsave(filename = figure_file5, plot=rf_tune_plot)
 ```
 Based on the red line that shows the lowest possible RMSE score, our random forest model performs the best with a node size of 1 and 4 predictors. This begs us to ask the question of which one of the 5 predictors included in our model should be dropped to improve model performance because all previous performance metrics suggested that including all 5 predictors created the best model. 
 
-Since both of these models are overfitting the data, we think it is wise to examine an information criterion to determine how well our model might perform on unseen data. Even though cross-validation is a better approach for answering this question because it actually resamples the data, the concern of overfitting justifies finding the AIC value in this case. This measure still evaluates the trade-off between good fit to the data, shown by a low cost function, and model complexity based on the number of parameters. We will compare the single predictor model with the standarized `sarc_standard` variable and the full model because the models have already been shown to have the best performance metrics. 
-```{r}
-#| message: false
-# define single predictor model in format conducive to finding AIC
-singlemod <- glm(pct_upreg_sarc ~ sarc_standard, data = mydata)
-
-# find AIC value 
-summary(singlemod)
-
-# define full predictor model in format conducive to finding AIC 
-fullmod <- glm(pct_upreg_sarc ~ sarc_standard + region + pct_currentlymarried + rate_matdeaths_upreg + rate_matdeaths_abs, data = mydata)
-
-# find AIC value
-summary(fullmod)
-```
-
-The single predictor model has an AIC of 812.95, and the full predictor model has an AIC of 803.21. The full predictor model has a lower AIC score, and the difference between the two models is 9.74, which means the difference between the two model is meaningful given that it is so close to 10. A lower AIC indicates a better performance, and the rule of thumb is that a difference of 10 between 2 models is meaningful. However, information criterion are not limited by an arbitrary cutoff point, so we feel confident that there is a difference between these two models. 
+Choose final model with justification 
