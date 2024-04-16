@@ -91,20 +91,20 @@ We began with a simple linear regression model with each of the 7 predictor vari
 
 ## Exploratory/Descriptive analysis
 
-After deciding on a single outcome variable, we created a summary table with that outcome and the seven predictors we will use to predict it, which can be seen @table1.
+After deciding on a single outcome variable, we created a summary table with that outcome and the seven predictors we will use to predict it, which can be seen @table-1.
 ```{r}
 #| message: false
-#| label: table1
+#| label: table-1
 #| tbl-cap: "Table 1: Summary Table Of Numeric Variables"
 #| echo: FALSE
 predictortable<- readRDS(here("results", "tables", "predictortable.rds"))
 predictortable
 ```
 
-We created a multitude of exploratory plots to understand our data better. The first exploratory result shown in @figure1 displays the distribution of the outcome variable: percent of unintended pregnancies due to short acting reversible methods. The `pct_upreg_sarc` variable is slightly skewed to the right with an average around 12%.
+We created a multitude of exploratory plots to understand our data better. The first exploratory result shown in @figure-1 displays the distribution of the outcome variable: percent of unintended pregnancies due to short acting reversible methods. The `pct_upreg_sarc` variable is slightly skewed to the right with an average around 12%.
 ```{r}
 #| message: false
-#| label: figure1
+#| label: figure-1
 #| fig-cap: "Plot 1: Histogram Depicting Number of Countries With Percent Unintended Pregnancy Using SARC"
 #| echo: FALSE
 knitr::include_graphics(here("results", "figures", "exploratory-figures", "pctupreg_sarc_distribution.png"))
