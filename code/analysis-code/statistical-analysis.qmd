@@ -44,9 +44,12 @@ tidy(lmfit1)
 # save results from fit into a data frame 
 lmtable1 <- tidy(lmfit1)
 
+# create a professional format of the table to add to the manuscript 
+kable_lmtable1 <- kable(lmtable1)
+
 # save fit results table  
 table_file1 = here("results", "tables", "resulttable1.rds")
-saveRDS(lmtable1, file = table_file1)
+saveRDS(kable_lmtable1, file = table_file1)
 ```
 There appears to be a very strong relationship between total number of women using this birth control method and the outcome based on the coefficient estimate of 87.65998.
 
@@ -63,9 +66,12 @@ tidy(lmfit2)
 # save results from fit into a data frame 
 lmtable2 <- tidy(lmfit2)
 
+# create a professional format of the table to add to the manuscript 
+kable_lmtable2 <- kable(lmtable2)
+
 # save fit results table  
 table_file2 = here("results", "tables", "resulttable2.rds")
-saveRDS(lmtable2, file = table_file2)
+saveRDS(kable_lmtable2, file = table_file2)
 
 ```
 This model shows that the Latin America/the Caribbean region has the strongest association with the outcome variable based on a coefficient estimate of 1.6218844 followed closely by the Asia region. The Oceania region has the weakest association with the outcome variable based on a coefficient estimate of 0.2512100.
@@ -191,9 +197,12 @@ tidy(lmfit8)
 # save results from fit into a data frame 
 lmtable8 <- tidy(lmfit8)
 
+# create a professional format of the table to add to the manuscript 
+kable_lmtable8 <- kable(lmtable8)
+
 # save fit results table  
 table_file8 = here("results", "tables", "resulttable8.rds")
-saveRDS(lmtable8, file = table_file8)
+saveRDS(kable_lmtable8, file = table_file8)
 ```
 This model shows the strongest predictor is the number of women using short acting reversible contraception with a huge coefficient of 85.6433. The next strongest predictor is the European region followed by the Latin America/the Caribbean region and the Asia region, which is a shift from the model with the singular region predictor. The Oceania region now has a negative association with the outcome. Both of the marriage status predictors are associated with a decrease in the outcome. The coefficient estimates for the rate of maternal death due to unintended pregnancies and abortion both flipped from the single predictor models to show a positive association with the outcome. 
 
@@ -593,20 +602,22 @@ finalbootstrap <- data.frame(
 
 # create visualization with all 5 variables 
 figure2 <- ggplot(finalbootstrap, aes(x = observed, y = point_estimates)) +
-              geom_point(color = "black") +  
-              geom_point(aes(y = medians), color = "coral") + 
+              geom_point(aes(shape = "Point Estimates", color = "black")) +  
+              geom_point(aes(y = medians, shape = "Medians",color = "coral")) + 
               geom_errorbar(aes(ymin = lower_bound, ymax = upper_bound), width = 0.1, color = "blue") + 
               geom_abline(slope = 1, intercept = 0, linetype = "dashed", color = "black") +  # add 45 degree line
               xlim(0, 50) + # limit the x-axis values
               ylim(0, 50) + # limit the y-axis values
-              labs(x = "Observed Values", y = "Predicted Values", title = "Uncertainty in Predictions with Final Model")
+              labs(x = "Observed Values", y = "Predicted Values", title = "Uncertainty in Predictions with Final Model") +
+              scale_color_manual(values = c("black" = "black", "coral" = "coral", "blue" = "blue"),
+                                 labels = c("Point Estimates", "Medians", "Error Bars"))
 figure2
 
 # save final figure
 figure_file2 = here("results", "figures", "final-figures", "bootstrappred.png")
 ggsave(filename = figure_file2, plot=figure2) 
 ```
-This figure shows that 95% confidence intervals, shown as dark blue lines, for the predictions that do not fall on the expected 45 degree line do not intersect with the line either. The dark blue lines show that the confidence intervals are narrow, which increases the validity of the conclusion that the model is overfitting the data because there is not much uncertainty in the predictions.
+This figure shows that 95% confidence intervals, shown as dark blue lines, for the predictions that do not fall on the expected 45 degree line do not intersect with the line either. The point estimates, represented as black triangles, have decent overlap with the medians, represented as coral circles, which is a sign of good agreement between predicted and observed values. The dark blue lines show that the confidence intervals are narrow, which increases the validity of the conclusion that the model is overfitting the data because there is not much uncertainty in the predictions. Unfortunately, the model is inaccurate, but it is inaccurate without much variation. 
 
 Since we have evidence that our model overfits the data, we want to explore our full model using Lasso regression. This regression analysis shrinks the coefficients towards the mean, which allows it to perform subset selection. Coefficients can reach zero, and that results in that variable being removed from the model. This technique could reveal predictors that should not be included in our final model, which could reduce the risk of overfitting. 
 ```{r}
@@ -627,9 +638,12 @@ tidy(lasso_results)
 # save results from fit into a data frame 
 lmtable11 <- tidy(lasso_results)
 
+# create a professional format of the table to add to the manuscript 
+kable_lmtable11 <- kable(lmtable11)
+
 # save fit results table  
 table_file16 = here("results", "tables", "resulttable16.rds")
-saveRDS(lmtable11, file = table_file16)
+saveRDS(kable_lmtable11, file = table_file16)
 ```
 As expected, the coefficients are much smaller than the first full model we created without the regularization penalty, but all 5 predictors remain in the model. The `sarc_standard` predictor still has the strongest relationship with the outcome. The percent of women currently married, rate of maternal deaths due to unintended pregnancies, and rate of maternal deaths to due to abortion all have weak negative associations with the outcome. The direction of the relationship between the rate of maternal deaths due to abortions and the outcome flipped from the first full regression model to this model, but the coefficient is so small that this difference is not significant.  
 
@@ -774,4 +788,4 @@ Based on the red line that shows the lowest possible RMSE score, our random fore
 ## Choosing a final model 
 After considering each of the 10 models we created throughout the statistical analysis process, the random forest model with 5 predictors is the best overall choice for predicting our outcome of percentage of unintended pregnancies due to short acting reversible methods. The collinearity between the total rate of maternal deaths, rate of maternal deaths due to abortion, and rate of maternal deaths due to unintended pregnancies justified why they should not be included in the same model. We chose to remove the total maternal mortality predictor to avoid the issue of collinearity because the other two predictors in this category had lower RMSE and MAE performance metrics. The same reasoning explains why the percent of currently married women and the percent of never married women predictors should not be included in the same model. We chose to include the percent of currently married women in the final model because it had the strongest relationship with the outcome. The four most promising models were the single predictor models with population size using short acting reversible contraception, percent of currently married women, and rate of maternal deaths due to abortion, respectively, along with the full model with all five predictors. The single model with the region variable only performed poorly with an RMSE of 18.11857, so it was not considered in the final running for the best model. The models with percent of currently married women and rate of maternal deaths due to abortion had comparable RMSE scores of 10.175909 and 10.141275, respectively. Large improvement in performance metrics was observed when considering the model with population size using short acting reversible contraception based on an RMSE of 5.143319. The full model with all five predictors, including short acting reversible contraception usage, region, percent of currently married women, rate of maternal mortality due to abortion, and rate of maternal mortality due to unintended pregnancies, performed the best with an RMSE of 4.361363. We felt it was important to include the region predictor in the final model even though it did not perform well in a model on its own because of the large differences in the coefficients for the region predictor in a linear model with the outcome. Latin America/the Caribbean and Asia have much larger effects on the outcome than Europe and Oceania, so we argue for the inclusion of this variable in the final model to capture this information. 
 
-Once we decided that the full model with 5 predictors was the best choice, we used cross-validation with LASSO regression and random forest modeling to explore subset selection. The LASSO regression kept all 5 predictors, and the coefficients for the Asia, Europe, and Latin America/the Caribbean predictors were the largest behind the sarc_standard predictor. The smallest coefficient was assigned to the percent of currently married women predictor. The parameters were tuned for the LASSO regression, which increased our confidence in using a penalty of 0.1. The random forest model generated the same RMSE of 4.361363 as the LASSO regression model, but it has a higher R-squared value of 0.8369754. Since the random forest model explains 83.69% of the variation between the predicted and observed outcomes compared to 82.06% explained by the LASSO regression model, it is slightly better at predicting the outcome. After tuning the parameters for this model, the number of randomly selected predictors that produces the lowest RMSE is 4, not 5. While we cannot be sure which predictor the model is suggesting to remove, we hypothesize that it is the percent of currently married women based on the information from the LASSO regression. However, the improvement in RMSE when using 4 predictors instead of 5 is minimal, and the minimal node size variable is much more impactful on the RMSE of the model. Based on all of this information, we suggest using the full model with all 5 predictors with a LASSO regression because it accurately portrays the importance of each predictor while providing a penalty to predictors that do not meaningfully contribute to the model. While this model has a slightly lower R-squared value compared to the random forest model, the evidence of overfitting is so strong that this difference is negligible. Cross-validation of the model with all 5 predictors showed that predictions from testing data deviated from the expected relationship with larger variance than the predictions from the training data. Since the model did not perform well when used on test data, we conclude that there is overfitting in our model. Unfortunately, it is likely that any of these models are not optimal choices for predicting our outcome based on the poor performance of our model on testing data. While we suggest using the LASSO regression with all 5 predictors to predict our outcome because it is slightly easier to interpret, future researchers who are willing to sacrifice interpretation for predictive power should use the random forest model with 4 predictors based on the slightly higher predictive performance shown by the R-squared performance metric. 
+Once we decided that the full model with 5 predictors was the best choice, we used cross-validation with LASSO regression and random forest modeling to explore subset selection. The LASSO regression kept all 5 predictors, and the coefficients for the Asia, Europe, and Latin America/the Caribbean predictors were the largest behind the sarc_standard predictor. The smallest coefficient was assigned to the percent of currently married women predictor. The parameters were tuned for the LASSO regression, which increased our confidence in using a penalty of 0.1. The random forest model generated the same RMSE of 4.361363 as the LASSO regression model, but it has a higher R-squared value of 0.8369754. Since the random forest model explains 83.69% of the variation between the predicted and observed outcomes compared to 82.06% explained by the LASSO regression model, it is slightly better at predicting the outcome. After tuning the parameters for this model, the number of randomly selected predictors that produces the lowest RMSE is 4, not 5. While we cannot be sure which predictor the model is suggesting to remove, we hypothesize that it is the percent of currently married women based on the information from the LASSO regression. However, the improvement in RMSE when using 4 predictors instead of 5 is minimal, but it is interesting that the graph suggests using a minimal node size of 4 if the model contains all 5 predictors. Based on all of this information, we suggest using the full model with all 5 predictors with a LASSO regression because it accurately portrays the importance of each predictor while providing a penalty to predictors that do not meaningfully contribute to the model. While this model has a slightly lower R-squared value compared to the random forest model, the evidence of overfitting is so strong that this difference is negligible. Cross-validation of the model with all 5 predictors showed that predictions from testing data deviated from the expected relationship with larger variance than the predictions from the training data. Since the model did not perform well when used on test data, we conclude that there is overfitting in our model. Unfortunately, it is likely that any of these models are not optimal choices for predicting our outcome based on the poor performance of our model on testing data. While we suggest using the LASSO regression with all 5 predictors to predict our outcome because it is slightly easier to interpret, future researchers who are willing to sacrifice interpretation for predictive power should use the random forest model with 4 predictors based on the slightly higher predictive performance shown by the R-squared performance metric. 

@@ -69,7 +69,7 @@ The next step is exploratory data analysis. The eda.qmd file in the code > eda-c
 
 Step three is the statistical analysis and model fitting portion found in the statistical-analysis.qmd file in the code > analysis-code folder. We explore the single outcome `pct_upreg_sarc` based on 7 predictors with simple linear regression, total number of women using short acting reversible methods, region, percent of currently married women, percent of women who never married, total rate of maternal mortality, rate of maternal mortality by unintended pregnancy, and rate of maternal mortality by abortion. We also explore the differences in the outcome between regions using an ANOVA test and Tukey's Honestly Significant Difference test for pairwise comparisons within ANOVA. Result tables for each model and test are stored in the results > tables folder. 
 
-Step four is to critically analyze the performance of our models to determine which one performs the best in predicting our outcome, which is also done in the statistical-analysis.qmd file in the code > analysis-code folder. We chose 2 performance metrics to find for each of our 9 models: Root Mean Square Error (RMSE) and Mean Absolute Error (MAE). We chose these performance metrics because they are commonly used for linear regression models like the ones we have created. RMSE provides an average magnitude of the error in the predictors, and MAE provides an average absolute difference between the predicted and actual values. We include both metrics to increase the validity of our results. Once we decided on the final model, we use cross-validation to determine how well it will perform on data it has not seen before. This involves splitting the data into testing and training pieces , which allows us to compare the predictions created using both datasets. To examine the uncertainty in the model, we will use the bootstrapping method to resample our data 100 times to find confidence intervals for our predictions. This process is similar to cross-validation because it relies on resamling the training data. Lastly, we used a LASSO regression to add a penalty to each parameter included in the model to determine if any variables should be removed to improve model performance. It is important to tune the hyperparameters associated with LASSO regression to determine which model fits best. We use a grid search to ensure that we try all combinations of the parameters in our grid. We complete the tuning process with a 5-fold cross-validation repeated 5 times. We added a random forest model to attempt to improve model performance. We used another parameter tuning grid to allow for tuning of 2 variables: `mtry`, the number of variable to possibly split at in each node, and `min_n`, the minimal node size. We set the number of trees to 300 because it strikes a good balance between achieving the best performance metrics and the processing time required to do so. Each of these processes are crucial in determining which model performs best for our dataset. Result tables for each model and test are stored in the results > tables folder. Figures created from cross-validation, boostrapping, LASSO regression, and random forest modeling are stored in the results > figure > final-figures folder.
+Step four is to critically analyze the performance of our models to determine which one performs the best in predicting our outcome, which is also done in the statistical-analysis.qmd file in the code > analysis-code folder. We chose 2 performance metrics to find for each of our 9 models: Root Mean Square Error (RMSE) and Mean Absolute Error (MAE). We chose these performance metrics because they are commonly used for linear regression models like the ones we have created. RMSE provides an average magnitude of the error in the predictors, and MAE provides an average absolute difference between the predicted and actual values. We include both metrics to increase the validity of our results. Once we decided on the final model, we use cross-validation to determine how well it will perform on data it has not seen before. This involves splitting the data into testing and training pieces , which allows us to compare the predictions created using both datasets. To examine the uncertainty in the model, we will use the bootstrapping method to resample our data 100 times to find confidence intervals for our predictions. This process is similar to cross-validation because it relies on resampling the training data. Lastly, we used a LASSO regression to add a penalty to each parameter included in the model to determine if any variables should be removed to improve model performance. It is important to tune the hyperparameters associated with LASSO regression to determine which model fits best. We use  a grid search to ensure that we try all combinations of the parameters in our grid. We complete the tuning process with a 5-fold cross-validation repeated 5 times. We added a random forest model to attempt to improve model performance. We used another parameter tuning grid to allow for cross-validated tuning of 2 variables: `mtry`, the number of variable to possibly split at in each node, and `min_n`, the minimal node size. We set the number of trees to 300 because it strikes a good balance between achieving the best performance metrics and the processing time required to do so. Each of these processes are crucial in determining which model performs best for our dataset. Result tables for each model and test are stored in the results > tables folder. Figures created from cross-validation, boostrapping, LASSO regression, and random forest modeling are stored in the results > figure > final-figures folder.
 
 The Manuscript.qmd file for this document can be found in the products > manuscript folder. 
 
@@ -91,11 +91,11 @@ We began with a simple linear regression model with each of the 7 predictor vari
 
 ## Exploratory/Descriptive analysis
 
-After deciding on a single outcome variable, we created a summary table with that outcome and the seven predictors we will use to predict it, which can be seen in @tbl-1.
+After deciding on a single outcome variable, we created a summary table with that outcome and the seven predictors we will use to predict it, which can be seen in @tbl-1. [insert explanation here]
 ```{r}
 #| message: false
 #| label: tbl-1
-#| tbl-cap: "Table 1: Summary Table Of Numeric Variables"
+#| tbl-cap: "Summary Table Of Numeric Variables"
 #| echo: FALSE
 predictortable<- readRDS(here("results", "tables", "predictortable.rds"))
 predictortable
@@ -105,7 +105,7 @@ We created a multitude of exploratory plots to understand our data better. The f
 ```{r}
 #| message: false
 #| label: fig-1
-#| fig-cap: "Number of Countries With Percent Unintended Pregnancy Using SARC"
+#| fig-cap: "[insert explanation here]"
 #| echo: FALSE
 knitr::include_graphics(here("results", "figures", "exploratory-figures", "pctupreg_sarc_distribution.png"))
 ```
@@ -114,7 +114,7 @@ The next set of variables we explored were the total counts of women using each 
 ```{r}
 #| message: false
 #| label: fig-2
-#| fig-cap: "Graph Depciting Percent Unintended Pregnancy by Standarized Count of Total Women"
+#| fig-cap: "insert explanation here"
 #| echo: FALSE
 knitr::include_graphics(here("results", "figures", "exploratory-figures", "pctupreg_totalsarc.png"))
 ```
@@ -123,7 +123,7 @@ We stratified these four graphs by region to examine how the relationship differ
 ```{r}
 #| message: false
 #| label: fig-3
-#| fig-cap: "Graph Depicting Percent Unintended Pregnancies Using SARC by region"
+#| fig-cap: "insert explanation here"
 #| echo: FALSE
 knitr::include_graphics(here("results", "figures", "exploratory-figures", "pctupreg_sarc_stratified.png"))
 ```
@@ -132,7 +132,7 @@ We also created violin plots using the categorical usage variables for each birt
 ```{r}
 #| message: false
 #| label: fig-4
-#| fig-cap: "Violin Plot Depicitng Usage of SARc Per Region"
+#| fig-cap: "insert explanation here"
 #| echo: FALSE
 knitr::include_graphics(here("results", "figures", "exploratory-figures", "sarc_pctupreg_violin.png"))
 ```
@@ -141,7 +141,7 @@ Lastly, we explored the predictor variables that will be used in our models, and
 ```{r}
 #| message: false
 #| label: fig-5 - fig 10
-#| fig-cap: "Predictor Variable Distributions"
+#| fig-cap: "insert explanation here"
 #| echo: FALSE
 knitr::include_graphics(here("results", "figures", "exploratory-figures", "region_distribution.png"))
 knitr::include_graphics(here("results", "figures", "exploratory-figures", "currmarried_distribution.png"))
@@ -159,7 +159,7 @@ We completed a simple linear regression analysis with each of the 7 predictors s
 ```{r}
 #| message: false
 #| label: tbl-2
-#| fig-cap: "Strongest Predictor: sarc_standard"
+#| fig-cap: "This simple linear regresion model shows a strong effect of the standardized population size using short-acting reversible contraception methods on the outcome of percentage of unintended pregnancies due to short acting reversible contraception. This strong positive relationship indicates that as more women use this form of contraception, more women are susceptible to unintended pregancies due to SARCs because they are now at risk of experiencing the outcome. The coefficient of 87.65998 is the largest single coefficient of any predictor that we studied, which increases our confidence in including it as a predictor in our final model."
 #| echo: FALSE
 readRDS(here("results","tables", "resulttable1.rds")) 
 ```
@@ -168,7 +168,7 @@ The second model we created used the region predictor, which revealed that the L
 ```{r}
 #| message: false
 #| label: tbl-3
-#| fig-cap: "Regional Predictor"
+#| fig-cap: "In a simple linear regression with the `region` predictor only, the Latin America/the Caribbean region has the strongest relationship with the outcome based on a coefficient of 1.6218844 followed closely by Asia. Europe has a smaller efffect on the outcome based on the coefficient of 0.3299391, but Oceania has the smallest effect on the outcome. This model chose the African region as the reference group, which means that it has the weakest association with the outcome compared to the other 4 regions."
 #| echo: FALSE
 readRDS(here("results","tables", "resulttable2.rds")) 
 ```
@@ -180,7 +180,7 @@ We created one model with all 5 predictors using multiple linear regression, sho
 ```{r}
 #| message: false
 #| label: tbl-4
-#| fig-cap: "Multiple Linear Regression with 5 Predictors"
+#| fig-cap: "The multiple linear regression model with all 5 predictors confirms that the `sarc_standard` predictor has the strongest effect on the outcome, but the effect size has decreased slightly. The region variable is the second most impactful predictor, but there is a shift in which region has the strongest effect on the outcome. Africa still serves as the control region, but Europe has the largest effect size in this model followed by Latin America/the Caribbean. Oceania still has the weakest effect, and the effect is negative in this model compared to the positive effect seen in the simple linear regression model with the region predictor. The percent of currently married women, rate of maternal deaths due to uninteded pregnancies, and rate of maternal deaths due to abortion are very weak predictors with miniscule coefficients."
 #| echo: FALSE
 readRDS(here("results","tables", "resulttable8.rds")) 
 ```
@@ -188,7 +188,7 @@ To determine which model performed the best, we started by examining the RMSE an
 ```{r}
 #| message: false
 #| label: tbl-5
-#| fig-cap: "Performance Metric Comparisons"
+#| fig-cap: "The performance metric comparisons clearly highlight the full model with 5 predictors as the best model with the lowest RMSE of 4.361363 and lowest MAE of 3.386193. The model with percent of currently married women and the model with the rate of maternal mortality due to abortion only perform slightly better than the null model, which just predicts the average outcome. These models are extremely poor. The best single predictor model is the one with the standard population size using SARCs with an RMSE of 5.143319 and an MAE of 3.953767."
 #| echo: FALSE
 readRDS(here("results","tables", "resulttable14.rds")) 
 ```
@@ -196,7 +196,7 @@ We used cross-validation of the two best models to determine how well the model 
 ```{r}
 #| message: false
 #| label: tbl-6
-#| fig-cap: "Cross Validation Performance Metric Comparisons"
+#| fig-cap: "Cross-validated (CV) performance metric comparisons were only completed on two models: the single predictor model with the `sarc_standard` variable and the full model with all five predictors because these two models performed the best in the first analysis. The RMSE metrics are closer using the CV technique with a differencec of 0.42 between the two models. The standard error of the full predictor model is slightly higher, but the R-squared value is also slightly higher for the full predictor model. These metrics confirm that the full predictor model is the best choice compared to single predictor models."
 #| echo: FALSE
 readRDS(here("results","tables", "resulttable15.rds")) 
 ```
@@ -205,7 +205,7 @@ Since we determined that the full model with all 5 predictors performs best, we 
 ```{r}
 #| message: false
 #| label: fig-11
-#| fig-cap: "Evaluating Final Model Performance on Test Data"
+#| fig-cap: "Evaluating the final model performance on test data reveals that the model is strongly overfitting the data. The testing model predictions are shown in coral, and the variation in these observations is much higher compared to the training model predictions, shown in blue. Ideally, there would be complete overlap between the testing and training data predictions following the black dotted line that represent the ideal relationship between observed and predicted values. The majority of testing data predictions do not overlap with the training data prediction in this case, and the testing data predictions are father away from the preferred relationship shown by the black dotted line."
 #| echo: FALSE
 knitr::include_graphics(here("results", "figures", "final-figures", "fullmodelpred.png"))
 ```
@@ -213,7 +213,7 @@ We went one step further to examine the uncertainty in the full model prediction
 ```{r}
 #| message: false
 #| label: fig-12
-#| fig-cap: "Evaluation of Uncertainty in Full Model Predictions"
+#| fig-cap: "Evaluation of uncertainty in the full model predictions reveals decent overlap between the point estimates, shown in black triangles, and the median prediction observation, shown in coral circles. The error bars, shown in blue, represent 95% confidence intervals of the median estimates, and most of the confidence intervals contain the point estimates. This provides confidence in the certainty of the model's predictions, but this is not very meaninful considering how the full model overfits the data."
 #| echo: FALSE
 knitr::include_graphics(here("results", "figures", "final-figures", "bootstrappred.png"))
 ```
@@ -222,7 +222,7 @@ Since we have evidence that our model overfits the data, the last technique we w
 ```{r}
 #| message: false
 #| label: tbl-7
-#| fig-cap: "LASSO Regression Results"
+#| fig-cap: "LASSO regression results confirm the findings of the multiple linear regression model, but each of the coefficients has been shrunk as a result of the penalty parameter of 0.1. The `sarc_standard` predictor is still the most strongly related to the outcome, followed by the European region. The LASSO penaltty decreased the effect size of the Oceania region even further, and the smallest coefficient is now assigned to the percent of currently married women, which is a shift from the multiple linear regression model. The rates of maternal mortality due to unintended pregnancy and abortion are very weak predictors in this model as well."
 #| echo: FALSE
 readRDS(here("results","tables", "resulttable16.rds")) 
 ```
@@ -230,7 +230,7 @@ It is important to tune the hyperparameters associated with LASSO regression to 
 ```{r}
 #| message: false
 #| label: fig-13
-#| fig-cap: "Parameter Tuning for LASSO Regression"
+#| fig-cap: "Parameter tuning for the LASSO regression reveals that the parameter should be smaller than 1 to ensure the lowest RMSE performance metric value. The RMSE value increases exponentially when the penalty parameter exceeds 1, so this provides confidence in our choice of using 0.1 as the penalty parameter in the prevoiusly displayed LASSO regression model. There is no evidence to use a smaller penalty parameter than 0.1 because it does not result in a lower performance metric."
 #| echo: FALSE
 knitr::include_graphics(here("results", "figures", "final-figures", "lassoparameters.png"))
 ```
@@ -239,16 +239,16 @@ After creating the random forest model, we found that the RMSE and MAE values ar
 ```{r}
 #| message: false
 #| label: fig-14
-#| fig-cap: "Predicted vs Observed Values in Random Forest Model"
+#| fig-cap: "The graph of predicted versus observed values in the random forest model shows less deviation from the expected relationship visualized by the black dotted line in comparison to the multiple linear regression model displayed previously. While there are still several outliers as the predicted values increase past a value of 20, the observations hover around the expected relationship with conistency for values less than 10. While it is still likely that the random forest model is overfitting because it uses the same predictors, it appears that this model has higher predictive accuracy."
 #| echo: FALSE
 knitr::include_graphics(here("results", "figures", "final-figures", "randomforestpred.png"))
 ```
 
-Again, it is crucial to tune hyperparameters associate with machine learning models. Based on the red line displayed in @fig-15 that shows the lowest possible RMSE score, our random forest model performs the best with a node size of 1 and 4 predictors. This begs the question of which one of the 5 predictors included in our model should be dropped to improve model performance because all previous performance metrics suggested that including all 5 predictors created the best model. However, there is a minimal increase in RMSE when all five models are included in the model with a node size of 1.  
+Again, it is crucial to tune hyperparameters associate with machine learning models. Based on the red line displayed in @fig-15 that shows the lowest possible RMSE score, our random forest model performs the best with a node size of 1 and 4 predictors. This begs the question of which one of the 5 predictors included in our model should be dropped to improve model performance because all previous performance metrics suggested that including all 5 predictors created the best model. However, there is a minimal increase in RMSE when all five predictors are included in the model, but the results suggest that a full model should have a node size of 4 to achieve the lowest RMSE.
 ```{r}
 #| message: false
 #| label: fig-15
-#| fig-cap: "Tuning Parameters for Random Forest Model"
+#| fig-cap: "After tuning two parameters for the random forest model, it is clear that the best model based on the lowest RMSE performance metric value has a minimal node size of 1 for 4 out of the 5 models. This graph suggests that the final model should contain 4 predictors to achieve the best performance metric, but it does not provide information on which parameter should be dropped from the model. Interestingly, the best model with all 5 predictors has a minimal node size of 4."
 #| echo: FALSE
 knitr::include_graphics(here("results", "figures", "final-figures", "randomforesttune.png"))
 ```
@@ -263,7 +263,7 @@ As seen in the statistical analysis file, we created 10 different model options 
 ## Summary and Interpretation
 Our exploratory data analysis allowed us to examine the distribution of our outcome of interest, percentage of unintended pregnancies due to short acting reversible contraception, and the predictors used to describe the outcome. Most low- and middle-income countries were from the African region, followed by Asia and Latin America/the Caribbean. The Latin America/the Caribbean region experienced the highest percentage of unintended pregnancies followed by Europe and Asia. This association is likely explained by the fact that women in these regions have better access to short acting reversible contraception methods because we would have expected the African region to experience the highest rate of our outcome based on the number of countries included from that region. After standardizing the number of women who use short acting reversible contraception based on total population size, it is clear the women in the Latin America/the Caribbean region use this contraception method at the highest rates, followed my the Asian region. Further analysis of the region predictor in a linear model with the outcome confirmed this finding by showing that Latin America/the Caribbean has the strongest association with the outcome, followed by Asia. Asia accounted for the highest percentage of currently married women. The highest rate of maternal mortality due to abortion and highest rate of maternal mortality due to unintended pregnancies are both accounted for by the African region. This cannot be explained by having the highest number of reproductive age women because the Asian region has 6 times the number of reproductive age women compared to the African region. This discrepancy is likely due to poorer access to maternal healthcare in Africa compared to Asia. 
 
-Our full statistical analysis of the final model with 5 predictors included the standardized number of women using short acting reversible methods, region, percent of currently married women, rate of maternal mortality due to abortion, and rate of maternal mortality due to unintended pregnancies as predictors. Cross-validation using LASSO regression and random forest modeling techniques did not result in an increase in performance metrics, and the model is strongly overfitting the data based on the predicted versus observed outcomes between the testing and training data. Based on the model using LASSO regression, the number of women using short acting reversible contraception is the strongest predictor of the outcome, which is to be expected because women must be using this form of contraception to have an unintended pregnancy due to failure of this contraceptive method in the first place. The most influential factor in this model is the region variable with European, Asian, and Latin American regions having the strongest effects on the outcome. The percent of currently married women, rate of maternal mortality due to abortion, and rate of maternal mortality due to unintended pregnancies as predictors are all negatively associated with the outcome in this model. This implies that the percentage of unintended pregnancies decreases when a higher percentage of women are currently married and when the country experiences a higher maternal mortality rate based on abortion and unintended pregnancies. However, these effects are so small that it is likely these predictors do not have a real effect on the outcome. This analysis was successful in determining that region does have a significant effect on the percentage of unintended pregnancies due to short acting reversible methods with the Latin America/the Caribbean region experiencing the outcome at the highest rates.
+Our full statistical analysis of the final model with 5 predictors included the standardized number of women using short acting reversible methods, region, percent of currently married women, rate of maternal mortality due to abortion, and rate of maternal mortality due to unintended pregnancies as predictors. Cross-validation using LASSO regression and random forest modeling techniques did not result in an increase in performance metrics, and the model is strongly overfitting the data based on the predicted versus observed outcomes between the testing and training data. Based on the model using LASSO regression, the number of women using short acting reversible contraception is the strongest predictor of the outcome, which is to be expected because women must be using this form of contraception to have an unintended pregnancy due to failure of this contraceptive method in the first place. The most influential factor in this model is the region variable with European, Asian, and Latin American regions having the strongest effects on the outcome. This finding implies that these three regions have the best access to SARCs because they also have the highest standardized population size using this form of contraception in the first place. Since the African region was always selected as the control for the model, it is likely that this region has the lowest access to SARCs. The percent of currently married women, rate of maternal mortality due to abortion, and rate of maternal mortality due to unintended pregnancies as predictors are all negatively associated with the outcome in this model. This implies that the percentage of unintended pregnancies decreases when a higher percentage of women are currently married and when the country experiences a higher maternal mortality rate based on abortion and unintended pregnancies. However, these effects are so small that it is likely these predictors do not have a real effect on the outcome. This analysis was successful in determining that region does have a significant effect on the percentage of unintended pregnancies due to short acting reversible methods with the Latin America/the Caribbean region experiencing the outcome at the highest rates.
 
 ## Strengths and Limitations
 _Discuss what you perceive as strengths and limitations of your analysis._
