@@ -267,11 +267,22 @@ Our full statistical analysis of the final model with 5 predictors included the 
 
 ## Strengths and Limitations
 _Discuss what you perceive as strengths and limitations of your analysis._
+This study relied on secondary data from the Guttmacher Institute's Adding It Up project. This means that we were limited by the data that was available and unable to collect our own data. Also, the study was cross-sectional, which means that it only looked at data from one point in time. This makes it difficult to establish causal relationships between the variables.
+
+Despite these limitations, our study provides valuable insights into the factors influencing unintended pregnancy rates in low- and middle-income countries. The findings suggest that a multifaceted approach is needed to address unintended pregnancy. This approach should include increasing access to SARC and LARC methods, improving education and counseling on contraception use, and addressing regional disparities in access to healthcare services and family planning programs.
+
 
 ## Conclusions
 _What are the main take-home messages?_
+This study investigated the association between unintended pregnancy rates and short-acting reversible contraception (SARC) use across low- and middle-income countries. The findings suggest that SARC use, regional variations, and marital status are all important factors influencing unintended pregnancy rates.
 
+The study found that SARC use was the strongest predictor of unintended pregnancy rates. This suggests that women who rely on SARC methods are more likely to experience unintended pregnancies compared to those who use other contraceptive methods. There are several possible explanations for this finding. First, SARC methods, such as pills and patches require more frequent user adherence than long-acting reversible contraceptives (LARCs) like implants. Perfect use of SARC methods is essential for their effectiveness, and even small lapses in use can increase the risk of unintended pregnancy. Second, SARC methods may not be as effective for women who have difficulty remembering to take their medication daily or who experience side effects from hormonal contraception.
 
+The study also found that regional variations were significantly associated with unintended pregnancy rates. The Latin America/Caribbean region displayed the strongest association with unintended pregnancy rates, followed by Asia. The Oceania and Europe region had weaker associations. These findings suggest that there are significant contextual factors that influence unintended pregnancy rates across different regions. These factors may include access to healthcare services, legal barriers to access, and cultural attitudes towards contraception. Additionally, regions with cultural or religious restrictions on contraception use may also have higher rates of unintended pregnancy.
+
+The study found that marital status was inversely associated with unintended pregnancy rates. We found that as the percent of women who are currently married increases, the unintended pregnancy rate decreases. There are some reasonable explanations for this finding. First, married women may have better access to healthcare services and family planning programs than unmarried women. Secondly, married couples may be more likely to plan their pregnancies than unmarried couples. Third, unmarried women may be more likely to have multiple sexual partners who could be opposed to using contraception.
+
+Future research directions could include conducting qualitative studies to better understand the reasons why women choose SARC methods and the challenges they face in using them effectively. Additionally, we suggest that a longitudinal study should be conducted to track changes in unintended pregnancy rates over time and to evaluate the effectiveness of different interventions aimed at reducing unintended pregnancy.
 
 
 {{< pagebreak >}}
