@@ -72,16 +72,29 @@ We also wanted a summary table with the predictor information to include in our 
 # Selecting variables
 selected_variables <- mydata[c("pct_upreg_sarc","pct_currentlymarried","pct_nevermarried","rate_matdeaths", "rate_matdeaths_upreg", "rate_matdeaths_abs","region", "wra")] 
 
+# Modify region variable type for proper labeling 
+selected_variables$region <- factor(selected_variables$region, labels = c("Africa", "Asia", "Europe", "Latin America/the Caribbean", "Oceania"))
+
 
 # Create table 
 predictortable <-selected_variables %>%
   tbl_summary(
     by = region,
-    label = list(wra ~ "Number of women of reproductive age, 15-49"),
+    label = list(wra ~ "Number of women of reproductive age, 15-49",
+                 starts_with("pct_upreg_sarc" ) ~ "Unintended Pregnancies due to SARC Usage (%)",
+                 starts_with("pct_currentlymarried" ) ~ "Currently Married Women (%)",
+                 starts_with("pct_nevermarried" ) ~ "Never Married Women (%)",
+                 starts_with("rate_matdeaths") ~ "Rate of Maternal Deaths (per 100,000 live births)",
+                 starts_with("rate_matdeaths_upreg") ~ "Rate of Maternal Deaths due to Unintended Pregnancies",
+                 starts_with("rate_matdeaths_abs") ~ "Rate of Maternal Deaths due to Abortions"
+                 ),
     type = all_continuous() ~ "continuous2",
     statistic = list(all_continuous() ~ c("{mean}","{min}, {max}"))) %>%
 modify_header(label ~ "**Predictor Variable**") %>%
-modify_caption("**Table 1. Predictor Variables**") %>%
+  modify_header(
+    starts_with("region") ~ "**Region (1-Africa, 2-Asia, 3-Europe, 4-Latin America/the Caribbean, 5-Oceania)**"
+  ) %>%
+modify_caption("**Table 1. Summary Table**") %>%
 modify_spanning_header(all_stat_cols() ~ "Region")
 
 

@@ -363,12 +363,8 @@ kable(resulttable2)
 
 # Discussion
 
-Any additional discussion regarding the supplementary material/findings.
+The most helpful part of this supplementary material is the information about the other potential outcomes that can be studied including the percentage of unintended pregnancies due to long-acting reversible methods, sterilization, traditional methods, and no birth control method. The initial exploration into these variables will provide future researchers with an initial idea of the distribution of these variables. The additional exploratory analysis included above provides insight on how we standardized our population predictor and dealt with missing data, which increases the validity of our study methods. The details about the methods we chose add confidence that the analysis performed in the statistical-analysis.qmd was the correct approach for our data. Choosing robust techniques like the LASSO regression and bootstrapping add evidence to our thorough investigation of the outcome and 7 predictors. 
 
-{{< pagebreak >}}
-
-
-# References
 
 
 
