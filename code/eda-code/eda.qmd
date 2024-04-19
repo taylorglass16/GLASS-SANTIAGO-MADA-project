@@ -148,8 +148,9 @@ We are also interested in how these relationships between percent of unintended 
 ```{r}
 
 # explore percent unintended pregnancies using short acting reversible methods by region
-plot_4 <- mydata %>% ggplot(aes(x=pct_upreg_sarc, y=sarc_standard, color = region)) + 
+plot_4 <- mydata %>% ggplot(aes(x=pct_upreg_sarc, y=sarc_standard)) + 
   geom_point() + 
+  geom_jitter(aes(colour = region)) +
   geom_smooth(method='lm') + 
   ggtitle("Percent of Unintended Pregnancies vs Standardzied Count of Women Using SARCs") + xlab("Standarized Total Number of Women") + ylab("Percentage of Unintended Pregnancies")
 plot(plot_4)
@@ -194,7 +195,7 @@ plot_7 <- mydata %>% ggplot(aes(x=pct_currentlymarried)) +
   xlab("Percentage") + ylab("Number of Countries")
 plot(plot_7)
 figure_file = here("results", "figures", "exploratory-figures", "currmarried_distribution.png")
-ggsave(filename = figure_file, plot=p23) 
+ggsave(filename = figure_file, plot=plot_7) 
 
 # explore the never married predictor
 plot_8 <- mydata %>% ggplot(aes(x=pct_nevermarried)) + 

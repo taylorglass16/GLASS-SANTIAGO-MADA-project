@@ -138,19 +138,6 @@ knitr::include_graphics(here("results", "figures", "exploratory-figures", "sarc_
 ```
 
 Lastly, we explored the predictor variables that will be used in our models, and the graphs are shown in @fig-5 - @fig-10. The Africa region accounts for most of the observations with about 53 countries, followed by Asia that includes about 35 countries. Latin America/the Caribbean accounts for about 25 countries. Europe and Oceania account for the least number of observations. The distribution of women currently married is approximately normal with an average around 57% and no major outliers. The distribution of women never married is slightly skewed to the right with an average around 30%, but there are a few outliers greater than 60%. The distribution of the total maternal mortality rate is highly skewed to the right with a couple outliers. We would have expected the highest rates to belong to India and China because they have the most people, but it is Chad, Sierra Leone, and South Sudan that account for the highest rates of total maternal mortality, which each belong to the African region. The distribution of the maternal mortality rate from unintended pregnancies is highly skewed to the right with a couple outliers, which is to be expected based on the trend shown in the previous histogram. Chad and South Sudan also account for the highest rates of maternal mortality in this category. The distribution of maternal mortality rate from abortions is also highly skewed to the right. The outliers are accounted for by Gambia and Mauritania in this predictor, which both belong to the African region.
-```{r}
-#| message: false
-#| label: fig-5 - fig 10
-#| fig-cap: "insert explanation here"
-#| echo: FALSE
-knitr::include_graphics(here("results", "figures", "exploratory-figures", "region_distribution.png"))
-knitr::include_graphics(here("results", "figures", "exploratory-figures", "currmarried_distribution.png"))
-knitr::include_graphics(here("results", "figures", "exploratory-figures", "nevmarried_distribution.png"))
-knitr::include_graphics(here("results", "figures", "exploratory-figures", "matdeaths_distribution.png"))
-knitr::include_graphics(here("results", "figures", "exploratory-figures", "matdeathsupreg_distribution.png"))
-knitr::include_graphics(here("results", "figures", "exploratory-figures", "matdeathsabs_distribution.png"))
-
-```
 
 
 ## Basic statistical analysis

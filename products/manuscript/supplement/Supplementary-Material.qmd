@@ -85,6 +85,7 @@ kable(resulttable2)
 
 Readers will be able to find our analysis of the different contraception methods that we did not select for our main outcome through figures we've made for the `pct_upreg_larcster`, `pct_upreg_trad`, and `pct_upreg_nouse` variables in this section.  
 
+
 ```{r}
 # explore the percentage of unintended pregnancies related to long acting reversible methods in each country
 p2 <- mydata %>% ggplot(aes(x=pct_upreg_larcster)) + 
@@ -119,6 +120,73 @@ P4: This histogram shows that about half of the countries reported less than 10%
 
 P5: This histogram shows that more countries report a higher percentage of unintended pregnancies among women who do not use any contraception, but it varies widely by country.
 
+
+We also needed to explore the remaining predictor variables: `region`, `pct_currentlymarried`, `pct_nevermarried`, `rate_matdeaths`, `rate_matdeaths_upreg`, and `rate_matdeaths_abs`. Simple histograms will allow us to see the distribution of each variable and ensure there are no outliers. 
+```{r}
+# explore the region predictor
+plot_6 <- mydata %>% ggplot(aes(x=region)) + 
+  geom_bar() +
+  ggtitle("Countries in Each Region") + 
+  xlab("Region") + ylab("Number of Countries")
+plot(plot_6)
+figure_file = here("results", "figures", "exploratory-figures", "region_distribution.png")
+ggsave(filename = figure_file, plot=plot_6) 
+
+# explore the current marriage predictor
+plot_7 <- mydata %>% ggplot(aes(x=pct_currentlymarried)) + 
+  geom_histogram() +
+  ggtitle("Percent of Women Currently Married") + 
+  xlab("Percentage") + ylab("Number of Countries")
+plot(plot_7)
+figure_file = here("results", "figures", "exploratory-figures", "currmarried_distribution.png")
+ggsave(filename = figure_file, plot=plot_7) 
+
+# explore the never married predictor
+plot_8 <- mydata %>% ggplot(aes(x=pct_nevermarried)) + 
+  geom_histogram() +
+  ggtitle("Percent of Women Never Married") + 
+  xlab("Percentage") + ylab("Number of Countries")
+plot(plot_8)
+figure_file = here("results", "figures", "exploratory-figures", "nevmarried_distribution.png")
+ggsave(filename = figure_file, plot=plot_8) 
+
+# explore the total maternal mortality rate predictor
+plot_9 <- mydata %>% ggplot(aes(x=rate_matdeaths)) + 
+  geom_histogram() +
+  ggtitle("Total Rate of Maternal Deaths") + 
+  xlab("Maternal Deaths") + ylab("Number of Countries")
+plot(plot_9)
+figure_file = here("results", "figures", "exploratory-figures", "matdeaths_distribution.png")
+ggsave(filename = figure_file, plot=plot_9) 
+
+# explore outliers in maternal mortality from unintended pregnancies
+mydata %>% filter(rate_matdeaths > 1000)
+
+# explore the maternal mortality rate from unintended pregnancies predictor
+plot_10 <- mydata %>% ggplot(aes(x=rate_matdeaths_upreg)) + 
+  geom_histogram() +
+  ggtitle("Rate of Maternal Deaths from Unintended Pregnancies") + 
+  xlab("Maternal Deaths") + ylab("Number of Countries")
+plot(plot_10)
+figure_file = here("results", "figures", "exploratory-figures", "matdeathsupreg_distribution.png")
+ggsave(filename = figure_file, plot=plot_10) 
+
+# explore outliers in maternal mortality from unintended pregnancies
+mydata %>% filter(rate_matdeaths_upreg > 6000)
+
+# explore the maternal mortality rate from abortions
+plot_11 <- mydata %>% ggplot(aes(x=rate_matdeaths_abs)) + 
+  geom_histogram() +
+  ggtitle("Rate of Maternal Deaths from Abortions") + 
+  xlab("Maternal Deaths") + ylab("Number of Countries")
+plot(plot_11)
+figure_file = here("results", "figures", "exploratory-figures", "matdeathsabs_distribution.png")
+ggsave(filename = figure_file, plot=plot_11) 
+
+# explore outliers in maternal mortality from abortions
+mydata %>% filter(rate_matdeaths_abs > 500)
+
+```
 
 The following set of plots revealed large outliers in the 'total_larcster`,'total_trad', and `total_none` variables, which prevented the graphs from being very useful. The histograms look like most observations for each of these four variables are 0, but that is not possible because the summary table showed that the minimum value for all four of these variables is greater than 0. This distortion is caused by the two large outliers in the data set.    
 
