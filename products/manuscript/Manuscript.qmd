@@ -95,7 +95,7 @@ After deciding on a single outcome variable, we created a summary table with tha
 ```{r}
 #| message: false
 #| label: tbl-1
-#| tbl-cap: "[A summary table was done to present data about the seven predictor variables chosen in a structured format. Summary tables enable us to compare between different categories or groups within the data set. This can reveal trends or relationships. From the summary table below, it would appear that] Latin America/the Caribbean has the highest percentage of unintended pregancies due to SARC usage."
+#| tbl-cap: "[A summary table was done to present data about the seven predictor variables chosen in a structured format. Summary tables enable us to compare between different categories or groups within the data set. This can reveal trends or relationships. From the summary table below, it would appear that the region with the highest rate of unintended pregnancies due to SARC usage is Latin America/Caribbean at 24%, followed by Europe at 23%. Africa and Asia have a mean of 13% and 14% respectively, while Oceania appears to have the lowest rate at 6%. It appears that a higher percentage of women are currently married in Asia (66%) and Africa (60%) compared to Latin America/Caribbean (54%) and Oceania (60%).The average percentage of never married women across the 5 regions is 31%. Latin America/Caribbean region has the highest percentage of never married women at 35% and Asia region has has the lowest percentage of never married women at 29%.]"
 #| echo: FALSE
 predictortable<- readRDS(here("results", "tables", "predictortable.rds"))
 predictortable
