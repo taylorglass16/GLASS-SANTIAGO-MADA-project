@@ -1,0 +1,166 @@
+---
+title: Project Review Template 
+author: Cassia Roth
+date: date-modified
+format: 
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+---
+
+# Overview
+
+Title of project: Global Distribution of Unintended Pregnancies and Contraceptive Usage
+
+Name of project author(s): Taylor Glass and Arlyn Santiago
+
+Name of project reviewer: Cassia Roth
+
+# Specific project content evaluation
+
+## Background, Context and Motivation
+
+How well is the context of the project described? Is a comprehensive background, including summary of previous/related work given? Is the project well placed into the context of existing work (including proper referencing of existing work). Is it clear why the project was undertaken and what new information it hopes to provide?
+
+### Feedback and Comments
+
+You do an excellent job in your general background information and your motivation for the project. The first half of the paragraph is a tiny bit vague in that the studies you outline don't include where they were conducted, which seems to matter for the motivation of your study (and the differences among regions that you pinpoint in your findings). You also combine all contraceptives with emergency contraceptives in the second half of the paragraph. These are very different things, unless your definition of SARC is ONLY emergency contraceptives. You might want to clarify this, as it undermines your overall discussion. Are you including EC in SARCs? What else is a SARC? You might have seen the greatest variation in Latin American regions because that region also has a large variation between countries in abortion legality (from completely illegal in all circumstances, Nicaragua, El Salvador, Honduras to fully legal until 24 weeks LMP in Colombia). Some discussion of abortion might be interesting here.
+
+In fact, you might want to provide more detailed definitions and examples for all of the three categories of contraceptives (long-acting reversible and sterilization; SARC; and traditional). I would suggest your opening sentence omit the word "higher" since you don't know the relationship at the outset. 
+
+### Summary assessment
+
+-   **strong contextualization and motivation**
+
+## Question description
+
+How well and clear are the question(s)/hypotheses the project aims to address described? Is it clear how the questions relate to the data?
+
+### Feedback and Comments
+
+In the question section, you very clearly and expertly outline your main question: Is there a significant difference in the percentage of unintended pregnancies among short acting reversible contraception users among region? You might want to clarify what you mean by significant. Do you mean statistically significant at the 0.05 level? You might also want to clarify what you mean by "among region." Do you mean between regions? Which regions?
+
+### Summary assessment
+
+-   **question/hypotheses somewhat explained**
+
+## Data description
+
+How well is the data overall described? Is the source provided? Is a codebook or other meta-information available that makes it clear what the data is?
+
+### Feedback and Comments
+
+You do a superb job of describing your overall data. The codebook is clear as is the data source. You also outline where you got it from.
+
+### Summary assessment
+
+-   **source and overall structure of data well explained**
+
+## Data wrangling and exploratory analysis
+
+How well is the data cleaned/processed and explored? Are all steps reasonable and well explained? Are alternatives discussed and considered? Are meaningful exploratory results shown (e.g. in the supplementary materials)?
+
+### Feedback and Comments
+
+Wow, you've done a great job here! I was very easily able to follow all of your wrangling and exploratory methods. You consider many different alternatives and provide all meaningful results in an easy-to-follow manner. I think some of the methods section could be removed from the final manuscript and put in the supplemental file, for example the description of all performance metrics you performed (just state the final one and refer to supplemental for the background analysis you did to get there).
+
+### Summary assessment
+
+-   **essentially no weaknesses in wrangling and exploratory component**
+
+## Appropriateness of Analysis
+
+Were the analysis methods appropriate for the data? Was the analysis done properly? Were different components of the analysis (e.g. performance measure, variable selection, data pre-processing, model evaluation) done in the best way possible and explained well?
+
+### Feedback and Comments
+
+Your descriptions of your models is very clear and informative. From my understanding of these models, they make sense. I would have found it helpful if you wrote out your model in mathematical form. I'm also wondering what the literature has included for covariates in similar studies? Why you chose the model you did and why you included/excluded specific covariates given model performance is very clear, but sometimes we want to know more about relationships even if that reduces the model's predictive power. What have other studies included as covariates? Does your study differ?
+
+### Summary assessment
+
+-   **strong and reasonable analysis**
+
+## Presentation
+
+How well are results presented? Are tables and figures easy to read and understand? Are the main figures/tables publication level quality?
+
+### Feedback and Comments
+
+The Tables and figures are great, although some of the tables were hard to read because they were not centered. I also had this problem with flextable, and I don't know how to fix it! There are some misspellings of standardized in Figures 2 and 3. The references to table 2 and 3 came out as unformatted in the word document I rendered (For these tables, you might want to use flextable). You also have multiple tables with the same numbers.
+
+### Summary assessment
+
+-   **results are very well presented**
+
+## Discussion/Conclusions
+
+Are the study findings properly discussed? Are strengths and limitations acknowledged? Are findings interpreted properly?
+
+### Feedback and Comments
+
+You do a great job of discussing your findings. I was interested to see a bit more about the "so-what" findings. Women who use SARC have higher probability of experiencing unintended pregnancies than women who don't use SARC? Even women who use traditional or no methods? I wasn't clear on this because in your discussion you only mention LARC. But, more importantly, what does this mean for policy? Should we focus on LARCs instead of SARCs? Or should we legalize abortion? 
+
+### Summary assessment
+
+-   **strong, complete and clear discussion**
+
+## Further comments
+
+I'm only interested in knowing what you think this means for policy and contraception, since I am interested in this topic! 
+
+# Overall project content evaluation
+
+Evaluate overall features of the project by filling in the sections below.
+
+## Structure
+
+Is the project well structured? Are files in well labeled folders? Do files have reasonable names? Are all "junk" files not needed for analysis/reproduction removed? By just looking at files and folders, can you get an idea of how things fit together?
+
+### Feedback and Comments
+
+Everything was well structured and cleaned up. Great job. My only question was the extra file in the eda-code folder (called libs). What is that for?
+
+### Summary assessment
+
+-   **well structured**
+
+## Documentation
+
+How well is the project documented? Are you able to understand each step of the whole analysis, each decision that was made, and each line of code? Is enough information provided as comments in code or as part of Rmd files?
+
+### Feedback and Comments
+
+Everything was very well documented and easy to follow. However, I think the master Readme could use some clarification. First, it did not mention the `eda.qmd` file and when it should be run. I ran it between the processing and analysis files. Second, I think you could have bullet points (or numbered points) easily showing which code to run in which order. This would make it easier for someone who is not familiar with your project to run it.
+
+### Summary assessment
+
+-   **fully and well documented**
+
+## Reproducibility
+
+Are all results fully reproducible? Is documentation provided which clearly explains how to reproduce things, and does it work without the need for any manual intervention? Are you able to re-run the whole analysis without having to do manual interventions/edits?
+
+### Feedback and Comments
+
+I was able to reproduce the entire project without any problem.
+
+### Summary assessment
+
+-   **fully reproducible without issues**
+
+## Thoroughness
+
+How thorough was the overall study? Were alternatives (e.g. different ways of processing the data or different models) considered? Were alternatives discussed? Were the questions/hypotheses fully and thoroughly addressed?
+
+### Feedback and Comments
+
+You did a fantastic job with thinking through the performances of your model. I was very impressed. I thought you could have included a few more references on this topic in your literature review.
+
+### Summary assessment
+
+-   **strong level of thoroughness**
+
+## Further comments
+
+Great job Arlyn and Tessa! I would make sure to proofread the manuscript document, as I found some spelling errors.
