@@ -1,0 +1,175 @@
+---
+title: Project Review Template 
+author: Kevin Kosewick
+date: date-modified
+format: 
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+---
+
+# Overview
+
+Title of project: Global Distribution of Unintended Pregnancies and Contraceptive Usage
+
+Name of project author(s): Taylor Glass and Arlyn Santiago
+
+Name of project reviewer: Kevin Kosewick
+
+## Background, Context and Motivation
+How well is the context of the project described? Is a comprehensive background, including summary of previous/related work given? Is the project well placed into the context of existing work (including proper referencing of existing work). Is it clear why the project was undertaken and what new information it hopes to provide?
+
+### Feedback and Comments
+
+The background/summary was very thorough and clearly described the aims/context of the project. I found no flaws with it. The second page of the manuscript is completely blank and could just be removed.
+
+### Summary assessment (PICK ONE, DELETE THE OTHERS)
+
+* strong contextualization and motivation
+
+
+## Question description
+How well and clear are the question(s)/hypotheses the project aims to address described? Is it clear how the questions relate to the data?
+
+
+### Feedback and Comments
+
+The question is clearly identified but the hypothesis isn't stated. The questions are clearly connected to the data after reading the description of data and background sections. Clearly stating your hypothesis would give this section a 3/3.
+
+There is a typo in section 2.3 ("people women") (minor issue, I just wanted to point it out).
+
+### Summary assessment
+
+* question/hypotheses somewhat explained
+
+
+
+## Data description
+How well is the data overall described? Is the source provided? Is a codebook or other meta-information available that makes it clear what the data is? 
+
+### Feedback and Comments
+
+The data is well-described and a codebook is provided. Meta information included in the manuscript makes it clear what the data is.
+
+### Summary assessment
+
+* source and overall structure of data well explained
+
+
+## Data wrangling and exploratory analysis
+How well is the data cleaned/processed and explored? Are all steps reasonable and well explained? Are alternatives discussed and considered? Are meaningful exploratory results shown (e.g. in the supplementary materials)?
+
+### Feedback and Comments
+
+The data is very thoroughly cleaned in the processing-file.qmd. All steps are explained and justified. The eda.qmd file thoroughly explores the data, making almost 20 figures and a few tables. Each step in the EDA process is explained and interpreted. The supplementary file in the products folder shows plots of interest from the EDA and further connects their importance to the analysis and future analyses.
+
+### Summary assessment
+
+* essentially no weaknesses in wrangling and exploratory component
+
+
+
+## Appropriateness of Analysis
+Were the analysis methods appropriate for the data? Was the analysis done properly? Were different components of the analysis (e.g. performance measure, variable selection, data pre-processing, model evaluation) done in the best way possible and explained well?
+
+### Feedback and Comments
+
+In the first set of models (the linear models), the analysis was done well and explored many alternatives. Performance was evaluated and compared between the models to determine the most useful set of predictors for the outcome of interest. CV and bootstrapping are used to make sure the models work on unseen data. Overfitting was identified, so LASSO was used to fix this issue and then compared to a Random Forest model. This is all good practice and explores several ways of doing the same thing. Everything is thoroughly explained, justified, and interpreted. The analysis seems appropriate to me and was done with a lot of care.
+
+### Summary assessment
+
+* strong and reasonable analysis
+
+## Presentation
+How well are results presented? Are tables and figures easy to read and understand? Are the main figures/tables publication level quality? 
+
+### Feedback and Comments
+
+The results are presented very thoroughly. Each figure has one or multipe paragraphs interpreting what we're seeing. Important ploratory and model results are both included here. Each plot is visually appealing but I believe that the tables could be improved using some more customization from different packages (they're a bit basic). More importantly, these figures and tables are easy to read/interpret. Sections 4.2 and 4.3 have links to tables that doesn't seem to be working in the manuscript word document; I'm not sure if this is normal or not.
+
+### Summary assessment
+
+* results are very well presented
+
+
+## Discussion/Conclusions
+Are the study findings properly discussed? Are strengths and limitations acknowledged? Are findings interpreted properly?
+
+### Feedback and Comments
+
+The findings are thoroughly and properly discussed. Each model's results are interpreted properly and linked back to the background/context of the project nicely. Strengths and limitations are clearly acknowledged in their own section of the manuscript. Further research questions are identified and the supplementary material provides helpful figures from the EDA to guide other researchers in directions that they could take the project for further studies. The conclusion is also thorough and wraps up the project nicely.
+
+### Summary assessment
+
+* strong, complete and clear discussion
+
+
+## Further comments
+
+This is a very well-done project. Everything is evaluated and justified thoroughly and several alternatives were explored in the model fitting process. Each of your documents is well-written and all code is heavily annotated and explained. I would read through your manuscript one more time just to catch any typos; there were several throughout. This is relatively unimportant though compared to the great job you both did analyzing this dataset. 
+
+
+# Overall project content evaluation
+Evaluate overall features of the project  by filling in the sections below.
+
+
+## Structure
+Is the project well structured? Are files in well labeled folders? Do files have reasonable names? Are all "junk" files not needed for analysis/reproduction removed? By just looking at files and folders, can you get an idea of how things fit together?
+
+### Feedback and Comments
+
+The project is neatly organized and structured with reasonable names. No junk files are left. Some of the ReadMe folders (e.g. in the statistical analysis folder) still have template text left though; it would improve the project to remove the template text and write things more applicable to the design of your current repository.
+
+### Summary assessment
+
+* well structured
+
+
+## Documentation 
+How well is the project documented? Are you able to understand each step of the whole analysis, each decision that was made, and each line of code? Is enough information provided as comments in code or as part of Rmd files? 
+
+### Feedback and Comments
+
+The project is extremely well documented and dense with text. I am able to easily follow each step, decision, and line of code thanks to the annotations and the extra clarification in the supplement quarto file (included in the products folder).
+
+### Summary assessment
+
+* fully and well documented
+
+
+
+## Reproducibility
+Are all results fully reproducible? Is documentation provided which clearly explains how to reproduce things, and does it work without the need for any manual intervention? Are you able to re-run the whole analysis without having to do manual interventions/edits?
+
+### Feedback and Comments
+
+I was able to completely reproduce everything except for the supplement quarto file. At line 76, I get an error saying that the .rds file being loaded doesn't exist. I'm not sure why though; I can clearly see it in the folder and your code uses the correct path as far as I can tell. Maybe it's something on my end? I would double check on your end just to be sure.
+
+
+### Summary assessment
+
+* small parts not reproducible or required manual intervention 
+
+
+
+## Thoroughness
+How thorough was the overall study? Were alternatives (e.g. different ways of processing the data or different models) considered? Were alternatives discussed? Were the questions/hypotheses fully and thoroughly addressed?
+
+### Feedback and Comments
+
+The study was very thorough. Several models were considered in the analysis and the processing took several iterations before reaching a justifiable final result. The questions posed were thoroughly addressed. There wasn't a hypothesis posed to be addressed though.
+
+### Summary assessment
+
+* strong level of thorougness
+
+
+## Further comments
+
+A very solid project with only minor issues. As previously mentioned, I would double check line 76 in your supplementary file, but other than that all I could find were small typos in the manuscript. Great job doing such a thorough analysis!
+
+
+
+
+
