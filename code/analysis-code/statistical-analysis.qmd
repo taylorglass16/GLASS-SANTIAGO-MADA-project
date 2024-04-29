@@ -640,11 +640,11 @@ tidy(lasso_results)
 lmtable11 <- tidy(lasso_results)
 
 # create a professional format of the table to add to the manuscript 
-kable_lmtable11 <- kable(lmtable11)
+lmtable11 <- as_flextable(lmtable11)
 
 # save fit results table  
 table_file16 = here("results", "tables", "resulttable16.rds")
-saveRDS(kable_lmtable11, file = table_file16)
+saveRDS(lmtable11, file = table_file16)
 ```
 As expected, the coefficients are much smaller than the first full model we created without the regularization penalty, but all 5 predictors remain in the model. The `sarc_standard` predictor still has the strongest relationship with the outcome. The percent of women currently married, rate of maternal deaths due to unintended pregnancies, and rate of maternal deaths to due to abortion all have weak negative associations with the outcome. The direction of the relationship between the rate of maternal deaths due to abortions and the outcome flipped from the first full regression model to this model, but the coefficient is so small that this difference is not significant.  
 

@@ -35,9 +35,9 @@ How well and clear are the question(s)/hypotheses the project aims to address de
 
 ### Feedback and Comments
 
-The question is clearly identified but the hypothesis isn't stated. The questions are clearly connected to the data after reading the description of data and background sections. Clearly stating your hypothesis would give this section a 3/3.
+The question is clearly identified but the hypothesis isn't stated. The questions are clearly connected to the data after reading the description of data and background sections. Clearly stating your hypothesis would give this section a 3/3. 
 
-There is a typo in section 2.3 ("people women") (minor issue, I just wanted to point it out).
+There is a typo in section 2.3 ("people women") (minor issue, I just wanted to point it out). UPDATED TG 
 
 ### Summary assessment
 
@@ -86,7 +86,7 @@ How well are results presented? Are tables and figures easy to read and understa
 
 ### Feedback and Comments
 
-The results are presented very thoroughly. Each figure has one or multipe paragraphs interpreting what we're seeing. Important ploratory and model results are both included here. Each plot is visually appealing but I believe that the tables could be improved using some more customization from different packages (they're a bit basic). More importantly, these figures and tables are easy to read/interpret. Sections 4.2 and 4.3 have links to tables that doesn't seem to be working in the manuscript word document; I'm not sure if this is normal or not.
+The results are presented very thoroughly. Each figure has one or multipe paragraphs interpreting what we're seeing. Important ploratory and model results are both included here. Each plot is visually appealing but I believe that the tables could be improved using some more customization from different packages (they're a bit basic). More importantly, these figures and tables are easy to read/interpret. Sections 4.2 and 4.3 have links to tables that doesn't seem to be working in the manuscript word document; I'm not sure if this is normal or not. UPDATED TG
 
 ### Summary assessment
 
@@ -119,7 +119,7 @@ Is the project well structured? Are files in well labeled folders? Do files have
 
 ### Feedback and Comments
 
-The project is neatly organized and structured with reasonable names. No junk files are left. Some of the ReadMe folders (e.g. in the statistical analysis folder) still have template text left though; it would improve the project to remove the template text and write things more applicable to the design of your current repository.
+The project is neatly organized and structured with reasonable names. No junk files are left. Some of the ReadMe folders (e.g. in the statistical analysis folder) still have template text left though; it would improve the project to remove the template text and write things more applicable to the design of your current repository. UPDATED TG 
 
 ### Summary assessment
 
@@ -144,7 +144,7 @@ Are all results fully reproducible? Is documentation provided which clearly expl
 
 ### Feedback and Comments
 
-I was able to completely reproduce everything except for the supplement quarto file. At line 76, I get an error saying that the .rds file being loaded doesn't exist. I'm not sure why though; I can clearly see it in the folder and your code uses the correct path as far as I can tell. Maybe it's something on my end? I would double check on your end just to be sure.
+I was able to completely reproduce everything except for the supplement quarto file. At line 76, I get an error saying that the .rds file being loaded doesn't exist. I'm not sure why though; I can clearly see it in the folder and your code uses the correct path as far as I can tell. Maybe it's something on my end? I would double check on your end just to be sure. UPDATED TG
 
 
 ### Summary assessment

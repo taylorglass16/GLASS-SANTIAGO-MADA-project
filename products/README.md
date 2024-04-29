@@ -1,1 +1,3 @@
-This folder contains are the deliverables for the project including the manuscript and slide set. 
+This folder contains the final products of our analysis. 
+
+The manuscript folder contains the `manuscript.qmd` file that can be rendered to produce our final manuscript. It also contains the supplement folder with the `Supplementary-Material.qmd` file that provides extra information that is not included in the final manuscript. 

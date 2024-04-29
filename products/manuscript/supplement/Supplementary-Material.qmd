@@ -68,12 +68,12 @@ knitr::include_graphics(here("results", "figures", "final-figures", "lassoparame
 ```
 
 # Additional data cleaning explanation
-The first priority when cleaning the data was analyzing missing values, and our findings can be seen @tbl-summarytable. We found that the `pct_upreg` variable containing the percentage of unintended pregnancies is unreliable due to missing data that could not be explained. This variable is only 82% complete, but the individual percent of unintended pregnancy variables correponding with different types of birth control methods are each 100% complete. Since the missingness of this data is not well explained except by the hypothesis that this variable was found using methods outside of the AIU protocol, we decided to use the variables with percentage of unintended pregnancies related to each birth control method as our outcome variables because they are complete and were found directly based on the AIU protocol information. We printed the summary table here because it was useful in determining missingness and creating a new factor variable for the usage of each birth control method at the factor level later in the processing sequence. 
+The first priority when cleaning the data was analyzing missing values, and our findings can be seen @tbl-summarytable2. We found that the `pct_upreg` variable containing the percentage of unintended pregnancies is unreliable due to missing data that could not be explained. This variable is only 82% complete, but the individual percent of unintended pregnancy variables correponding with different types of birth control methods are each 100% complete. Since the missingness of this data is not well explained except by the hypothesis that this variable was found using methods outside of the AIU protocol, we decided to use the variables with percentage of unintended pregnancies related to each birth control method as our outcome variables because they are complete and were found directly based on the AIU protocol information. We printed the summary table here because it was useful in determining missingness and creating a new factor variable for the usage of each birth control method at the factor level later in the processing sequence. 
 ```{r}
 #| label: tbl-summarytable2
 #| tbl-cap: "Summary table to discover missingness"
 #| echo: FALSE
-resulttable2 <- readRDS("../../results/tables/summarytable.rds")
+resulttable2 <- readRDS(here("results", "tables", "summarytable.rds"))
 kable(resulttable2)
 ```
 

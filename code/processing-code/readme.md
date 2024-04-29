@@ -1,4 +1,6 @@
-This folder contains code for processing data.
+This folder contains code for processing data from its raw form.
 
-We chose to use the quarto document style for this section. 
+The final processed data is located in the data > processed-data folder. 
+
+Processing techniques include changing variable types, exploring the missing data, converting fractions into true percentages, feature engineering to create new variables, exploring outliers, and standardizing population counts. 
 

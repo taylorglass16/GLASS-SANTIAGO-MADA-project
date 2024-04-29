@@ -53,9 +53,11 @@ Is there a significant difference in the percentage of unintended pregnancies am
 
 The main outcome variables will be total percentage of unintended pregnancies among women using short acting reversible contraception methods (`pct_upreg_sarc`).
 
-The predictor variables will include the total number of people women using each type of birth control standardized by population size, region, percentage of women currently married, percentage of women never married, total rate of maternal deaths, rate of maternal deaths due to unintended pregnancy and rate of maternal deaths due to abortion. 
+The predictor variables will include the total number of women using each type of birth control standardized by population size, region, percentage of women currently married, percentage of women never married, total rate of maternal deaths, rate of maternal deaths due to unintended pregnancy and rate of maternal deaths due to abortion. 
     
 A full list of variables can be found in the processing-file in the code > processing-code folder. 
+
+We hypothesize that the percentage of unintended preggnancies among SARC users will vary between the five regions based on differing access to this type of contraception. 
 
 {{< pagebreak >}}
 

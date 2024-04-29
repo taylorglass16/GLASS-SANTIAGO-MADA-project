@@ -1,12 +1,5 @@
-This folder contains code to do some simple exploratory analysis on the processed/cleaned data.
-The code produces a few tables and figures, which are saved in the `results` folder.
+This folder contains code to do the full statistical analysis on the processed and explored data. This code creates simple linear regression and multiple linear regression models with various combinations of predictors. Performance metrics are included to determine which model performs best. 
 
-It's the same code done 3 times:
+Further model exploration is done through cross-validation, bootstrapping, LASSO regression, random forest modeling, and parameter tuning. 
 
-* First, there is an R script that you can run which does all the computations.
-* Second, there is a Quarto file which contains exactly the same code as the R script.
-* Third, my current favorite, is a Quarto file with an approach where the code is pulled in from the R script and run.
-
-The last version has the advantage of having code in one place for easy writing/debugging, and then being able to pull the code into the Quarto file for a nice combination of text/commentary and code.
-
-Each way of doing this is a reasonable approach, pick whichever one you prefer or makes the most sense for your setup. Whichever approach you choose, add ample documentation/commentary so you and others can easily understand what's going on and what is done.
+All results from this file are saved in the results > figures > final-figures folder. 
