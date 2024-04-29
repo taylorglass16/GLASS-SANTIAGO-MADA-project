@@ -27,7 +27,7 @@ How well is the context of the project described? Is a comprehensive background,
 
 You do an excellent job in your general background information and your motivation for the project. The first half of the paragraph is a tiny bit vague in that the studies you outline don't include where they were conducted, which seems to matter for the motivation of your study (and the differences among regions that you pinpoint in your findings). You also combine all contraceptives with emergency contraceptives in the second half of the paragraph. These are very different things, unless your definition of SARC is ONLY emergency contraceptives. You might want to clarify this, as it undermines your overall discussion. Are you including EC in SARCs? What else is a SARC? You might have seen the greatest variation in Latin American regions because that region also has a large variation between countries in abortion legality (from completely illegal in all circumstances, Nicaragua, El Salvador, Honduras to fully legal until 24 weeks LMP in Colombia). Some discussion of abortion might be interesting here.
 
-In fact, you might want to provide more detailed definitions and examples for all of the three categories of contraceptives (long-acting reversible and sterilization; SARC; and traditional). I would suggest your opening sentence omit the word "higher" since you don't know the relationship at the outset. 
+In fact, you might want to provide more detailed definitions and examples for all of the three categories of contraceptives (long-acting reversible and sterilization; SARC; and traditional). I would suggest your opening sentence omit the word "higher" since you don't know the relationship at the outset.  UPDATED TG
 
 ### Summary assessment
 
@@ -39,7 +39,7 @@ How well and clear are the question(s)/hypotheses the project aims to address de
 
 ### Feedback and Comments
 
-In the question section, you very clearly and expertly outline your main question: Is there a significant difference in the percentage of unintended pregnancies among short acting reversible contraception users among region? You might want to clarify what you mean by significant. Do you mean statistically significant at the 0.05 level? You might also want to clarify what you mean by "among region." Do you mean between regions? Which regions?
+In the question section, you very clearly and expertly outline your main question: Is there a significant difference in the percentage of unintended pregnancies among short acting reversible contraception users among region? You might want to clarify what you mean by significant. Do you mean statistically significant at the 0.05 level? You might also want to clarify what you mean by "among region." Do you mean between regions? Which regions? UPDATED TG
 
 ### Summary assessment
 
@@ -63,7 +63,7 @@ How well is the data cleaned/processed and explored? Are all steps reasonable an
 
 ### Feedback and Comments
 
-Wow, you've done a great job here! I was very easily able to follow all of your wrangling and exploratory methods. You consider many different alternatives and provide all meaningful results in an easy-to-follow manner. I think some of the methods section could be removed from the final manuscript and put in the supplemental file, for example the description of all performance metrics you performed (just state the final one and refer to supplemental for the background analysis you did to get there).
+Wow, you've done a great job here! I was very easily able to follow all of your wrangling and exploratory methods. You consider many different alternatives and provide all meaningful results in an easy-to-follow manner. I think some of the methods section could be removed from the final manuscript and put in the supplemental file, for example the description of all performance metrics you performed (just state the final one and refer to supplemental for the background analysis you did to get there). UPDATED TG
 
 ### Summary assessment
 
@@ -87,7 +87,7 @@ How well are results presented? Are tables and figures easy to read and understa
 
 ### Feedback and Comments
 
-The Tables and figures are great, although some of the tables were hard to read because they were not centered. I also had this problem with flextable, and I don't know how to fix it! There are some misspellings of standardized in Figures 2 and 3. The references to table 2 and 3 came out as unformatted in the word document I rendered (For these tables, you might want to use flextable). You also have multiple tables with the same numbers.
+The Tables and figures are great, although some of the tables were hard to read because they were not centered. I also had this problem with flextable, and I don't know how to fix it! There are some misspellings of standardized in Figures 2 and 3. The references to table 2 and 3 came out as unformatted in the word document I rendered (For these tables, you might want to use flextable). You also have multiple tables with the same numbers. UPDATED TG
 
 ### Summary assessment
 
@@ -131,7 +131,7 @@ How well is the project documented? Are you able to understand each step of the 
 
 ### Feedback and Comments
 
-Everything was very well documented and easy to follow. However, I think the master Readme could use some clarification. First, it did not mention the `eda.qmd` file and when it should be run. I ran it between the processing and analysis files. Second, I think you could have bullet points (or numbered points) easily showing which code to run in which order. This would make it easier for someone who is not familiar with your project to run it.
+Everything was very well documented and easy to follow. However, I think the master Readme could use some clarification. First, it did not mention the `eda.qmd` file and when it should be run. I ran it between the processing and analysis files. Second, I think you could have bullet points (or numbered points) easily showing which code to run in which order. This would make it easier for someone who is not familiar with your project to run it. UPDATED TG
 
 ### Summary assessment
 

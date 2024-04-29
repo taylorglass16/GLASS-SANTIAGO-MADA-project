@@ -14,12 +14,10 @@ csl: ../../assets/apa.csl
 
 ```{r, echo=FALSE, message=FALSE}
 # load a few R packages for rendering 
-library(here)
-library(readr)
-library(knitr)
-library(dplyr)
-library(naniar)
-library(ggplot2)
+library(here) # for locating tables and figures
+library(readr) # for loading tables and figures
+library(knitr) # for displaying tables and figures 
+library(dplyr) # for basic syntax
 ```
 
 # Summary/Abstract
@@ -67,9 +65,9 @@ Reproducing this project requires R, RStudio, and Microsoft word. The README fil
 
 The next step is exploratory data analysis. The eda.qmd file in the code > eda-code folder contains all the code for this process. We produced a couple summary tables before we began a simple exploration of trends in percentage of unintended pregnancies by country in our first set of histograms. The second set of histograms explore contraceptive usage methods by country. These graphs revealed outliers, so we standardized by population size for each country. The next sets of plots are line graphs showing total usage of contraceptive methods to percentage of unintended pregnancies associated with that method. The last two sets of plots contain line graphs of the relationship between the two variables stratified by region and violin plots displaying the relationship between percentage of unintended pregnancies and the categorical usage variable created during processing. All of these figures are displayed and summarized in the Supplementary-Material.qmd file in the products > manuscript > supplement folder. This process led us to focus on the percentage of unintended pregnancies among short acting reversible methods as our single outcome because this method is becoming increasingly popular, so we feel that results from this contraception method will be the most relevant. Additionally, the exploratory data analysis process showed that the distribution of this outcome variable is less skewed than the other options, and the stratification by region is clearer, which allows for better understanding. All exploratory figures are saved in the results > figures > exploratory-figures folder. 
 
-Step three is the statistical analysis and model fitting portion found in the statistical-analysis.qmd file in the code > analysis-code folder. We explore the single outcome `pct_upreg_sarc` based on 7 predictors with simple linear regression, total number of women using short acting reversible methods, region, percent of currently married women, percent of women who never married, total rate of maternal mortality, rate of maternal mortality by unintended pregnancy, and rate of maternal mortality by abortion. We also explore the differences in the outcome between regions using an ANOVA test and Tukey's Honestly Significant Difference test for pairwise comparisons within ANOVA. Result tables for each model and test are stored in the results > tables folder. 
+Step three is the statistical analysis and model fitting portion found in the statistical-analysis.qmd file in the code > analysis-code folder. We explore the single outcome `pct_upreg_sarc` based on 7 predictors with simple linear regression, total number of women using short acting reversible methods, region, percent of currently married women, percent of women who never married, total rate of maternal mortality, rate of maternal mortality by unintended pregnancy, and rate of maternal mortality by abortion. Result tables for each model and test are stored in the results > tables folder. 
 
-Step four is to critically analyze the performance of our models to determine which one performs the best in predicting our outcome, which is also done in the statistical-analysis.qmd file in the code > analysis-code folder. We chose 2 performance metrics to find for each of our 9 models: Root Mean Square Error (RMSE) and Mean Absolute Error (MAE). We chose these performance metrics because they are commonly used for linear regression models like the ones we have created. RMSE provides an average magnitude of the error in the predictors, and MAE provides an average absolute difference between the predicted and actual values. We include both metrics to increase the validity of our results. Once we decided on the final model, we use cross-validation to determine how well it will perform on data it has not seen before. This involves splitting the data into testing and training pieces , which allows us to compare the predictions created using both datasets. To examine the uncertainty in the model, we will use the bootstrapping method to resample our data 100 times to find confidence intervals for our predictions. This process is similar to cross-validation because it relies on resampling the training data. Lastly, we used a LASSO regression to add a penalty to each parameter included in the model to determine if any variables should be removed to improve model performance. It is important to tune the hyperparameters associated with LASSO regression to determine which model fits best. We use  a grid search to ensure that we try all combinations of the parameters in our grid. We complete the tuning process with a 5-fold cross-validation repeated 5 times. We added a random forest model to attempt to improve model performance. We used another parameter tuning grid to allow for cross-validated tuning of 2 variables: `mtry`, the number of variable to possibly split at in each node, and `min_n`, the minimal node size. We set the number of trees to 300 because it strikes a good balance between achieving the best performance metrics and the processing time required to do so. Each of these processes are crucial in determining which model performs best for our dataset. Result tables for each model and test are stored in the results > tables folder. Figures created from cross-validation, boostrapping, LASSO regression, and random forest modeling are stored in the results > figure > final-figures folder.
+Step four is to critically analyze the performance of our models to determine which one performs the best in predicting our outcome, which is also done in the statistical-analysis.qmd file in the code > analysis-code folder. We chose 2 performance metrics to find for each of our 9 models: Root Mean Square Error (RMSE) and Mean Absolute Error (MAE). Once we decided on the final model based on RMSE and MAE, we use cross-validation to determine how well it will perform on data it has not seen before. This involves splitting the data into testing and training pieces , which allows us to compare the predictions created using both datasets. To examine the uncertainty in the model, we will use the bootstrapping method to resample our data 100 times to find confidence intervals for our predictions. Next, we used a LASSO regression to add a penalty to each parameter included in the model to determine if any variables should be removed to improve model performance. It is important to tune the hyperparameters associated with LASSO regression to determine which model fits best. We used a grid search to ensure that we try all combinations of the parameters in our grid. Lastly, we added a random forest model to attempt to improve model performance. We used another parameter tuning grid to allow for cross-validated tuning of 2 variables: `mtry`, the number of variable to possibly split at in each node, and `min_n`, the minimal node size. Each of these processes are crucial in determining which model performs best for our data. Result tables for each model and test are stored in the results > tables folder. Figures created from cross-validation, bootstrapping, LASSO regression, and random forest modeling are stored in the results > figure > final-figures folder.
 
 The Manuscript.qmd file for this document can be found in the products > manuscript folder. 
 
@@ -91,11 +89,11 @@ We began with a simple linear regression model with each of the 7 predictor vari
 
 ## Exploratory/Descriptive analysis
 
-After deciding on a single outcome variable, we created a summary table with that outcome and the seven predictors we will use to predict it, which can be seen in @tbl-1. [insert explanation here]
+After deciding on a single outcome variable, we created a summary table with that outcome and the seven predictors we will use to predict it, which can be seen in @tbl-1. A summary table was done to present data about the seven predictor variables chosen in a structured format. Summary tables enable us to compare between different categories or groups within the data set. This can reveal trends or relationships. From the summary table below, it would appear that the region with the highest rate of unintended pregnancies due to SARC usage is Latin America/Caribbean at 24%, followed by Europe at 23%. Africa and Asia have a mean of 13% and 14% respectively, while Oceania appears to have the lowest rate at 6%. It appears that a higher percentage of women are currently married in Asia (66%) and Africa (60%) compared to Latin America/Caribbean (54%) and Oceania (60%).The average percentage of never married women across the 5 regions is 31%. Latin America/Caribbean region has the highest percentage of never married women at 35% and Asia region has has the lowest percentage of never married women at 29%.
 ```{r}
 #| message: false
 #| label: tbl-1
-#| tbl-cap: "[A summary table was done to present data about the seven predictor variables chosen in a structured format. Summary tables enable us to compare between different categories or groups within the data set. This can reveal trends or relationships. From the summary table below, it would appear that the region with the highest rate of unintended pregnancies due to SARC usage is Latin America/Caribbean at 24%, followed by Europe at 23%. Africa and Asia have a mean of 13% and 14% respectively, while Oceania appears to have the lowest rate at 6%. It appears that a higher percentage of women are currently married in Asia (66%) and Africa (60%) compared to Latin America/Caribbean (54%) and Oceania (60%).The average percentage of never married women across the 5 regions is 31%. Latin America/Caribbean region has the highest percentage of never married women at 35% and Asia region has has the lowest percentage of never married women at 29%.]"
+#| tbl-cap: "Table 1: Summary of All Explored Variables"
 #| echo: FALSE
 predictortable<- readRDS(here("results", "tables", "predictortable.rds"))
 predictortable
@@ -105,7 +103,7 @@ We created a multitude of exploratory plots to understand our data better. The f
 ```{r}
 #| message: false
 #| label: fig-1
-#| fig-cap: "[A bar chart was made to showcase the frequencies of the number of countries and the percentage of unintended pregnancy rates using SARC methods. The data presented suggests that there are fewer countries with a higher number of unintended pregnancies using SARCs.]"
+#| fig-cap: "A bar chart was made to showcase the frequencies of the number of countries and the percentage of unintended pregnancy rates using SARC methods. The data presented suggests that there are fewer countries with a higher number of unintended pregnancies using SARCs considering more than half of the countries experience less than 20% of unintended pregnancies when using SARCs."
 #| echo: FALSE
 knitr::include_graphics(here("results", "figures", "exploratory-figures", "pctupreg_sarc_distribution.png"))
 ```
@@ -114,7 +112,7 @@ The next set of variables we explored were the total counts of women using each 
 ```{r}
 #| message: false
 #| label: fig-2
-#| fig-cap: "[A Scatterplot was contructed to see if there is a correlation between a standardized count of women using SARCs and the percentage of unintended pregnancies. In this case, a positive correlation is shown. It suggests that as the number of women using SARCs increases (x-axis), the percentage of unintended pregnancies increases (y-axis)]"
+#| fig-cap: "A Scatterplot was contructed to see if there is a correlation between a standardized count of women using SARCs and the percentage of unintended pregnancies. In this case, a positive correlation is shown. It suggests that as the number of women using SARCs increases (x-axis), the percentage of unintended pregnancies increases (y-axis)"
 #| echo: FALSE
 knitr::include_graphics(here("results", "figures", "exploratory-figures", "pctupreg_totalsarc.png"))
 ```
@@ -123,7 +121,7 @@ We stratified these four graphs by region to examine how the relationship differ
 ```{r}
 #| message: false
 #| label: fig-3
-#| fig-cap: "[Scatter plots are used to see if there is a relationship between two sets of continuous data. In this scatter plot, the relationship between the standardized count of women using SARCs and the percentage of unintended pregnancies is being examined.There appears to be a positive correlation between the standardized count of women using SARCs and the percentage of unintended pregnancies. The regions with the highest percentage of unintended pregnacies are shown to be Latin America & the Caribbean, followed by Africa.]"
+#| fig-cap: "Scatter plots are used to see if there is a relationship between two sets of continuous data. In this scatter plot, the relationship between the standardized count of women using SARCs and the percentage of unintended pregnancies is being examined.There appears to be a positive correlation between the standardized count of women using SARCs and the percentage of unintended pregnancies. The regions with the highest percentage of unintended pregnacies are shown to be Latin America & the Caribbean, followed by Africa."
 #| echo: FALSE
 knitr::include_graphics(here("results", "figures", "exploratory-figures", "pctupreg_sarc_stratified.png"))
 ```
@@ -132,7 +130,7 @@ We also created violin plots using the categorical usage variables for each birt
 ```{r}
 #| message: false
 #| label: fig-4
-#| fig-cap: "[Violin plots are used to visualize the distribution of data across different categories. In this case, it is being used to see the distribution of unintended pregnancy rates among countries that use short-acting reversible contraceptives (SARCs).The violin plot below shows that the distribution of unintended pregnancy rates is wider for countries with high SARC usage compared to counties with medium or low SARC usage. This means that there is more variation in unintended pregnancy rates in counties with high SARC usage.]"
+#| fig-cap: "Violin plots are used to visualize the distribution of data across different categories. In this case, it is being used to see the distribution of unintended pregnancy rates among countries that use short-acting reversible contraceptives (SARCs).The violin plot below shows that the distribution of unintended pregnancy rates is wider for countries with high SARC usage compared to counties with medium or low SARC usage. This means that there is more variation in unintended pregnancy rates in counties with high SARC usage."
 #| echo: FALSE
 knitr::include_graphics(here("results", "figures", "exploratory-figures", "sarc_pctupreg_violin.png"))
 ```
@@ -146,7 +144,7 @@ We completed a simple linear regression analysis with each of the 7 predictors s
 ```{r}
 #| message: false
 #| label: tbl-2
-#| fig-cap: "This simple linear regresion model shows a strong effect of the standardized population size using short-acting reversible contraception methods on the outcome of percentage of unintended pregnancies due to short acting reversible contraception. This strong positive relationship indicates that as more women use this form of contraception, more women are susceptible to unintended pregancies due to SARCs because they are now at risk of experiencing the outcome. The coefficient of 87.65998 is the largest single coefficient of any predictor that we studied, which increases our confidence in including it as a predictor in our final model."
+#| fig-cap: "Table 2: This simple linear regresion model shows a strong effect of the standardized population size using short-acting reversible contraception methods on the outcome of percentage of unintended pregnancies due to short acting reversible contraception. This strong positive relationship indicates that as more women use this form of contraception, more women are susceptible to unintended pregancies due to SARCs because they are now at risk of experiencing the outcome. The coefficient of 87.65998 is the largest single coefficient of any predictor that we studied, which increases our confidence in including it as a predictor in our final model."
 #| echo: FALSE
 readRDS(here("results","tables", "resulttable1.rds")) 
 ```
@@ -155,7 +153,7 @@ The second model we created used the region predictor, which revealed that the L
 ```{r}
 #| message: false
 #| label: tbl-3
-#| fig-cap: "In a simple linear regression with the `region` predictor only, the Latin America/the Caribbean region has the strongest relationship with the outcome based on a coefficient of 1.6218844 followed closely by Asia. Europe has a smaller efffect on the outcome based on the coefficient of 0.3299391, but Oceania has the smallest effect on the outcome. This model chose the African region as the reference group, which means that it has the weakest association with the outcome compared to the other 4 regions."
+#| fig-cap: " Table 3: In a simple linear regression with the `region` predictor only, the Latin America/the Caribbean region has the strongest relationship with the outcome based on a coefficient of 1.6218844 followed closely by Asia. Europe has a smaller efffect on the outcome based on the coefficient of 0.3299391, but Oceania has the smallest effect on the outcome. This model chose the African region as the reference group, which means that it has the weakest association with the outcome compared to the other 4 regions."
 #| echo: FALSE
 readRDS(here("results","tables", "resulttable2.rds")) 
 ```

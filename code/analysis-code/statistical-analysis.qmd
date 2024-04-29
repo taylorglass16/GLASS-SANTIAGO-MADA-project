@@ -11,6 +11,7 @@ library(dplyr) # for basic syntax
 library(broom) #for cleaning up output from lm()
 library(here) #for data loading/saving
 library(tidymodels) # for model building 
+library(flextable) # for creating tables for the manuscript
 library(yardstick) # for finding performance metrics 
 library(rsample) #for splitting the data into testing/training
 library(knitr) # to create performance metric tables 
@@ -45,11 +46,11 @@ tidy(lmfit1)
 lmtable1 <- tidy(lmfit1)
 
 # create a professional format of the table to add to the manuscript 
-kable_lmtable1 <- kable(lmtable1)
+lmtable1 <- as_flextable(lmtable1)
 
 # save fit results table  
 table_file1 = here("results", "tables", "resulttable1.rds")
-saveRDS(kable_lmtable1, file = table_file1)
+saveRDS(lmtable1, file = table_file1)
 ```
 There appears to be a very strong relationship between total number of women using this birth control method and the outcome based on the coefficient estimate of 87.65998.
 
@@ -67,11 +68,11 @@ tidy(lmfit2)
 lmtable2 <- tidy(lmfit2)
 
 # create a professional format of the table to add to the manuscript 
-kable_lmtable2 <- kable(lmtable2)
+lmtable2 <- as_flextable(lmtable2)
 
 # save fit results table  
 table_file2 = here("results", "tables", "resulttable2.rds")
-saveRDS(kable_lmtable2, file = table_file2)
+saveRDS(lmtable2, file = table_file2)
 
 ```
 This model shows that the Latin America/the Caribbean region has the strongest association with the outcome variable based on a coefficient estimate of 1.6218844 followed closely by the Asia region. The Oceania region has the weakest association with the outcome variable based on a coefficient estimate of 0.2512100.
@@ -198,11 +199,11 @@ tidy(lmfit8)
 lmtable8 <- tidy(lmfit8)
 
 # create a professional format of the table to add to the manuscript 
-kable_lmtable8 <- kable(lmtable8)
+lmtable8 <- as_flextable(lmtable8)
 
 # save fit results table  
 table_file8 = here("results", "tables", "resulttable8.rds")
-saveRDS(kable_lmtable8, file = table_file8)
+saveRDS(lmtable8, file = table_file8)
 ```
 This model shows the strongest predictor is the number of women using short acting reversible contraception with a huge coefficient of 85.6433. The next strongest predictor is the European region followed by the Latin America/the Caribbean region and the Asia region, which is a shift from the model with the singular region predictor. The Oceania region now has a negative association with the outcome. Both of the marriage status predictors are associated with a decrease in the outcome. The coefficient estimates for the rate of maternal death due to unintended pregnancies and abortion both flipped from the single predictor models to show a positive association with the outcome. 
 
