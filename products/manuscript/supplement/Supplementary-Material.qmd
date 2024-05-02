@@ -343,7 +343,7 @@ We explored the distribution of the countries by five categorical variables: `re
 #| label: tbl-summarytable1
 #| tbl-cap: "Summary table for categorical variables"
 #| echo: FALSE
-resulttable1 <- readRDS("../../results/tables/summarytablecat.rds")
+resulttable1 <- here("results","tables","summarytable.cat")
 kable(resulttable1)
 ```
 
