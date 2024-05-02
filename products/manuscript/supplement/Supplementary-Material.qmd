@@ -20,6 +20,7 @@ library(dplyr) # for basic piping functions
 library(skimr) # for summarizing data
 library(ggplot2) # for visualizing data
 library(gtsummary) # for creating tables
+library(kableExtra) # for creating tables
 ```
 
 
@@ -343,7 +344,7 @@ We explored the distribution of the countries by five categorical variables: `re
 #| label: tbl-summarytable1
 #| tbl-cap: "Summary table for categorical variables"
 #| echo: FALSE
-resulttable1 <- here("results","tables","summarytable.cat")
+resulttable1 <- readRDS(here("results","tables","summarytablecat.rds"))
 kable(resulttable1)
 ```
 
